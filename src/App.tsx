@@ -9,7 +9,7 @@ const Questions = lazy(() => import("@/components/Questions"));
 const Recall = lazy(() => import("@/components/Recall"));
 const Statistics = lazy(() => import("@/components/Statistics"));
 import { ImportExport } from "@/components/ImportExport";
-import { Settings } from "@/components/Settings";
+const Settings = lazy(() => import("@/components/Settings"));
 import { Onboarding } from "@/components/Onboarding";
 import { MathJaxContext } from "better-react-mathjax";
 import { useDecks } from "@/hooks/useDecks";
