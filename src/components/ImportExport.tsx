@@ -14,6 +14,7 @@ import { Download, Upload, FileJson } from "lucide-react";
 import { exportDeck, importDeck, exportAllData } from "@/services/storage";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { isValidJSON, validateDeckStructure } from "@/lib/validation";
+import { ValidationErrors } from "@/components/ValidationErrors";
 
 interface ImportExportProps {
   currentDeckId: string | null;
@@ -29,6 +30,8 @@ export function ImportExport({
   const [exportedData, setExportedData] = useState("");
   const [importData, setImportData] = useState("");
   const [isImporting, setIsImporting] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [validationWarnings, setValidationWarnings] = useState<string[]>([]);
 
   const handleExportDeck = () => {
     if (!currentDeckId) {
@@ -51,14 +54,16 @@ export function ImportExport({
 
   const handleImportDeck = () => {
     if (!importData.trim()) {
-      alert("Please paste deck data to import");
+      setValidationErrors(["Please paste deck data to import"]);
+      setValidationWarnings([]);
       return;
     }
 
     // Validate JSON first
     const jsonValidation = isValidJSON(importData);
     if (!jsonValidation.valid) {
-      alert(`Invalid JSON:\n${jsonValidation.errors.join("\n")}`);
+      setValidationErrors(jsonValidation.errors);
+      setValidationWarnings([]);
       return;
     }
 
@@ -70,24 +75,26 @@ export function ImportExport({
       const deckValidation = validateDeckStructure(data);
 
       if (!deckValidation.valid) {
-        alert(`Invalid deck structure:\n${deckValidation.errors.join("\n")}`);
+        setValidationErrors(deckValidation.errors);
+        setValidationWarnings(deckValidation.warnings);
         setIsImporting(false);
         return;
       }
 
       // Show warnings if any
-      if (deckValidation.warnings.length > 0) {
-        console.warn("Deck import warnings:", deckValidation.warnings);
-      }
+      setValidationWarnings(deckValidation.warnings);
 
       const deck = importDeck(importData);
       if (deck) {
         alert(`Successfully imported deck: ${deck.name}`);
         setImportData("");
+        setValidationErrors([]);
+        setValidationWarnings([]);
         setIsImportOpen(false);
         onDeckImported();
       } else {
-        alert("Failed to import deck. Please check the JSON format.");
+        setValidationErrors(["Failed to import deck. Please check the JSON format."]);
+        setValidationWarnings([]);
       }
       setIsImporting(false);
     }, 100);
@@ -137,9 +144,14 @@ export function ImportExport({
           <Textarea
             placeholder='{"id": "deck-...", "name": "...", ...}'
             value={importData}
-            onChange={(e) => setImportData(e.target.value)}
+            onChange={(e) => {
+              setImportData(e.target.value);
+              setValidationErrors([]);
+              setValidationWarnings([]);
+            }}
             className="min-h-[300px] font-mono text-xs"
           />
+          <ValidationErrors errors={validationErrors} warnings={validationWarnings} />
           <DialogFooter>
             <Button
               variant="outline"
