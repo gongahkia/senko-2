@@ -31,12 +31,17 @@ export function Questions({
   const [parsedQuestions, setParsedQuestions] =
     useState<QuestionItem[]>(initialQuestions);
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = parseQuestions(text);
-    setParsedQuestions(parsed);
-    onSave(parsed);
+    setIsSaving(true);
+    setTimeout(() => {
+      const parsed = parseQuestions(text);
+      setParsedQuestions(parsed);
+      onSave(parsed);
+      setIsSaving(false);
+    }, 100);
   };
 
   const handleImageUpload = async (
@@ -80,8 +85,15 @@ export function Questions({
           onChange={(e) => setText(e.target.value)}
           className="min-h-[40vh] sm:min-h-[50vh] resize-y font-mono text-sm sm:text-base"
         />
-        <Button type="submit" className="w-full sm:w-fit mt-2">
-          Save Questions
+        <Button type="submit" disabled={isSaving} className="w-full sm:w-fit mt-2">
+          {isSaving ? (
+            <>
+              <LoadingSpinner size="sm" className="mr-2" />
+              Saving...
+            </>
+          ) : (
+            "Save Questions"
+          )}
         </Button>
       </form>
 
