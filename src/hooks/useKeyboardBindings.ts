@@ -30,13 +30,16 @@ export function useKeyboardBindings({
     if (!enabled) return;
 
     const cleanupPendingListener = () => {
-      if (pendingListenerRef.current) {
-        window.removeEventListener("keydown", pendingListenerRef.current);
-        pendingListenerRef.current = null;
-      }
+      // Clear timeout first to prevent race conditions
       if (timeoutRef.current !== null) {
         clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
+      }
+
+      // Then remove event listener
+      if (pendingListenerRef.current) {
+        window.removeEventListener("keydown", pendingListenerRef.current);
+        pendingListenerRef.current = null;
       }
     };
 
