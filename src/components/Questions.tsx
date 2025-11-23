@@ -62,9 +62,9 @@ export function Questions({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       <div className="flex justify-between items-center">
-        <p className="text-2xl text-foreground">Questions for Active Recall</p>
+        <p className="text-xl sm:text-2xl text-foreground">Questions for Active Recall</p>
       </div>
 
       <form onSubmit={handleSubmit} className="grid gap-2">
@@ -73,30 +73,30 @@ export function Questions({
           placeholder="Type your questions here in the format: question\n===\nanswer\n\nSupports LaTeX math with $ and $$"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="min-h-[50vh] resize-y font-mono"
+          className="min-h-[40vh] sm:min-h-[50vh] resize-y font-mono text-sm sm:text-base"
         />
-        <Button type="submit" className="w-fit mt-2">
+        <Button type="submit" className="w-full sm:w-fit mt-2">
           Save Questions
         </Button>
       </form>
 
       {parsedQuestions.length > 0 && (
-        <div className="mt-6">
-          <h3 className="text-xl font-medium mb-4">
+        <div className="mt-4 sm:mt-6">
+          <h3 className="text-lg sm:text-xl font-medium mb-3 sm:mb-4">
             Parsed Questions ({parsedQuestions.length})
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {parsedQuestions.map((item, index) => (
               <div
                 key={index}
-                className="border rounded-md p-4 bg-card text-card-foreground"
+                className="border rounded-md p-3 sm:p-4 bg-card text-card-foreground"
               >
-                <p className="font-medium">Question {index + 1}:</p>
-                <p className="ml-4 mt-1 whitespace-pre-wrap">
+                <p className="font-medium text-sm sm:text-base">Question {index + 1}:</p>
+                <p className="ml-3 sm:ml-4 mt-1 whitespace-pre-wrap text-sm sm:text-base">
                   <MathJax dynamic>{item.question}</MathJax>
                 </p>
-                <p className="font-medium mt-2">Answer:</p>
-                <p className="ml-4 mt-1 whitespace-pre-wrap">
+                <p className="font-medium mt-2 text-sm sm:text-base">Answer:</p>
+                <p className="ml-3 sm:ml-4 mt-1 whitespace-pre-wrap text-sm sm:text-base">
                   <MathJax dynamic>{item.answer}</MathJax>
                 </p>
 
