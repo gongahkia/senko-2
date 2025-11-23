@@ -123,15 +123,15 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
   return (
     <MathJaxContext config={mathJaxConfig}>
       <ThemeProvider>
-        <div className="container mx-auto max-w-[85%] pt-[3%] pb-[5%]">
+        <div className="container mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
           {/* Header */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <BookOpen className="h-8 w-8 text-primary" />
-                <h1 className="text-3xl font-bold text-foreground">senko-2</h1>
+          <div className="mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">senko-2</h1>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                 <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="icon" data-onboarding="help">
@@ -307,8 +307,8 @@ What is the quadratic formula?
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4">
-              <div data-onboarding="deck-selector">
+            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
+              <div data-onboarding="deck-selector" className="w-full sm:w-auto">
                 <DeckSelector
                   decks={decks}
                   currentDeckId={currentDeckId}
@@ -318,10 +318,12 @@ What is the quadratic formula?
                 />
               </div>
 
-              <ImportExport
-                currentDeckId={currentDeckId}
-                onDeckImported={handleDeckImported}
-              />
+              <div className="w-full sm:w-auto">
+                <ImportExport
+                  currentDeckId={currentDeckId}
+                  onDeckImported={handleDeckImported}
+                />
+              </div>
             </div>
           </div>
 

@@ -32,11 +32,11 @@ export function DeckSelector({
   };
 
   return (
-    <div className="flex items-center gap-2">
-      <FolderOpen className="h-5 w-5 text-muted-foreground" />
+    <div className="flex items-center gap-2 w-full sm:w-auto">
+      <FolderOpen className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
       <Select value={currentDeckId || undefined} onValueChange={onSelectDeck}>
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-full sm:w-[200px] min-w-0">
           <SelectValue placeholder="Select a deck" />
         </SelectTrigger>
         <SelectContent>
@@ -48,7 +48,7 @@ export function DeckSelector({
         </SelectContent>
       </Select>
 
-      <Button variant="outline" size="icon" onClick={handleCreateDeck}>
+      <Button variant="outline" size="icon" onClick={handleCreateDeck} className="flex-shrink-0">
         <Plus className="h-4 w-4" />
       </Button>
 
@@ -61,6 +61,7 @@ export function DeckSelector({
               onDeleteDeck(currentDeckId);
             }
           }}
+          className="flex-shrink-0"
         >
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>
