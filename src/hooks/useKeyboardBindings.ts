@@ -154,7 +154,9 @@ export function useKeyboardBindings({
 
             // Auto-cleanup after 3 seconds if no key pressed
             timeoutRef.current = window.setTimeout(() => {
-              cleanupPendingListener();
+              if (pendingListenerRef.current) {
+                cleanupPendingListener();
+              }
             }, 3000);
           }
         }
