@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ToastProvider } from "@/contexts/ToastContext";
+import { PromptDialog } from "@/components/ui/prompt-dialog";
 import { DeckSelector } from "@/components/DeckSelector";
 import { Questions } from "@/components/Questions";
 import { Recall } from "@/components/Recall";
@@ -62,6 +63,7 @@ function App() {
   const [currentTab, setCurrentTab] = useState<"recall" | "questions" | "stats">("recall");
   const [refreshKey, setRefreshKey] = useState(0);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
+  const [showCreatePrompt, setShowCreatePrompt] = useState(false);
 
   const handleSaveQuestions = (questions: QuestionItem[]) => {
     if (currentDeckId) {
@@ -339,12 +341,7 @@ What is the quadratic formula?
               <p className="text-muted-foreground mb-6">
                 Create a new deck or select an existing one to get started
               </p>
-              <Button
-                onClick={() => {
-                  const name = prompt("Enter deck name:");
-                  if (name) createDeck(name);
-                }}
-              >
+              <Button onClick={() => setShowCreatePrompt(true)}>
                 Create Your First Deck
               </Button>
             </div>
@@ -407,6 +404,18 @@ What is the quadratic formula?
           <Onboarding />
           </ThemeProvider>
         </MathJaxContext>
+
+        <PromptDialog
+          open={showCreatePrompt}
+          onOpenChange={setShowCreatePrompt}
+          title="Create New Deck"
+          description="Enter a name for your new deck"
+          label="Deck Name"
+          placeholder="e.g., Math Formulas"
+          onConfirm={createDeck}
+          confirmText="Create"
+          cancelText="Cancel"
+        />
       </ToastProvider>
     </ErrorBoundary>
   );

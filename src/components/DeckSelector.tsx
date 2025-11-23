@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { PromptDialog } from "@/components/ui/prompt-dialog";
 import { Deck } from "@/types";
 
 interface DeckSelectorProps {
@@ -27,12 +28,10 @@ export function DeckSelector({
   onDeleteDeck,
 }: DeckSelectorProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showCreatePrompt, setShowCreatePrompt] = useState(false);
 
-  const handleCreateDeck = () => {
-    const name = prompt("Enter deck name:");
-    if (name && name.trim()) {
-      onCreateDeck(name.trim());
-    }
+  const handleCreateDeck = (name: string) => {
+    onCreateDeck(name);
   };
 
   const handleDeleteDeck = () => {
@@ -59,7 +58,7 @@ export function DeckSelector({
         </SelectContent>
       </Select>
 
-      <Button variant="outline" size="icon" onClick={handleCreateDeck} className="flex-shrink-0">
+      <Button variant="outline" size="icon" onClick={() => setShowCreatePrompt(true)} className="flex-shrink-0">
         <Plus className="h-4 w-4" />
       </Button>
 
@@ -74,6 +73,18 @@ export function DeckSelector({
         </Button>
       )}
     </div>
+
+    <PromptDialog
+      open={showCreatePrompt}
+      onOpenChange={setShowCreatePrompt}
+      title="Create New Deck"
+      description="Enter a name for your new deck"
+      label="Deck Name"
+      placeholder="e.g., Math Formulas"
+      onConfirm={handleCreateDeck}
+      confirmText="Create"
+      cancelText="Cancel"
+    />
 
     <ConfirmDialog
       open={showDeleteConfirm}
