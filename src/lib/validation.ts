@@ -50,6 +50,37 @@ export function validateDeckStructure(data: unknown): DeckValidation {
 
   if (!Array.isArray(deck.questions)) {
     errors.push("'questions' must be an array");
+  } else {
+    // Validate each question
+    deck.questions.forEach((q: unknown, index: number) => {
+      if (typeof q !== "object" || q === null) {
+        errors.push(`Question ${index + 1}: must be an object`);
+        return;
+      }
+
+      const question = q as Record<string, unknown>;
+
+      if (!question.question || typeof question.question !== "string") {
+        errors.push(`Question ${index + 1}: missing or invalid 'question' field`);
+      }
+
+      if (!question.answer || typeof question.answer !== "string") {
+        errors.push(`Question ${index + 1}: missing or invalid 'answer' field`);
+      }
+
+      if (question.type && typeof question.type !== "string") {
+        errors.push(`Question ${index + 1}: invalid 'type' field`);
+      }
+
+      // Validate question type-specific fields
+      if (question.type === "multiple-choice" && !Array.isArray(question.options)) {
+        warnings.push(`Question ${index + 1}: multiple-choice type should have 'options' array`);
+      }
+
+      if (question.type === "fill-in-blank" && !Array.isArray(question.blanks)) {
+        warnings.push(`Question ${index + 1}: fill-in-blank type should have 'blanks' array`);
+      }
+    });
   }
 
   return {
