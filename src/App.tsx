@@ -11,7 +11,7 @@ import { StudyModeSelector } from "@/components/StudyModeSelector";
 import { MathJaxContext } from "better-react-mathjax";
 import { useDecks } from "@/hooks/useDecks";
 import { StudyMode, QuestionItem } from "@/types";
-import { BookOpen, HelpCircle } from "lucide-react";
+import { BookOpen, HelpCircle, Copy, Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -54,6 +54,7 @@ function App() {
 
   const [studyMode, setStudyMode] = useState<StudyMode>("normal");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [copiedPrompt, setCopiedPrompt] = useState(false);
 
   const handleSaveQuestions = (questions: QuestionItem[]) => {
     if (currentDeckId) {
@@ -65,6 +66,42 @@ function App() {
   const handleDeckImported = () => {
     setRefreshKey((k) => k + 1);
     window.location.reload();
+  };
+
+  const promptTemplate = `Generate flashcard questions and answers for active recall study on the topic: [YOUR TOPIC HERE]
+
+Please format your response EXACTLY as follows:
+
+Question 1 text here
+===
+Answer 1 text here
+
+Question 2 text here
+===
+Answer 2 text here
+
+Requirements:
+- Generate 15-20 questions
+- Questions should test understanding, not just memorization
+- Answers should be concise but complete
+- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
+- Separate each question-answer pair with a blank line
+- Do NOT number the questions
+- Do NOT add any extra formatting or commentary
+
+Example:
+What is the derivative of $x^2$?
+===
+The derivative of $x^2$ is $2x$, found using the power rule.
+
+What is Newton's Second Law?
+===
+Newton's Second Law states that $F = ma$, where force equals mass times acceleration.`;
+
+  const copyPromptToClipboard = () => {
+    navigator.clipboard.writeText(promptTemplate);
+    setCopiedPrompt(true);
+    setTimeout(() => setCopiedPrompt(false), 2000);
   };
 
   return (
@@ -130,6 +167,37 @@ function App() {
                         ===
                         <br />
                         {"$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$"}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold mb-2">LLM Prompt Template</h4>
+                      <p className="text-muted-foreground mb-2">
+                        Copy this prompt and paste it into ChatGPT, Claude, or any
+                        LLM. Replace [YOUR TOPIC HERE] with your subject:
+                      </p>
+                      <div className="relative">
+                        <div className="bg-muted p-3 rounded font-mono text-xs max-h-[200px] overflow-y-auto whitespace-pre-wrap">
+                          {promptTemplate}
+                        </div>
+                        <Button
+                          onClick={copyPromptToClipboard}
+                          size="sm"
+                          variant="secondary"
+                          className="absolute top-2 right-2"
+                        >
+                          {copiedPrompt ? (
+                            <>
+                              <Check className="h-3 w-3 mr-1" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-3 w-3 mr-1" />
+                              Copy
+                            </>
+                          )}
+                        </Button>
                       </div>
                     </div>
 
@@ -234,6 +302,30 @@ function App() {
               </TabsContent>
             </Tabs>
           )}
+
+          {/* Footer */}
+          <footer className="mt-12 pt-8 pb-4 border-t border-border text-center text-sm text-muted-foreground">
+            <p>
+              Made with ❤️ by{" "}
+              <a
+                href="https://gabrielongzm.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Gabriel Ong
+              </a>
+              {" · "}
+              <a
+                href="https://github.com/gongahkia/senko-2"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Source Code
+              </a>
+            </p>
+          </footer>
         </div>
       </ThemeProvider>
     </MathJaxContext>
