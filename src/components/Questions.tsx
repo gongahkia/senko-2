@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useToastContext } from "@/contexts/ToastContext";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { MathJax } from "better-react-mathjax";
@@ -17,6 +18,7 @@ export function Questions({
   initialQuestions,
   onSave,
 }: QuestionsProps) {
+  const { showError } = useToastContext();
   const [text, setText] = useState(() => {
     // Convert questions back to text format
     return initialQuestions
@@ -52,7 +54,7 @@ export function Questions({
     if (!file) return;
 
     if (!isValidImageFile(file)) {
-      alert("Invalid image file. Please use JPG, PNG, GIF, or WEBP under 5MB.");
+      showError("Invalid image file. Please use JPG, PNG, GIF, or WEBP under 5MB.");
       return;
     }
 
@@ -65,7 +67,7 @@ export function Questions({
       onSave(updated);
     } catch (error) {
       console.error("Failed to upload image:", error);
-      alert("Failed to upload image");
+      showError("Failed to upload image");
     } finally {
       setUploadingIndex(null);
     }
