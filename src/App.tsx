@@ -27,6 +27,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 const mathJaxConfig = {
   tex: {
@@ -354,25 +355,31 @@ What is the quadratic formula?
               </TabsList>
 
               <TabsContent value="recall" className="mt-6">
-                <Recall
-                  key={`${currentDeckId}-${refreshKey}`}
-                  deckId={currentDeck.id}
-                  questions={currentDeck.questions}
-                  studyMode={studyMode}
-                  keyboardMode={keyboardMode}
-                />
+                <Suspense fallback={<div className="flex items-center justify-center p-8"><LoadingSpinner size="lg" /></div>}>
+                  <Recall
+                    key={`${currentDeckId}-${refreshKey}`}
+                    deckId={currentDeck.id}
+                    questions={currentDeck.questions}
+                    studyMode={studyMode}
+                    keyboardMode={keyboardMode}
+                  />
+                </Suspense>
               </TabsContent>
 
               <TabsContent value="questions" className="mt-6">
-                <Questions
-                  deckId={currentDeck.id}
-                  initialQuestions={currentDeck.questions}
-                  onSave={handleSaveQuestions}
-                />
+                <Suspense fallback={<div className="flex items-center justify-center p-8"><LoadingSpinner size="lg" /></div>}>
+                  <Questions
+                    deckId={currentDeck.id}
+                    initialQuestions={currentDeck.questions}
+                    onSave={handleSaveQuestions}
+                  />
+                </Suspense>
               </TabsContent>
 
               <TabsContent value="stats" className="mt-6">
-                <Statistics />
+                <Suspense fallback={<div className="flex items-center justify-center p-8"><LoadingSpinner size="lg" /></div>}>
+                  <Statistics />
+                </Suspense>
               </TabsContent>
             </Tabs>
           )}
