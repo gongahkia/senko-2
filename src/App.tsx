@@ -7,7 +7,7 @@ import { PromptDialog } from "@/components/ui/prompt-dialog";
 import { DeckSelector } from "@/components/DeckSelector";
 const Questions = lazy(() => import("@/components/Questions"));
 const Recall = lazy(() => import("@/components/Recall"));
-import { Statistics } from "@/components/Statistics";
+const Statistics = lazy(() => import("@/components/Statistics"));
 import { ImportExport } from "@/components/ImportExport";
 import { Settings } from "@/components/Settings";
 import { Onboarding } from "@/components/Onboarding";
