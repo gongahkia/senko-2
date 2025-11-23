@@ -118,10 +118,23 @@ export function ImportExport({
             className="min-h-[300px] font-mono text-xs"
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsImportOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsImportOpen(false)}
+              disabled={isImporting}
+            >
               Cancel
             </Button>
-            <Button onClick={handleImportDeck}>Import</Button>
+            <Button onClick={handleImportDeck} disabled={isImporting}>
+              {isImporting ? (
+                <>
+                  <LoadingSpinner size="sm" className="mr-2" />
+                  Importing...
+                </>
+              ) : (
+                "Import"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
