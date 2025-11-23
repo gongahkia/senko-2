@@ -8,10 +8,11 @@ import { Recall } from "@/components/Recall";
 import { Statistics } from "@/components/Statistics";
 import { ImportExport } from "@/components/ImportExport";
 import { StudyModeSelector } from "@/components/StudyModeSelector";
+import { Onboarding } from "@/components/Onboarding";
 import { MathJaxContext } from "better-react-mathjax";
 import { useDecks } from "@/hooks/useDecks";
 import { StudyMode, QuestionItem } from "@/types";
-import { BookOpen, HelpCircle, Copy, Check } from "lucide-react";
+import { BookOpen, HelpCircle, Copy, Check, Sparkles, Keyboard, Zap } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -115,139 +116,192 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
                 <BookOpen className="h-8 w-8 text-primary" />
                 <h1 className="text-3xl font-bold text-foreground">senko-2</h1>
               </div>
-              <ColorSchemeSelector />
+              <div data-onboarding="theme-selector">
+                <ColorSchemeSelector />
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-4">
-              <DeckSelector
-                decks={decks}
-                currentDeckId={currentDeckId}
-                onSelectDeck={setCurrentDeckId}
-                onCreateDeck={createDeck}
-                onDeleteDeck={deleteDeck}
-              />
+              <div data-onboarding="deck-selector">
+                <DeckSelector
+                  decks={decks}
+                  currentDeckId={currentDeckId}
+                  onSelectDeck={setCurrentDeckId}
+                  onCreateDeck={createDeck}
+                  onDeleteDeck={deleteDeck}
+                />
+              </div>
 
               <ImportExport
                 currentDeckId={currentDeckId}
                 onDeckImported={handleDeckImported}
               />
 
-              <StudyModeSelector mode={studyMode} onModeChange={setStudyMode} />
+              <div data-onboarding="study-mode">
+                <StudyModeSelector mode={studyMode} onModeChange={setStudyMode} />
+              </div>
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" size="icon">
+                  <Button variant="outline" size="icon" data-onboarding="help">
                     <HelpCircle className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle>How to Use senko-2</DialogTitle>
+                    <DialogTitle className="text-2xl">Quick Start Guide</DialogTitle>
                     <DialogDescription>
-                      Master your material through active recall
+                      Learn active recall in 3 simple steps
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="space-y-4 text-sm">
-                    <div>
-                      <h4 className="font-semibold mb-2">Creating Questions</h4>
-                      <p className="text-muted-foreground mb-2">
-                        Generate questions with your favorite LLM or write them
-                        manually. Use this format:
-                      </p>
-                      <div className="bg-muted p-3 rounded font-mono text-xs">
-                        What is the formula for the area of a circle?
-                        <br />
-                        ===
-                        <br />
-                        The area is $A = \pi r^2$ where $r$ is the radius.
-                        <br />
-                        <br />
-                        What is the quadratic formula?
-                        <br />
-                        ===
-                        <br />
-                        {"$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$"}
-                      </div>
-                    </div>
 
-                    <div>
-                      <h4 className="font-semibold mb-2">LLM Prompt Template</h4>
-                      <p className="text-muted-foreground mb-2">
-                        Copy this prompt and paste it into ChatGPT, Claude, or any
-                        LLM. Replace [YOUR TOPIC HERE] with your subject:
-                      </p>
-                      <div className="relative">
-                        <div className="bg-muted p-3 rounded font-mono text-xs max-h-[200px] overflow-y-auto whitespace-pre-wrap">
-                          {promptTemplate}
+                  <div className="space-y-6">
+                    {/* Quick Start Steps */}
+                    <div className="grid gap-4">
+                      <div className="flex gap-3 p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">1</div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold mb-1">Create a Deck</h4>
+                          <p className="text-sm text-muted-foreground">Click the + button to create your first deck for any subject</p>
                         </div>
-                        <Button
-                          onClick={copyPromptToClipboard}
-                          size="sm"
-                          variant="secondary"
-                          className="absolute top-2 right-2"
-                        >
-                          {copiedPrompt ? (
-                            <>
-                              <Check className="h-3 w-3 mr-1" />
-                              Copied!
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="h-3 w-3 mr-1" />
-                              Copy
-                            </>
-                          )}
-                        </Button>
+                      </div>
+
+                      <div className="flex gap-3 p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">2</div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold mb-1">Add Questions</h4>
+                          <p className="text-sm text-muted-foreground">Switch to Questions tab and paste or write your flashcards</p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">3</div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold mb-1">Start Studying</h4>
+                          <p className="text-sm text-muted-foreground">Return to Recall tab and use <kbd className="px-1.5 py-0.5 bg-background border rounded text-xs">Space</kbd> to flip cards and <kbd className="px-1.5 py-0.5 bg-background border rounded text-xs">1-4</kbd> to rate yourself</p>
+                        </div>
                       </div>
                     </div>
 
-                    <div>
-                      <h4 className="font-semibold mb-2">Study Modes</h4>
-                      <ul className="space-y-1 text-muted-foreground">
-                        <li>
-                          <strong>Normal:</strong> Classic flashcard review
-                        </li>
-                        <li>
-                          <strong>Pomodoro:</strong> 25min work, 5min break
-                          cycles
-                        </li>
-                        <li>
-                          <strong>Sprint:</strong> Timed rapid-fire review
-                        </li>
-                        <li>
-                          <strong>Zen:</strong> No stats, pure concentration
-                        </li>
-                      </ul>
-                    </div>
+                    {/* Divider */}
+                    <div className="border-t" />
 
-                    <div>
-                      <h4 className="font-semibold mb-2">Keyboard Shortcuts</h4>
-                      <ul className="space-y-1 text-muted-foreground">
-                        <li>
-                          <kbd className="px-2 py-1 bg-muted rounded text-xs">
-                            Space
-                          </kbd>{" "}
-                          - Reveal answer
-                        </li>
-                        <li>
-                          <kbd className="px-2 py-1 bg-muted rounded text-xs">
-                            1-4
-                          </kbd>{" "}
-                          - Rate your recall (1=Bad, 4=Easy)
-                        </li>
-                      </ul>
-                    </div>
+                    {/* Detailed Sections */}
+                    <div className="space-y-5">
+                      {/* Question Format */}
+                      <div>
+                        <h4 className="font-semibold mb-3 flex items-center gap-2">
+                          <BookOpen className="h-4 w-4" />
+                          Question Format
+                        </h4>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Separate each question and answer with <code className="px-1.5 py-0.5 bg-muted rounded text-xs">===</code> on its own line:
+                        </p>
+                        <div className="bg-muted/70 p-4 rounded-lg border">
+                          <pre className="font-mono text-xs leading-relaxed">
+What is the formula for the area of a circle?
+===
+The area is $A = \pi r^2$ where $r$ is the radius.
 
-                    <div>
-                      <h4 className="font-semibold mb-2">Features</h4>
-                      <ul className="space-y-1 text-muted-foreground">
-                        <li>• Multi-deck organization</li>
-                        <li>• LaTeX math support ($...$ for inline, $$...$$ for block)</li>
-                        <li>• Image/diagram embedding</li>
-                        <li>• Statistics and progress tracking</li>
-                        <li>• Import/export decks</li>
-                        <li>• Offline-first (all data in browser)</li>
-                      </ul>
+What is the quadratic formula?
+===
+{"$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$"}
+                          </pre>
+                        </div>
+                      </div>
+
+                      {/* LLM Template */}
+                      <div>
+                        <h4 className="font-semibold mb-3 flex items-center gap-2">
+                          <Sparkles className="h-4 w-4" />
+                          Generate with AI
+                        </h4>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Use this prompt with ChatGPT, Claude, or any LLM:
+                        </p>
+                        <div className="relative">
+                          <div className="bg-muted/70 p-4 rounded-lg border font-mono text-xs max-h-[150px] overflow-y-auto whitespace-pre-wrap">
+                            {promptTemplate}
+                          </div>
+                          <Button
+                            onClick={copyPromptToClipboard}
+                            size="sm"
+                            variant="secondary"
+                            className="absolute top-2 right-2 shadow-md"
+                          >
+                            {copiedPrompt ? (
+                              <>
+                                <Check className="h-3 w-3 mr-1" />
+                                Copied!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-3 w-3 mr-1" />
+                                Copy
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Keyboard Shortcuts */}
+                      <div>
+                        <h4 className="font-semibold mb-3 flex items-center gap-2">
+                          <Keyboard className="h-4 w-4" />
+                          Keyboard Shortcuts
+                        </h4>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="flex items-center gap-3 p-3 bg-muted/50 rounded">
+                            <kbd className="px-3 py-1.5 bg-background border rounded font-mono text-sm font-semibold">Space</kbd>
+                            <span className="text-sm text-muted-foreground">Flip card</span>
+                          </div>
+                          <div className="flex items-center gap-3 p-3 bg-muted/50 rounded">
+                            <kbd className="px-3 py-1.5 bg-background border rounded font-mono text-sm font-semibold">1-4</kbd>
+                            <span className="text-sm text-muted-foreground">Rate recall</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2 ml-1">
+                          Ratings: 1=Bad, 2=Good, 3=Better, 4=Easy
+                        </p>
+                      </div>
+
+                      {/* Advanced Features */}
+                      <div>
+                        <h4 className="font-semibold mb-3 flex items-center gap-2">
+                          <Zap className="h-4 w-4" />
+                          Advanced Features
+                        </h4>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                          <div className="flex items-start gap-2 p-2">
+                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <strong>LaTeX Math:</strong>
+                              <code className="ml-1 text-xs bg-muted px-1 rounded">$...$</code> or
+                              <code className="ml-1 text-xs bg-muted px-1 rounded">$$...$$</code>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-2 p-2">
+                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                            <span><strong>Multi-deck</strong> organization</span>
+                          </div>
+                          <div className="flex items-start gap-2 p-2">
+                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                            <span><strong>Image embedding</strong> support</span>
+                          </div>
+                          <div className="flex items-start gap-2 p-2">
+                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                            <span><strong>Progress tracking</strong> & stats</span>
+                          </div>
+                          <div className="flex items-start gap-2 p-2">
+                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                            <span><strong>Import/Export</strong> decks</span>
+                          </div>
+                          <div className="flex items-start gap-2 p-2">
+                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                            <span><strong>Offline-first:</strong> all in browser</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </DialogContent>
@@ -274,7 +328,7 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
             </div>
           ) : (
             <Tabs defaultValue="recall" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 max-w-md">
+              <TabsList className="grid w-full grid-cols-3 max-w-md" data-onboarding="tabs">
                 <TabsTrigger value="recall">Recall</TabsTrigger>
                 <TabsTrigger value="questions">Questions</TabsTrigger>
                 <TabsTrigger value="stats">Statistics</TabsTrigger>
@@ -327,6 +381,7 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
             </p>
           </footer>
         </div>
+        <Onboarding />
       </ThemeProvider>
     </MathJaxContext>
   );
