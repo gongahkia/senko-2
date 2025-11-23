@@ -1,9 +1,16 @@
 // Core data structures
 
+export type QuestionType = "flashcard" | "multiple-choice" | "true-false" | "fill-in-blank";
+
 export type QuestionItem = {
+  type: QuestionType;
   question: string;
   answer: string;
   imageUrl?: string; // Optional base64 or URL for images
+  // For multiple-choice questions
+  options?: string[];
+  // For fill-in-blank questions
+  blanks?: string[]; // Array of correct answers for each blank
 };
 
 export type FlashCard = QuestionItem & {
