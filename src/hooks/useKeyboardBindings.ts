@@ -119,6 +119,9 @@ export function useKeyboardBindings({
         // Navigation with Ctrl+X combinations
         if (event.ctrlKey && !event.metaKey && !event.shiftKey && onNavigate) {
           if (event.key === "x") {
+            // Clean up any existing pending listener first
+            cleanupPendingListener();
+
             // Wait for next key
             const handleNextKey = (nextEvent: KeyboardEvent) => {
               if (nextEvent.key === "r") {
@@ -131,8 +134,10 @@ export function useKeyboardBindings({
                 nextEvent.preventDefault();
                 onNavigate("stats");
               }
-              window.removeEventListener("keydown", handleNextKey);
+              pendingListenerRef.current = null;
             };
+
+            pendingListenerRef.current = handleNextKey;
             window.addEventListener("keydown", handleNextKey, { once: true });
           }
         }
