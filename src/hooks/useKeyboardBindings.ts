@@ -32,7 +32,18 @@ export function useKeyboardBindings({
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      // Clean up any pending listeners when disabled
+      if (pendingListenerRef.current) {
+        window.removeEventListener("keydown", pendingListenerRef.current);
+        pendingListenerRef.current = null;
+      }
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+      return;
+    }
 
     const cleanupPendingListener = () => {
       // Clear timeout first to prevent race conditions
