@@ -5,6 +5,7 @@ import { MathJax } from "better-react-mathjax";
 import { QuestionItem } from "@/types";
 import { parseQuestions, imageToBase64, isValidImageFile } from "@/lib/utils";
 import { Upload } from "lucide-react";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface QuestionsProps {
   deckId: string;
@@ -29,6 +30,7 @@ export function Questions({
   });
   const [parsedQuestions, setParsedQuestions] =
     useState<QuestionItem[]>(initialQuestions);
+  const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +51,7 @@ export function Questions({
       return;
     }
 
+    setUploadingIndex(index);
     try {
       const base64 = await imageToBase64(file);
       const updated = [...parsedQuestions];
@@ -58,6 +61,8 @@ export function Questions({
     } catch (error) {
       console.error("Failed to upload image:", error);
       alert("Failed to upload image");
+    } finally {
+      setUploadingIndex(null);
     }
   };
 
