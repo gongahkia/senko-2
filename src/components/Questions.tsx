@@ -127,12 +127,22 @@ export function Questions({
                       type="button"
                       variant="outline"
                       size="sm"
+                      disabled={uploadingIndex === index}
                       onClick={(e) =>
                         (e.currentTarget.previousSibling as HTMLInputElement)?.click()
                       }
                     >
-                      <Upload className="h-3 w-3 mr-1" />
-                      {item.imageUrl ? "Change Image" : "Add Image"}
+                      {uploadingIndex === index ? (
+                        <>
+                          <LoadingSpinner size="sm" className="mr-1" />
+                          Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-3 w-3 mr-1" />
+                          {item.imageUrl ? "Change Image" : "Add Image"}
+                        </>
+                      )}
                     </Button>
                   </label>
                 </div>
