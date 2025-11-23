@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Download, Upload, FileJson } from "lucide-react";
 import { exportDeck, importDeck, exportAllData } from "@/services/storage";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface ImportExportProps {
   currentDeckId: string | null;
@@ -26,6 +27,7 @@ export function ImportExport({
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [exportedData, setExportedData] = useState("");
   const [importData, setImportData] = useState("");
+  const [isImporting, setIsImporting] = useState(false);
 
   const handleExportDeck = () => {
     if (!currentDeckId) {
@@ -52,15 +54,20 @@ export function ImportExport({
       return;
     }
 
-    const deck = importDeck(importData);
-    if (deck) {
-      alert(`Successfully imported deck: ${deck.name}`);
-      setImportData("");
-      setIsImportOpen(false);
-      onDeckImported();
-    } else {
-      alert("Failed to import deck. Please check the JSON format.");
-    }
+    setIsImporting(true);
+    // Wrap in setTimeout to allow UI to update
+    setTimeout(() => {
+      const deck = importDeck(importData);
+      if (deck) {
+        alert(`Successfully imported deck: ${deck.name}`);
+        setImportData("");
+        setIsImportOpen(false);
+        onDeckImported();
+      } else {
+        alert("Failed to import deck. Please check the JSON format.");
+      }
+      setIsImporting(false);
+    }, 100);
   };
 
   const handleCopyToClipboard = () => {
