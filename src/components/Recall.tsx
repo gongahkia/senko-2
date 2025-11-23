@@ -108,7 +108,11 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
         </div>
 
         {/* Content */}
-        <div className="flex flex-col h-full pt-12 sm:pt-10">
+        <div
+          className="flex flex-col h-full pt-12 sm:pt-10 cursor-pointer"
+          onClick={() => mode === "question" && handleFlipCard()}
+          onTouchEnd={() => mode === "question" && handleFlipCard()}
+        >
           <QuestionRenderer
             question={{ ...currentCard, type: currentCard.type || "flashcard" }}
             mode={mode}
