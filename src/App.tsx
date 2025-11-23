@@ -8,11 +8,14 @@ import { Recall } from "@/components/Recall";
 import { Statistics } from "@/components/Statistics";
 import { ImportExport } from "@/components/ImportExport";
 import { StudyModeSelector } from "@/components/StudyModeSelector";
+import { Settings } from "@/components/Settings";
 import { Onboarding } from "@/components/Onboarding";
 import { MathJaxContext } from "better-react-mathjax";
 import { useDecks } from "@/hooks/useDecks";
 import { StudyMode, QuestionItem } from "@/types";
 import { BookOpen, HelpCircle, Copy, Check, Sparkles, Keyboard, Zap } from "lucide-react";
+
+type KeyboardMode = "default" | "vim" | "emacs";
 import {
   Dialog,
   DialogContent,
@@ -54,6 +57,7 @@ function App() {
   } = useDecks();
 
   const [studyMode, setStudyMode] = useState<StudyMode>("normal");
+  const [keyboardMode, setKeyboardMode] = useState<KeyboardMode>("default");
   const [refreshKey, setRefreshKey] = useState(0);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
 
@@ -116,32 +120,8 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
                 <BookOpen className="h-8 w-8 text-primary" />
                 <h1 className="text-3xl font-bold text-foreground">senko-2</h1>
               </div>
-              <div data-onboarding="theme-selector">
-                <ColorSchemeSelector />
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-4">
-              <div data-onboarding="deck-selector">
-                <DeckSelector
-                  decks={decks}
-                  currentDeckId={currentDeckId}
-                  onSelectDeck={setCurrentDeckId}
-                  onCreateDeck={createDeck}
-                  onDeleteDeck={deleteDeck}
-                />
-              </div>
-
-              <ImportExport
-                currentDeckId={currentDeckId}
-                onDeckImported={handleDeckImported}
-              />
-
-              <div data-onboarding="study-mode">
-                <StudyModeSelector mode={studyMode} onModeChange={setStudyMode} />
-              </div>
-
-              <Dialog>
+              <div className="flex items-center gap-2">
+                <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="icon" data-onboarding="help">
                     <HelpCircle className="h-4 w-4" />
@@ -306,6 +286,31 @@ What is the quadratic formula?
                   </div>
                 </DialogContent>
               </Dialog>
+
+              <Settings
+                studyMode={studyMode}
+                onStudyModeChange={setStudyMode}
+                keyboardMode={keyboardMode}
+                onKeyboardModeChange={setKeyboardMode}
+              />
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <div data-onboarding="deck-selector">
+                <DeckSelector
+                  decks={decks}
+                  currentDeckId={currentDeckId}
+                  onSelectDeck={setCurrentDeckId}
+                  onCreateDeck={createDeck}
+                  onDeleteDeck={deleteDeck}
+                />
+              </div>
+
+              <ImportExport
+                currentDeckId={currentDeckId}
+                onDeckImported={handleDeckImported}
+              />
             </div>
           </div>
 
