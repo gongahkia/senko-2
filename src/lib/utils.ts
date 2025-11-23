@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { QuestionItem, QuestionType } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -37,20 +38,64 @@ export function shuffle<T>(array: T[]): T[] {
 }
 
 // Parse questions from text
-export function parseQuestions(inputText: string): { question: string; answer: string }[] {
+export function parseQuestions(inputText: string): QuestionItem[] {
   if (!inputText.trim()) return [];
 
-  // Pattern: question, followed by "===", followed by an answer
-  const pattern = /([^\n]*)\n===\n([\s\S]*?)(?=\n[^\n]*\n===\n|$)/g;
+  const questions: QuestionItem[] = [];
 
-  const questions: { question: string; answer: string }[] = [];
-  let match;
-  while ((match = pattern.exec(inputText)) !== null) {
-    const question = match[1].trim();
-    const answer = match[2].trim();
-    if (question && answer) {
-      questions.push({ question, answer });
+  // Split by === delimiter
+  const sections = inputText.split(/\n===\n/);
+
+  for (let i = 0; i < sections.length - 1; i += 2) {
+    if (i + 1 >= sections.length) break;
+
+    const questionText = sections[i].trim();
+    const answerText = sections[i + 1].trim();
+
+    if (!questionText || !answerText) continue;
+
+    // Detect question type based on format
+    let type: QuestionType = "flashcard";
+    let question = questionText;
+    let answer = answerText;
+    let options: string[] | undefined;
+    let blanks: string[] | undefined;
+
+    // Multiple choice: Check for [MC] prefix and options
+    if (questionText.startsWith("[MC]")) {
+      type = "multiple-choice";
+      question = questionText.substring(4).trim();
+
+      // Parse options from answer (format: A) option1 \n B) option2 \n ... \n ANSWER: A)
+      const optionLines = answerText.split("\n").filter(line => line.trim());
+      options = [];
+
+      for (const line of optionLines) {
+        if (line.startsWith("ANSWER:")) {
+          answer = line.substring(7).trim();
+        } else if (/^[A-Z]\)/.test(line)) {
+          options.push(line);
+        }
+      }
     }
+    // True/False: Check for [TF] prefix
+    else if (questionText.startsWith("[TF]")) {
+      type = "true-false";
+      question = questionText.substring(4).trim();
+      // Answer should be "True" or "False"
+      answer = answerText.toLowerCase().includes("true") ? "True" : "False";
+    }
+    // Fill in blank: Check for [FIB] prefix and ___
+    else if (questionText.startsWith("[FIB]")) {
+      type = "fill-in-blank";
+      question = questionText.substring(5).trim();
+
+      // Parse multiple blanks if present (format: answer1 | answer2 | answer3)
+      blanks = answerText.split("|").map(a => a.trim());
+      answer = blanks.join(" / "); // Display format
+    }
+
+    questions.push({ type, question, answer, options, blanks });
   }
 
   return questions;
