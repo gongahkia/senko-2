@@ -33,6 +33,21 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-destructive mb-2">
+              Something went wrong
+            </h1>
+            <p className="text-muted-foreground">
+              The application encountered an error.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
     return this.props.children;
   }
 }
