@@ -124,6 +124,8 @@ export function useKeyboardBindings({
         // Navigation with Ctrl+X combinations
         if (event.ctrlKey && !event.metaKey && !event.shiftKey && onNavigate) {
           if (event.key === "x") {
+            event.preventDefault();
+
             // Clean up any existing pending listener first
             cleanupPendingListener();
 
