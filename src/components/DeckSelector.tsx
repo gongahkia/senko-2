@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Plus, FolderOpen, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Deck } from "@/types";
 
 interface DeckSelectorProps {
@@ -24,6 +26,8 @@ export function DeckSelector({
   onCreateDeck,
   onDeleteDeck,
 }: DeckSelectorProps) {
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   const handleCreateDeck = () => {
     const name = prompt("Enter deck name:");
     if (name && name.trim()) {
@@ -31,7 +35,14 @@ export function DeckSelector({
     }
   };
 
+  const handleDeleteDeck = () => {
+    if (currentDeckId) {
+      onDeleteDeck(currentDeckId);
+    }
+  };
+
   return (
+    <>
     <div className="flex items-center gap-2 w-full sm:w-auto">
       <FolderOpen className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
@@ -56,16 +67,24 @@ export function DeckSelector({
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => {
-            if (confirm("Are you sure you want to delete this deck?")) {
-              onDeleteDeck(currentDeckId);
-            }
-          }}
+          onClick={() => setShowDeleteConfirm(true)}
           className="flex-shrink-0"
         >
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>
       )}
     </div>
+
+    <ConfirmDialog
+      open={showDeleteConfirm}
+      onOpenChange={setShowDeleteConfirm}
+      title="Delete Deck"
+      description="Are you sure you want to delete this deck? This action cannot be undone."
+      onConfirm={handleDeleteDeck}
+      confirmText="Delete"
+      cancelText="Cancel"
+      variant="destructive"
+    />
+    </>
   );
 }
