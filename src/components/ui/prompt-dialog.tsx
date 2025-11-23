@@ -76,7 +76,7 @@ export function PromptDialog({
             <Input
               id="prompt-input"
               value={value}
-              onChange={(e) => setValue(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
               autoFocus
