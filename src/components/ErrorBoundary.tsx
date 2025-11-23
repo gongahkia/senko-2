@@ -1,16 +1,18 @@
 import { Component, ReactNode } from "react";
 import { logError } from "@/lib/errorLogger";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
+  showDetails?: boolean;
 }
 
 interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
   errorInfo: React.ErrorInfo | null;
+  showDetails: boolean;
 }
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -18,6 +20,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     hasError: false,
     error: null,
     errorInfo: null,
+    showDetails: false,
   };
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
@@ -41,7 +44,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       hasError: false,
       error: null,
       errorInfo: null,
+      showDetails: false,
     });
+  };
+
+  toggleDetails = () => {
+    this.setState((prev) => ({ showDetails: !prev.showDetails }));
   };
 
   render() {
@@ -80,6 +88,50 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <p className="text-xs text-muted-foreground mt-6">
               Error details have been saved to your browser's console
             </p>
+
+            {(this.state.error?.stack || this.state.errorInfo?.componentStack) && (
+              <div className="mt-4">
+                <Button
+                  onClick={this.toggleDetails}
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs"
+                >
+                  {this.state.showDetails ? (
+                    <>
+                      <ChevronUp className="h-3 w-3 mr-1" />
+                      Hide Details
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="h-3 w-3 mr-1" />
+                      Show Details
+                    </>
+                  )}
+                </Button>
+
+                {this.state.showDetails && (
+                  <div className="mt-3 bg-muted p-3 rounded border text-left max-h-48 overflow-auto">
+                    {this.state.error?.stack && (
+                      <div className="mb-3">
+                        <p className="text-xs font-semibold mb-1">Stack Trace:</p>
+                        <pre className="text-xs font-mono whitespace-pre-wrap break-words">
+                          {this.state.error.stack}
+                        </pre>
+                      </div>
+                    )}
+                    {this.state.errorInfo?.componentStack && (
+                      <div>
+                        <p className="text-xs font-semibold mb-1">Component Stack:</p>
+                        <pre className="text-xs font-mono whitespace-pre-wrap break-words">
+                          {this.state.errorInfo.componentStack}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       );
