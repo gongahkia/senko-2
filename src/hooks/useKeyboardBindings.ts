@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 type KeyboardMode = "default" | "vim" | "emacs";
 
@@ -23,6 +23,8 @@ export function useKeyboardBindings({
   enabled = true,
   currentMode,
 }: KeyboardBindingsConfig) {
+  const pendingListenerRef = useRef<((event: KeyboardEvent) => void) | null>(null);
+
   useEffect(() => {
     if (!enabled) return;
 
