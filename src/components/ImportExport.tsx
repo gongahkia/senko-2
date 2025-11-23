@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -32,6 +32,39 @@ export function ImportExport({
   const [isImporting, setIsImporting] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [validationWarnings, setValidationWarnings] = useState<string[]>([]);
+
+  // Real-time validation feedback as user types
+  useEffect(() => {
+    if (!importData.trim()) {
+      setValidationErrors([]);
+      setValidationWarnings([]);
+      return;
+    }
+
+    // Debounce validation to avoid excessive checks
+    const timer = setTimeout(() => {
+      // Validate JSON first
+      const jsonValidation = isValidJSON(importData);
+      if (!jsonValidation.valid) {
+        setValidationErrors(jsonValidation.errors);
+        setValidationWarnings([]);
+        return;
+      }
+
+      // Parse and validate deck structure
+      try {
+        const data = JSON.parse(importData);
+        const deckValidation = validateDeckStructure(data);
+        setValidationErrors(deckValidation.errors);
+        setValidationWarnings(deckValidation.warnings);
+      } catch (e) {
+        setValidationErrors(["Failed to parse JSON"]);
+        setValidationWarnings([]);
+      }
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timer);
+  }, [importData]);
 
   const handleExportDeck = () => {
     if (!currentDeckId) {
@@ -144,11 +177,7 @@ export function ImportExport({
           <Textarea
             placeholder='{"id": "deck-...", "name": "...", ...}'
             value={importData}
-            onChange={(e) => {
-              setImportData(e.target.value);
-              setValidationErrors([]);
-              setValidationWarnings([]);
-            }}
+            onChange={(e) => setImportData(e.target.value)}
             className="min-h-[300px] font-mono text-xs"
           />
           <ValidationErrors errors={validationErrors} warnings={validationWarnings} />
