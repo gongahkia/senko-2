@@ -156,6 +156,9 @@ export function useKeyboardBindings({
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      cleanupPendingListener();
+    };
   }, [mode, enabled, currentMode, onFlipCard, onRate, onNavigate, onNextCard, onPreviousCard]);
 }
