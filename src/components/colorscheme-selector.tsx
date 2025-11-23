@@ -1,0 +1,52 @@
+import { Palette } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useTheme } from "@/components/theme-provider";
+import { ColorScheme } from "@/types";
+
+const colorSchemes: { value: ColorScheme; label: string }[] = [
+  { value: "default-light", label: "Default Light" },
+  { value: "default-dark", label: "Default Dark" },
+  { value: "gruvbox-light", label: "Gruvbox Light" },
+  { value: "gruvbox-dark", label: "Gruvbox Dark" },
+  { value: "catppuccin-latte", label: "Catppuccin Latte" },
+  { value: "catppuccin-frappe", label: "Catppuccin Frappé" },
+  { value: "catppuccin-macchiato", label: "Catppuccin Macchiato" },
+  { value: "catppuccin-mocha", label: "Catppuccin Mocha" },
+  { value: "ayu-light", label: "Ayu Light" },
+  { value: "ayu-dark", label: "Ayu Dark" },
+  { value: "ayu-mirage", label: "Ayu Mirage" },
+  { value: "nord", label: "Nord" },
+  { value: "tokyo-night", label: "Tokyo Night" },
+  { value: "dracula", label: "Dracula" },
+];
+
+export function ColorSchemeSelector() {
+  const { colorScheme, setColorScheme } = useTheme();
+
+  return (
+    <div className="flex items-center gap-2">
+      <Button variant="ghost" size="icon" className="h-9 w-9">
+        <Palette className="h-4 w-4" />
+      </Button>
+      <Select value={colorScheme} onValueChange={setColorScheme}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select theme" />
+        </SelectTrigger>
+        <SelectContent>
+          {colorSchemes.map((scheme) => (
+            <SelectItem key={scheme.value} value={scheme.value}>
+              {scheme.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
