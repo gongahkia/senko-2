@@ -16,6 +16,8 @@ export function LoadingSpinner({ size = "md", className }: LoadingSpinnerProps) 
   return (
     <Loader2
       className={cn("animate-spin text-primary", sizeClasses[size], className)}
+      role="status"
+      aria-label="Loading"
     />
   );
 }
