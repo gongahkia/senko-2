@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ColorSchemeSelector } from "@/components/colorscheme-selector";
@@ -12,6 +12,7 @@ import { Settings } from "@/components/Settings";
 import { Onboarding } from "@/components/Onboarding";
 import { MathJaxContext } from "better-react-mathjax";
 import { useDecks } from "@/hooks/useDecks";
+import { useKeyboardBindings } from "@/hooks/useKeyboardBindings";
 import { StudyMode, QuestionItem } from "@/types";
 import { BookOpen, HelpCircle, Copy, Check, Sparkles, Keyboard, Zap } from "lucide-react";
 
@@ -58,6 +59,7 @@ function App() {
 
   const [studyMode, setStudyMode] = useState<StudyMode>("normal");
   const [keyboardMode, setKeyboardMode] = useState<KeyboardMode>("default");
+  const [currentTab, setCurrentTab] = useState<"recall" | "questions" | "stats">("recall");
   const [refreshKey, setRefreshKey] = useState(0);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
 
@@ -72,6 +74,17 @@ function App() {
     setRefreshKey((k) => k + 1);
     window.location.reload();
   };
+
+  const handleNavigate = useCallback((tab: "recall" | "questions" | "stats") => {
+    setCurrentTab(tab);
+  }, []);
+
+  // Global keyboard bindings for tab navigation
+  useKeyboardBindings({
+    mode: keyboardMode,
+    onNavigate: handleNavigate,
+    enabled: !!currentDeck,
+  });
 
   const promptTemplate = `Generate flashcard questions and answers for active recall study on the topic: [YOUR TOPIC HERE]
 
@@ -332,7 +345,7 @@ What is the quadratic formula?
               </Button>
             </div>
           ) : (
-            <Tabs defaultValue="recall" className="w-full">
+            <Tabs value={currentTab} onValueChange={(value) => setCurrentTab(value as "recall" | "questions" | "stats")} className="w-full">
               <TabsList className="grid w-full grid-cols-3 max-w-md" data-onboarding="tabs">
                 <TabsTrigger value="recall">Recall</TabsTrigger>
                 <TabsTrigger value="questions">Questions</TabsTrigger>
@@ -345,6 +358,7 @@ What is the quadratic formula?
                   deckId={currentDeck.id}
                   questions={currentDeck.questions}
                   studyMode={studyMode}
+                  keyboardMode={keyboardMode}
                 />
               </TabsContent>
 
