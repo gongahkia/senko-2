@@ -28,6 +28,13 @@ export function useKeyboardBindings({
   useEffect(() => {
     if (!enabled) return;
 
+    const cleanupPendingListener = () => {
+      if (pendingListenerRef.current) {
+        window.removeEventListener("keydown", pendingListenerRef.current);
+        pendingListenerRef.current = null;
+      }
+    };
+
     const handleKeyDown = (event: KeyboardEvent) => {
       // Default mode - original behavior
       if (mode === "default") {
