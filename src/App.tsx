@@ -5,7 +5,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { PromptDialog } from "@/components/ui/prompt-dialog";
 import { DeckSelector } from "@/components/DeckSelector";
-import { Questions } from "@/components/Questions";
+const Questions = lazy(() => import("@/components/Questions"));
 import { Recall } from "@/components/Recall";
 import { Statistics } from "@/components/Statistics";
 import { ImportExport } from "@/components/ImportExport";
