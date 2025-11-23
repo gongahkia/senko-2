@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { MathJax } from "better-react-mathjax";
 import { Button } from "@/components/ui/button";
+import { QuestionRenderer } from "@/components/QuestionRenderer";
 import { useStudySession } from "@/hooks/useStudySession";
 import { useKeyboardBindings } from "@/hooks/useKeyboardBindings";
 import { QuestionItem, StudyMode } from "@/types";
@@ -109,40 +110,10 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
 
         {/* Content */}
         <div className="flex flex-col h-full pt-10">
-          {/* Question */}
-          <div className="text-xl font-medium mt-2 mb-6 text-center whitespace-pre-wrap">
-            <MathJax dynamic>{currentCard.question}</MathJax>
-          </div>
-
-          {/* Image if present */}
-          {currentCard.imageUrl && mode === "question" && (
-            <div className="mb-6 flex justify-center">
-              <img
-                src={currentCard.imageUrl}
-                alt="Question diagram"
-                className="max-w-md rounded border"
-              />
-            </div>
-          )}
-
-          {/* Answer */}
-          {mode === "answer-rating" && (
-            <div className="mb-6 p-4 w-full bg-muted rounded-md shadow-sm whitespace-pre-wrap">
-              <p className="font-medium">Answer:</p>
-              <p className="mt-2">
-                <MathJax dynamic>{currentCard.answer}</MathJax>
-              </p>
-              {currentCard.imageUrl && (
-                <div className="mt-4">
-                  <img
-                    src={currentCard.imageUrl}
-                    alt="Answer diagram"
-                    className="max-w-md rounded border"
-                  />
-                </div>
-              )}
-            </div>
-          )}
+          <QuestionRenderer
+            question={{ ...currentCard, type: currentCard.type || "flashcard" }}
+            mode={mode}
+          />
 
           {/* Rating UI or Space prompt */}
           {mode === "answer-rating" ? (
