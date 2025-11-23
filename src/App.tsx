@@ -305,12 +305,14 @@ What is the quadratic formula?
                 </DialogContent>
               </Dialog>
 
-              <Settings
-                studyMode={studyMode}
-                onStudyModeChange={setStudyMode}
-                keyboardMode={keyboardMode}
-                onKeyboardModeChange={setKeyboardMode}
-              />
+              <Suspense fallback={<LoadingSpinner />}>
+                <Settings
+                  studyMode={studyMode}
+                  onStudyModeChange={setStudyMode}
+                  keyboardMode={keyboardMode}
+                  onKeyboardModeChange={setKeyboardMode}
+                />
+              </Suspense>
               </div>
             </div>
 
