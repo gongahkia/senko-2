@@ -13,6 +13,7 @@ import {
 import { Download, Upload, FileJson } from "lucide-react";
 import { exportDeck, importDeck, exportAllData } from "@/services/storage";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { isValidJSON, validateDeckStructure } from "@/lib/validation";
 
 interface ImportExportProps {
   currentDeckId: string | null;
@@ -54,9 +55,31 @@ export function ImportExport({
       return;
     }
 
+    // Validate JSON first
+    const jsonValidation = isValidJSON(importData);
+    if (!jsonValidation.valid) {
+      alert(`Invalid JSON:\n${jsonValidation.errors.join("\n")}`);
+      return;
+    }
+
     setIsImporting(true);
     // Wrap in setTimeout to allow UI to update
     setTimeout(() => {
+      // Parse and validate deck structure
+      const data = JSON.parse(importData);
+      const deckValidation = validateDeckStructure(data);
+
+      if (!deckValidation.valid) {
+        alert(`Invalid deck structure:\n${deckValidation.errors.join("\n")}`);
+        setIsImporting(false);
+        return;
+      }
+
+      // Show warnings if any
+      if (deckValidation.warnings.length > 0) {
+        console.warn("Deck import warnings:", deckValidation.warnings);
+      }
+
       const deck = importDeck(importData);
       if (deck) {
         alert(`Successfully imported deck: ${deck.name}`);
