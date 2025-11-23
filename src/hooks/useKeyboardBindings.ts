@@ -23,7 +23,12 @@ export function useKeyboardBindings({
   enabled = true,
   currentMode,
 }: KeyboardBindingsConfig) {
+  // Track pending Emacs two-key sequence listener to prevent memory leaks
+  // When Ctrl+X is pressed, we attach a listener for the next key (r/q/s)
+  // If component unmounts before the second key, listener must be cleaned up
   const pendingListenerRef = useRef<((event: KeyboardEvent) => void) | null>(null);
+
+  // Timeout to auto-cleanup if user doesn't press second key within 3 seconds
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
