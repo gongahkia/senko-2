@@ -1,16 +1,20 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { MathJax } from "better-react-mathjax";
 import { Button } from "@/components/ui/button";
 import { useStudySession } from "@/hooks/useStudySession";
+import { useKeyboardBindings } from "@/hooks/useKeyboardBindings";
 import { QuestionItem, StudyMode } from "@/types";
+
+type KeyboardMode = "default" | "vim" | "emacs";
 
 interface RecallProps {
   deckId: string;
   questions: QuestionItem[];
   studyMode: StudyMode;
+  keyboardMode: KeyboardMode;
 }
 
-export function Recall({ deckId, questions }: RecallProps) {
+export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
   const [mode, setMode] = useState<"question" | "answer-rating">("question");
 
   const {
@@ -31,30 +35,20 @@ export function Recall({ deckId, questions }: RecallProps) {
     [handleRating]
   );
 
-  // Keyboard listener
-  useEffect(() => {
-    if (isCompleted) return;
+  const handleFlipCard = useCallback(() => {
+    if (mode === "question") {
+      setMode("answer-rating");
+    }
+  }, [mode]);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === "Space") {
-        event.preventDefault();
-        if (mode === "question") {
-          setMode("answer-rating");
-        }
-      }
-
-      if (
-        mode === "answer-rating" &&
-        ["1", "2", "3", "4"].includes(event.key)
-      ) {
-        event.preventDefault();
-        onRating(Number(event.key) as 1 | 2 | 3 | 4);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [mode, isCompleted, onRating]);
+  // Keyboard bindings
+  useKeyboardBindings({
+    mode: keyboardMode,
+    onFlipCard: handleFlipCard,
+    onRate: onRating,
+    enabled: !isCompleted,
+    currentMode: mode,
+  });
 
   if (questions.length === 0) {
     return (
