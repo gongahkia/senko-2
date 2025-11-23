@@ -24,6 +24,7 @@ export function useKeyboardBindings({
   currentMode,
 }: KeyboardBindingsConfig) {
   const pendingListenerRef = useRef<((event: KeyboardEvent) => void) | null>(null);
+  const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!enabled) return;
@@ -32,6 +33,10 @@ export function useKeyboardBindings({
       if (pendingListenerRef.current) {
         window.removeEventListener("keydown", pendingListenerRef.current);
         pendingListenerRef.current = null;
+      }
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
     };
 
@@ -124,6 +129,11 @@ export function useKeyboardBindings({
 
             // Wait for next key
             const handleNextKey = (nextEvent: KeyboardEvent) => {
+              if (timeoutRef.current !== null) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+              }
+
               if (nextEvent.key === "r") {
                 nextEvent.preventDefault();
                 onNavigate("recall");
@@ -139,6 +149,11 @@ export function useKeyboardBindings({
 
             pendingListenerRef.current = handleNextKey;
             window.addEventListener("keydown", handleNextKey, { once: true });
+
+            // Auto-cleanup after 3 seconds if no key pressed
+            timeoutRef.current = window.setTimeout(() => {
+              cleanupPendingListener();
+            }, 3000);
           }
         }
 
