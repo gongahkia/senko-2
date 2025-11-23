@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ToastProvider } from "@/contexts/ToastContext";
 import { DeckSelector } from "@/components/DeckSelector";
 import { Questions } from "@/components/Questions";
 import { Recall } from "@/components/Recall";
@@ -123,8 +124,9 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
 
   return (
     <ErrorBoundary>
-      <MathJaxContext config={mathJaxConfig}>
-        <ThemeProvider>
+      <ToastProvider>
+        <MathJaxContext config={mathJaxConfig}>
+          <ThemeProvider>
           <div className="container mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
           {/* Header */}
           <div className="mb-4 sm:mb-6">
@@ -403,8 +405,9 @@ What is the quadratic formula?
           </footer>
           </div>
           <Onboarding />
-        </ThemeProvider>
-      </MathJaxContext>
+          </ThemeProvider>
+        </MathJaxContext>
+      </ToastProvider>
     </ErrorBoundary>
   );
 }
