@@ -180,3 +180,5 @@ export function Statistics() {
     </div>
   );
 }
+
+export default Statistics;

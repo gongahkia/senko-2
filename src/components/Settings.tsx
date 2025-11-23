@@ -136,3 +136,5 @@ export function Settings({ studyMode, onStudyModeChange, keyboardMode, onKeyboar
     </Dialog>
   );
 }
+
+export default Settings;

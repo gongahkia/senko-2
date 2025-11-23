@@ -173,3 +173,5 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
     </div>
   );
 }
+
+export default Recall;
