@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
-import { FlashCard, StudySession } from "@/types";
+import { FlashCard, StudySession, QuestionItem } from "@/types";
 import { shuffle, generateId, formatDateKey } from "@/lib/utils";
 import { addSession, addDailyStats } from "@/services/storage";
 
 export function useStudySession(
   deckId: string,
-  questions: { question: string; answer: string; imageUrl?: string }[]
+  questions: QuestionItem[]
 ) {
   const [flashcardQueue, setFlashcardQueue] = useState<FlashCard[]>([]);
   const [sessionId] = useState(() => generateId("session"));
@@ -20,9 +20,12 @@ export function useStudySession(
     if (questions.length > 0) {
       const initialFlashcards: FlashCard[] = questions.map((q) => ({
         id: generateId("card"),
+        type: q.type || "flashcard",
         question: q.question,
         answer: q.answer,
         imageUrl: q.imageUrl,
+        options: q.options,
+        blanks: q.blanks,
         status: "unseen",
         lastRating: null,
         reviewCount: 0,
@@ -129,9 +132,12 @@ export function useStudySession(
     if (questions.length > 0) {
       const resetFlashcards: FlashCard[] = questions.map((q) => ({
         id: generateId("card"),
+        type: q.type || "flashcard",
         question: q.question,
         answer: q.answer,
         imageUrl: q.imageUrl,
+        options: q.options,
+        blanks: q.blanks,
         status: "unseen",
         lastRating: null,
         reviewCount: 0,

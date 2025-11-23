@@ -1,4 +1,4 @@
-import { Settings as SettingsIcon, X } from "lucide-react";
+import { Settings as SettingsIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ColorSchemeSelector } from "@/components/colorscheme-selector";
 import { StudyModeSelector } from "@/components/StudyModeSelector";

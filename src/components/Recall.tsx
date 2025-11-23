@@ -1,5 +1,4 @@
 import { useState, useCallback } from "react";
-import { MathJax } from "better-react-mathjax";
 import { Button } from "@/components/ui/button";
 import { QuestionRenderer } from "@/components/QuestionRenderer";
 import { useStudySession } from "@/hooks/useStudySession";

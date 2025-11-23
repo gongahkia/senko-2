@@ -1,13 +1,11 @@
 import { useState, useCallback } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ColorSchemeSelector } from "@/components/colorscheme-selector";
 import { DeckSelector } from "@/components/DeckSelector";
 import { Questions } from "@/components/Questions";
 import { Recall } from "@/components/Recall";
 import { Statistics } from "@/components/Statistics";
 import { ImportExport } from "@/components/ImportExport";
-import { StudyModeSelector } from "@/components/StudyModeSelector";
 import { Settings } from "@/components/Settings";
 import { Onboarding } from "@/components/Onboarding";
 import { MathJaxContext } from "better-react-mathjax";

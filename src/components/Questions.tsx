@@ -19,7 +19,12 @@ export function Questions({
   const [text, setText] = useState(() => {
     // Convert questions back to text format
     return initialQuestions
-      .map((q) => `${q.question}\n===\n${q.answer}`)
+      .map((q) => {
+        const prefix = q.type === "multiple-choice" ? "[MC] " :
+                      q.type === "true-false" ? "[TF] " :
+                      q.type === "fill-in-blank" ? "[FIB] " : "";
+        return `${prefix}${q.question}\n===\n${q.answer}`;
+      })
       .join("\n\n");
   });
   const [parsedQuestions, setParsedQuestions] =
