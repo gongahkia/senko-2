@@ -346,10 +346,10 @@ What is the quadratic formula?
             </div>
           ) : (
             <Tabs value={currentTab} onValueChange={(value) => setCurrentTab(value as "recall" | "questions" | "stats")} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 max-w-md" data-onboarding="tabs">
-                <TabsTrigger value="recall">Recall</TabsTrigger>
-                <TabsTrigger value="questions">Questions</TabsTrigger>
-                <TabsTrigger value="stats">Statistics</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto" data-onboarding="tabs">
+                <TabsTrigger value="recall" className="text-xs sm:text-sm">Recall</TabsTrigger>
+                <TabsTrigger value="questions" className="text-xs sm:text-sm">Questions</TabsTrigger>
+                <TabsTrigger value="stats" className="text-xs sm:text-sm">Statistics</TabsTrigger>
               </TabsList>
 
               <TabsContent value="recall" className="mt-6">
