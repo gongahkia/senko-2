@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useToastContext } from "@/contexts/ToastContext";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -25,6 +26,7 @@ export function ImportExport({
   currentDeckId,
   onDeckImported,
 }: ImportExportProps) {
+  const { showSuccess, showError, showInfo } = useToastContext();
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [exportedData, setExportedData] = useState("");
@@ -68,7 +70,7 @@ export function ImportExport({
 
   const handleExportDeck = () => {
     if (!currentDeckId) {
-      alert("Please select a deck to export");
+      showError("Please select a deck to export");
       return;
     }
 
@@ -119,7 +121,7 @@ export function ImportExport({
 
       const deck = importDeck(importData);
       if (deck) {
-        alert(`Successfully imported deck: ${deck.name}`);
+        showSuccess(`Successfully imported deck: ${deck.name}`);
         setImportData("");
         setValidationErrors([]);
         setValidationWarnings([]);
@@ -135,7 +137,7 @@ export function ImportExport({
 
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(exportedData);
-    alert("Copied to clipboard!");
+    showInfo("Copied to clipboard!");
   };
 
   const handleDownload = () => {
