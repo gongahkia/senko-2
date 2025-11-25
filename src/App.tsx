@@ -199,27 +199,6 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
 
                     {/* Detailed Sections */}
                     <div className="space-y-5">
-                      {/* Question Format */}
-                      <div>
-                        <h4 className="font-semibold mb-3 flex items-center gap-2">
-                          <BookOpen className="h-4 w-4" />
-                          Question Format
-                        </h4>
-                        <p className="text-sm text-muted-foreground mb-2">
-                          Separate each question and answer with <code className="px-1.5 py-0.5 bg-muted rounded text-xs">===</code> on its own line:
-                        </p>
-                        <div className="bg-muted/70 p-4 rounded-lg border">
-                          <pre className="font-mono text-xs leading-relaxed">
-What is the formula for the area of a circle?
-===
-The area is $A = \pi r^2$ where $r$ is the radius.
-
-What is the quadratic formula?
-===
-{"$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$"}
-                          </pre>
-                        </div>
-                      </div>
 
                       {/* LLM Template */}
                       <div>
@@ -231,7 +210,7 @@ What is the quadratic formula?
                           Use this prompt with ChatGPT, Claude, or any LLM:
                         </p>
                         <div className="relative">
-                          <div className="bg-muted/70 p-4 rounded-lg border font-mono text-xs max-h-[150px] overflow-y-auto whitespace-pre-wrap">
+                          <div className="bg-muted/70 p-4 pr-20 rounded-lg border font-mono text-xs max-h-[150px] overflow-y-auto overflow-x-hidden break-words whitespace-pre-wrap">
                             {promptTemplate}
                           </div>
                           <Button
@@ -252,65 +231,6 @@ What is the quadratic formula?
                               </>
                             )}
                           </Button>
-                        </div>
-                      </div>
-
-                      {/* Keyboard Shortcuts */}
-                      <div>
-                        <h4 className="font-semibold mb-3 flex items-center gap-2">
-                          <Keyboard className="h-4 w-4" />
-                          Keyboard Shortcuts
-                        </h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div className="flex items-center gap-3 p-3 bg-muted/50 rounded">
-                            <kbd className="px-3 py-1.5 bg-background border rounded font-mono text-sm font-semibold">Space</kbd>
-                            <span className="text-sm text-muted-foreground">Flip card</span>
-                          </div>
-                          <div className="flex items-center gap-3 p-3 bg-muted/50 rounded">
-                            <kbd className="px-3 py-1.5 bg-background border rounded font-mono text-sm font-semibold">1-4</kbd>
-                            <span className="text-sm text-muted-foreground">Rate recall</span>
-                          </div>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-2 ml-1">
-                          Ratings: 1=Bad, 2=Good, 3=Better, 4=Easy
-                        </p>
-                      </div>
-
-                      {/* Advanced Features */}
-                      <div>
-                        <h4 className="font-semibold mb-3 flex items-center gap-2">
-                          <Zap className="h-4 w-4" />
-                          Advanced Features
-                        </h4>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                          <div className="flex items-start gap-2 p-2">
-                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                            <div>
-                              <strong>LaTeX Math:</strong>
-                              <code className="ml-1 text-xs bg-muted px-1 rounded">$...$</code> or
-                              <code className="ml-1 text-xs bg-muted px-1 rounded">$$...$$</code>
-                            </div>
-                          </div>
-                          <div className="flex items-start gap-2 p-2">
-                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span><strong>Multi-deck</strong> organization</span>
-                          </div>
-                          <div className="flex items-start gap-2 p-2">
-                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span><strong>Image embedding</strong> support</span>
-                          </div>
-                          <div className="flex items-start gap-2 p-2">
-                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span><strong>Progress tracking</strong> & stats</span>
-                          </div>
-                          <div className="flex items-start gap-2 p-2">
-                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span><strong>Import/Export</strong> decks</span>
-                          </div>
-                          <div className="flex items-start gap-2 p-2">
-                            <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                            <span><strong>Offline-first:</strong> all in browser</span>
-                          </div>
                         </div>
                       </div>
                     </div>
