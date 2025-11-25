@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useToastContext } from "@/contexts/ToastContext";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { MathJax } from "better-react-mathjax";
 import { QuestionItem } from "@/types";
 import { parseQuestions, imageToBase64, isValidImageFile } from "@/lib/utils";
-import { Upload } from "lucide-react";
+import { Upload, Search, X } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface QuestionsProps {
@@ -34,6 +35,18 @@ export function Questions({
     useState<QuestionItem[]>(initialQuestions);
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [questionSearchQuery, setQuestionSearchQuery] = useState("");
+
+  // Filter questions based on search query
+  const filteredQuestions = useMemo(() => {
+    if (!questionSearchQuery.trim()) return parsedQuestions;
+
+    const query = questionSearchQuery.toLowerCase();
+    return parsedQuestions.filter(q =>
+      q.question.toLowerCase().includes(query) ||
+      q.answer.toLowerCase().includes(query)
+    );
+  }, [parsedQuestions, questionSearchQuery]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,8 +117,38 @@ export function Questions({
           <h3 className="text-lg sm:text-xl font-medium mb-3 sm:mb-4">
             Parsed Questions ({parsedQuestions.length})
           </h3>
+
+          {/* Question Search */}
+          {parsedQuestions.length > 5 && (
+            <div className="mb-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search questions..."
+                  value={questionSearchQuery}
+                  onChange={(e) => setQuestionSearchQuery(e.target.value)}
+                  className="pl-10 pr-10"
+                />
+                {questionSearchQuery && (
+                  <button
+                    onClick={() => setQuestionSearchQuery("")}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+              {questionSearchQuery && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Showing {filteredQuestions.length} of {parsedQuestions.length} questions
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="space-y-3 sm:space-y-4">
-            {parsedQuestions.map((item, index) => (
+            {filteredQuestions.map((item, index) => (
               <div
                 key={index}
                 className="border rounded-md p-3 sm:p-4 bg-card text-card-foreground"
