@@ -152,6 +152,10 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground">senko-2</h1>
               </div>
               <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <ImportExport
+                  currentDeckId={currentDeckId}
+                  onDeckImported={handleDeckImported}
+                />
                 <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="icon" data-onboarding="help">
@@ -278,23 +282,14 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
               </div>
             )}
 
-            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
-              <div data-onboarding="deck-selector" className="w-full sm:w-auto">
-                <DeckSelector
-                  decks={filteredDecks}
-                  currentDeckId={currentDeckId}
-                  onSelectDeck={setCurrentDeckId}
-                  onCreateDeck={createDeck}
-                  onDeleteDeck={deleteDeck}
-                />
-              </div>
-
-              <div className="w-full sm:w-auto">
-                <ImportExport
-                  currentDeckId={currentDeckId}
-                  onDeckImported={handleDeckImported}
-                />
-              </div>
+            <div data-onboarding="deck-selector" className="w-full sm:w-auto">
+              <DeckSelector
+                decks={filteredDecks}
+                currentDeckId={currentDeckId}
+                onSelectDeck={setCurrentDeckId}
+                onCreateDeck={createDeck}
+                onDeleteDeck={deleteDeck}
+              />
             </div>
           </div>
 

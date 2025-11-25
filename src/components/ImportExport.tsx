@@ -152,21 +152,18 @@ export function ImportExport({
 
   return (
     <div className="flex gap-2">
-      <Button variant="outline" onClick={handleExportDeck}>
-        <Download className="h-4 w-4 mr-2" />
-        Export Deck
+      <Button variant="outline" size="icon" onClick={handleExportDeck} title="Export Current Deck">
+        <Download className="h-4 w-4" />
       </Button>
 
-      <Button variant="outline" onClick={handleExportAll}>
-        <FileJson className="h-4 w-4 mr-2" />
-        Export All
+      <Button variant="outline" size="icon" onClick={handleExportAll} title="Export All Decks">
+        <FileJson className="h-4 w-4" />
       </Button>
 
       <Dialog open={isImportOpen} onOpenChange={setIsImportOpen}>
         <DialogTrigger asChild>
-          <Button variant="outline">
-            <Upload className="h-4 w-4 mr-2" />
-            Import Deck
+          <Button variant="outline" size="icon" title="Import Deck">
+            <Upload className="h-4 w-4" />
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-2xl">
