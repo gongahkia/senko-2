@@ -3,6 +3,14 @@ import { FlashCard, StudySession, QuestionItem } from "@/types";
 import { shuffle, generateId, formatDateKey } from "@/lib/utils";
 import { addSession, addDailyStats } from "@/services/storage";
 
+interface UndoState {
+  flashcardQueue: FlashCard[];
+  cardsReviewed: number;
+  cardsMastered: number;
+  ratings: { 1: number; 2: number; 3: number; 4: number };
+  isCompleted: boolean;
+}
+
 export function useStudySession(
   deckId: string,
   questions: QuestionItem[]
@@ -14,6 +22,7 @@ export function useStudySession(
   const [cardsMastered, setCardsMastered] = useState(0);
   const [ratings, setRatings] = useState({ 1: 0, 2: 0, 3: 0, 4: 0 });
   const [isCompleted, setIsCompleted] = useState(false);
+  const [undoState, setUndoState] = useState<UndoState | null>(null);
 
   // Initialize flashcards
   useEffect(() => {
@@ -38,6 +47,7 @@ export function useStudySession(
       setCardsReviewed(0);
       setCardsMastered(0);
       setRatings({ 1: 0, 2: 0, 3: 0, 4: 0 });
+      setUndoState(null);
     }
   }, [questions]);
 
