@@ -140,6 +140,7 @@ export function Statistics() {
         <h3 className="text-lg font-semibold mb-4">Deck Performance</h3>
         {stats.deckStats.length > 0 ? (
           <div className="space-y-3">
+            {/* Use pre-calculated deckName from stats to avoid duplicate localStorage reads */}
             {stats.deckStats.map((deckStat) => (
               <div
                 key={deckStat.deckId}
