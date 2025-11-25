@@ -137,40 +137,35 @@ export function Statistics() {
         <h3 className="text-lg font-semibold mb-4">Deck Performance</h3>
         {stats.deckStats.length > 0 ? (
           <div className="space-y-3">
-            {stats.deckStats.map((deckStat) => {
-              const deck = loadAppData().decks.find(
-                (d) => d.id === deckStat.deckId
-              );
-              return (
-                <div
-                  key={deckStat.deckId}
-                  className="p-4 rounded bg-muted/50 space-y-2"
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium">{deck?.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {deckStat.totalCards} cards • {deckStat.totalReviews}{" "}
-                        reviews
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium">
-                        Avg: {deckStat.averageRating.toFixed(1)}/4
-                      </p>
-                    </div>
+            {stats.deckStats.map((deckStat) => (
+              <div
+                key={deckStat.deckId}
+                className="p-4 rounded bg-muted/50 space-y-2"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-medium">{deckStat.deckName}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {deckStat.totalCards} cards • {deckStat.totalReviews}{" "}
+                      reviews
+                    </p>
                   </div>
-                  <div className="h-2 bg-background rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary"
-                      style={{
-                        width: `${(deckStat.averageRating / 4) * 100}%`,
-                      }}
-                    />
+                  <div className="text-right">
+                    <p className="text-sm font-medium">
+                      Avg: {deckStat.averageRating.toFixed(1)}/4
+                    </p>
                   </div>
                 </div>
-              );
-            })}
+                <div className="h-2 bg-background rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary"
+                    style={{
+                      width: `${(deckStat.averageRating / 4) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <p className="text-muted-foreground text-center py-8">
