@@ -65,6 +65,7 @@ function App() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [showCreatePrompt, setShowCreatePrompt] = useState(false);
+  const [deckSearchQuery, setDeckSearchQuery] = useState("");
 
   const handleSaveQuestions = (questions: QuestionItem[]) => {
     if (currentDeckId) {
