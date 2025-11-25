@@ -110,6 +110,23 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
           <div className="text-xs opacity-75">Reviewed: {cardsReviewed}</div>
         </div>
 
+        {/* Undo button - bottom right */}
+        {canUndo && (
+          <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 flex flex-col items-end gap-1">
+            <Button
+              onClick={undoLastRating}
+              variant="ghost"
+              size="sm"
+              className="text-xs text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 transition-opacity"
+            >
+              ↶ Undo Last Rating
+            </Button>
+            <p className="text-xs text-muted-foreground hidden sm:block">
+              <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">Ctrl+Z</kbd>
+            </p>
+          </div>
+        )}
+
         {/* Content */}
         <div
           className="flex flex-col h-full pt-12 sm:pt-10 cursor-pointer"
@@ -123,25 +140,10 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
 
           {/* Rating UI or Space prompt */}
           {mode === "answer-rating" ? (
-            <div className="mt-auto w-full">
+            <div className="mt-auto w-full pb-12 sm:pb-10">
               <p className="mb-3 sm:mb-4 text-center text-sm sm:text-base text-muted-foreground">
                 How well did you know this?
               </p>
-              {canUndo && (
-                <div className="mb-3 flex flex-col items-center gap-1">
-                  <Button
-                    onClick={undoLastRating}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs sm:text-sm"
-                  >
-                    ↶ Undo Last Rating
-                  </Button>
-                  <p className="text-xs text-muted-foreground hidden sm:block">
-                    Press <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">Ctrl+Z</kbd> to undo
-                  </p>
-                </div>
-              )}
               <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3">
                 <Button
                   onClick={() => onRating(1)}
