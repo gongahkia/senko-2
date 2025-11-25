@@ -10,7 +10,6 @@ const Recall = lazy(() => import("@/components/Recall"));
 const Statistics = lazy(() => import("@/components/Statistics"));
 import { ImportExport } from "@/components/ImportExport";
 const Settings = lazy(() => import("@/components/Settings"));
-import { Onboarding } from "@/components/Onboarding";
 import { MathJaxContext } from "better-react-mathjax";
 import { useDecks } from "@/hooks/useDecks";
 import { useKeyboardBindings } from "@/hooks/useKeyboardBindings";
@@ -158,7 +157,7 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
                 />
                 <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" size="icon" data-onboarding="help">
+                  <Button variant="outline" size="icon">
                     <HelpCircle className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
@@ -282,7 +281,7 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
               </div>
             )}
 
-            <div data-onboarding="deck-selector" className="w-full sm:w-auto">
+            <div className="w-full sm:w-auto">
               <DeckSelector
                 decks={filteredDecks}
                 currentDeckId={currentDeckId}
@@ -307,7 +306,7 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
             </div>
           ) : (
             <Tabs value={currentTab} onValueChange={(value) => setCurrentTab(value as "recall" | "questions" | "stats")} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto" data-onboarding="tabs">
+              <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto">
                 <TabsTrigger value="recall" className="text-xs sm:text-sm">Recall</TabsTrigger>
                 <TabsTrigger value="questions" className="text-xs sm:text-sm">Questions</TabsTrigger>
                 <TabsTrigger value="stats" className="text-xs sm:text-sm">Statistics</TabsTrigger>
@@ -367,7 +366,6 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
             </p>
           </footer>
           </div>
-          <Onboarding />
           </ThemeProvider>
         </MathJaxContext>
 
