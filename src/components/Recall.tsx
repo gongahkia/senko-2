@@ -24,6 +24,8 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
     totalCards,
     isCompleted,
     handleRating,
+    undoLastRating,
+    canUndo,
     resetSession,
   } = useStudySession(deckId, questions);
 
@@ -124,6 +126,18 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
               <p className="mb-3 sm:mb-4 text-center text-sm sm:text-base text-muted-foreground">
                 How well did you know this?
               </p>
+              {canUndo && (
+                <div className="mb-3 flex justify-center">
+                  <Button
+                    onClick={undoLastRating}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                  >
+                    ↶ Undo Last Rating
+                  </Button>
+                </div>
+              )}
               <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3">
                 <Button
                   onClick={() => onRating(1)}
