@@ -45,7 +45,6 @@ export function StudyModeSelector({ mode, onModeChange }: StudyModeSelectorProps
 
   return (
     <div className="flex items-center gap-2">
-      {currentMode && <currentMode.icon className="h-4 w-4 text-muted-foreground" />}
       <Select value={mode} onValueChange={onModeChange}>
         <SelectTrigger className="w-[160px]">
           <SelectValue placeholder="Study mode" />

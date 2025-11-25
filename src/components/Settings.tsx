@@ -34,24 +34,16 @@ export function Settings({ studyMode, onStudyModeChange, keyboardMode, onKeyboar
       <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl">Settings</DialogTitle>
-          <DialogDescription>
-            Customize your learning experience
-          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Theme Settings */}
           <div className="space-y-3">
             <div>
-              <h3 className="text-lg font-semibold mb-1">Appearance</h3>
-              <p className="text-sm text-muted-foreground">Customize the look and feel</p>
+              <h3 className="text-lg font-semibold mb-1">Color Scheme</h3>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="color-scheme">Color Scheme</Label>
               <ColorSchemeSelector />
-              <p className="text-xs text-muted-foreground">
-                Choose from 14 beautiful themes optimized for extended study sessions
-              </p>
             </div>
           </div>
 
@@ -61,10 +53,8 @@ export function Settings({ studyMode, onStudyModeChange, keyboardMode, onKeyboar
           <div className="space-y-3">
             <div>
               <h3 className="text-lg font-semibold mb-1">Study Mode</h3>
-              <p className="text-sm text-muted-foreground">Select your preferred study technique</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="study-mode">Active Mode</Label>
               <StudyModeSelector mode={studyMode} onModeChange={onStudyModeChange} />
               <div className="mt-3 p-3 bg-muted/50 rounded-lg text-sm space-y-1">
                 <div><strong>Normal:</strong> Classic flashcard review</div>
@@ -81,10 +71,8 @@ export function Settings({ studyMode, onStudyModeChange, keyboardMode, onKeyboar
           <div className="space-y-3">
             <div>
               <h3 className="text-lg font-semibold mb-1">Keyboard Bindings</h3>
-              <p className="text-sm text-muted-foreground">Choose your preferred keyboard navigation style</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="keyboard-mode">Keyboard Mode</Label>
               <Select value={keyboardMode} onValueChange={(value: KeyboardMode) => onKeyboardModeChange(value)}>
                 <SelectTrigger id="keyboard-mode" className="w-full">
                   <SelectValue placeholder="Select keyboard mode" />

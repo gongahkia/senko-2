@@ -32,9 +32,6 @@ export function ColorSchemeSelector() {
 
   return (
     <div className="flex items-center gap-2">
-      <Button variant="ghost" size="icon" className="h-9 w-9">
-        <Palette className="h-4 w-4" />
-      </Button>
       <Select value={colorScheme} onValueChange={setColorScheme}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Select theme" />

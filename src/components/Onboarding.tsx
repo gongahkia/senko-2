@@ -30,7 +30,7 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
   },
   {
     target: '[data-onboarding="theme-selector"]',
-    title: "Customize Your Theme",
+    title: " Your Theme",
     description: "Pick from 14 beautiful color schemes to make studying more enjoyable. Your eyes will thank you!",
     position: "bottom",
   },
