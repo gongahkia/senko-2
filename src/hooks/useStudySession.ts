@@ -147,6 +147,20 @@ export function useStudySession(
     });
   }, [sessionId, deckId, sessionStartTime, cardsReviewed, cardsMastered, ratings]);
 
+  const undoLastRating = useCallback(() => {
+    if (!undoState) return;
+
+    // Restore previous state
+    setFlashcardQueue(undoState.flashcardQueue);
+    setCardsReviewed(undoState.cardsReviewed);
+    setCardsMastered(undoState.cardsMastered);
+    setRatings(undoState.ratings);
+    setIsCompleted(undoState.isCompleted);
+
+    // Clear undo state (can only undo once)
+    setUndoState(null);
+  }, [undoState]);
+
   const resetSession = useCallback(() => {
     if (questions.length > 0) {
       const resetFlashcards: FlashCard[] = questions.map((q) => ({
@@ -169,6 +183,7 @@ export function useStudySession(
       setCardsReviewed(0);
       setCardsMastered(0);
       setRatings({ 1: 0, 2: 0, 3: 0, 4: 0 });
+      setUndoState(null);
     }
   }, [questions]);
 
