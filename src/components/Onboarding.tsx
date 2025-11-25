@@ -23,18 +23,6 @@ const ONBOARDING_STEPS: OnboardingStep[] = [
     position: "bottom",
   },
   {
-    target: '[data-onboarding="study-mode"]',
-    title: "Choose Your Study Mode",
-    description: "Select different study modes like Normal, Pomodoro, Sprint, or Zen to customize your learning experience.",
-    position: "bottom",
-  },
-  {
-    target: '[data-onboarding="theme-selector"]',
-    title: " Your Theme",
-    description: "Pick from 14 beautiful color schemes to make studying more enjoyable. Your eyes will thank you!",
-    position: "bottom",
-  },
-  {
     target: '[data-onboarding="help"]',
     title: "Need Help?",
     description: "Click here anytime to access the Quick Start Guide with detailed instructions and tips.",
@@ -64,6 +52,15 @@ export function Onboarding() {
   useEffect(() => {
     if (isVisible) {
       updateHighlight();
+
+      // Add listener for window resize and scroll to update highlight position
+      window.addEventListener('resize', updateHighlight);
+      window.addEventListener('scroll', updateHighlight);
+
+      return () => {
+        window.removeEventListener('resize', updateHighlight);
+        window.removeEventListener('scroll', updateHighlight);
+      };
     }
   }, [currentStep, isVisible]);
 
@@ -73,6 +70,15 @@ export function Onboarding() {
     if (element) {
       const rect = element.getBoundingClientRect();
       setHighlightRect(rect);
+    } else {
+      // If element not found, retry after a short delay
+      setTimeout(() => {
+        const retryElement = document.querySelector(step.target);
+        if (retryElement) {
+          const rect = retryElement.getBoundingClientRect();
+          setHighlightRect(rect);
+        }
+      }, 100);
     }
   };
 
