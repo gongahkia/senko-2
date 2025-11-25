@@ -55,6 +55,15 @@ export function useStudySession(
     (rating: 1 | 2 | 3 | 4) => {
       if (flashcardQueue.length === 0) return;
 
+      // Save current state for undo
+      setUndoState({
+        flashcardQueue: [...flashcardQueue],
+        cardsReviewed,
+        cardsMastered,
+        ratings: { ...ratings },
+        isCompleted,
+      });
+
       const updatedQueue = [...flashcardQueue];
       const currentCard = updatedQueue.shift();
 
@@ -112,7 +121,7 @@ export function useStudySession(
 
       setFlashcardQueue(updatedQueue);
     },
-    [flashcardQueue]
+    [flashcardQueue, cardsReviewed, cardsMastered, ratings, isCompleted]
   );
 
   const endSession = useCallback(() => {
