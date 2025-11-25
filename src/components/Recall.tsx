@@ -48,6 +48,7 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
     mode: keyboardMode,
     onFlipCard: handleFlipCard,
     onRate: onRating,
+    onUndo: canUndo ? undoLastRating : undefined,
     enabled: !isCompleted,
     currentMode: mode,
   });

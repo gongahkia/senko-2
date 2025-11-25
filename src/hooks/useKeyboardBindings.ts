@@ -9,6 +9,7 @@ interface KeyboardBindingsConfig {
   onNavigate?: (tab: "recall" | "questions" | "stats") => void;
   onNextCard?: () => void;
   onPreviousCard?: () => void;
+  onUndo?: () => void;
   enabled?: boolean;
   currentMode?: "question" | "answer-rating";
 }
@@ -20,6 +21,7 @@ export function useKeyboardBindings({
   onNavigate,
   onNextCard,
   onPreviousCard,
+  onUndo,
   enabled = true,
   currentMode,
 }: KeyboardBindingsConfig) {
@@ -60,6 +62,14 @@ export function useKeyboardBindings({
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Global shortcuts (work in all modes)
+      // Undo with Ctrl+Z (Windows/Linux) or Cmd+Z (Mac)
+      if ((event.ctrlKey || event.metaKey) && event.key === "z" && !event.shiftKey && onUndo) {
+        event.preventDefault();
+        onUndo();
+        return;
+      }
+
       // Default mode - original behavior
       if (mode === "default") {
         if (event.code === "Space") {
@@ -198,5 +208,5 @@ export function useKeyboardBindings({
       window.removeEventListener("keydown", handleKeyDown);
       cleanupPendingListener();
     };
-  }, [mode, enabled, currentMode, onFlipCard, onRate, onNavigate, onNextCard, onPreviousCard]);
+  }, [mode, enabled, currentMode, onFlipCard, onRate, onNavigate, onNextCard, onPreviousCard, onUndo]);
 }
