@@ -1,4 +1,4 @@
-import { useState, useCallback, lazy, Suspense } from "react";
+import { useState, useCallback, useMemo, lazy, Suspense } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -66,6 +66,17 @@ function App() {
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [showCreatePrompt, setShowCreatePrompt] = useState(false);
   const [deckSearchQuery, setDeckSearchQuery] = useState("");
+
+  // Filter decks based on search query
+  const filteredDecks = useMemo(() => {
+    if (!deckSearchQuery.trim()) return decks;
+
+    const query = deckSearchQuery.toLowerCase();
+    return decks.filter(deck =>
+      deck.name.toLowerCase().includes(query) ||
+      deck.description?.toLowerCase().includes(query)
+    );
+  }, [decks, deckSearchQuery]);
 
   const handleSaveQuestions = (questions: QuestionItem[]) => {
     if (currentDeckId) {
@@ -320,7 +331,7 @@ What is the quadratic formula?
             <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
               <div data-onboarding="deck-selector" className="w-full sm:w-auto">
                 <DeckSelector
-                  decks={decks}
+                  decks={filteredDecks}
                   currentDeckId={currentDeckId}
                   onSelectDeck={setCurrentDeckId}
                   onCreateDeck={createDeck}
