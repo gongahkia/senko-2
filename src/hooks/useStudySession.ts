@@ -195,6 +195,8 @@ export function useStudySession(
     ratings,
     isCompleted,
     handleRating,
+    undoLastRating,
+    canUndo: undoState !== null,
     resetSession,
     totalCards: questions.length,
   };
