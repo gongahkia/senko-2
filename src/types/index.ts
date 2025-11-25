@@ -97,6 +97,7 @@ export type DailyStats = {
 
 export type DeckStats = {
   deckId: string;
+  deckName: string;
   totalCards: number;
   masteredCards: number;
   learningCards: number;
