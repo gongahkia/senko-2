@@ -68,6 +68,8 @@ export function ImportExport({
     return () => clearTimeout(timer);
   }, [importData]);
 
+  const [exportType, setExportType] = useState<"deck" | "all">("deck");
+
   const handleExportDeck = () => {
     if (!currentDeckId) {
       showError("Please select a deck to export");
@@ -77,6 +79,7 @@ export function ImportExport({
     const data = exportDeck(currentDeckId);
     if (data) {
       setExportedData(data);
+      setExportType("deck");
       setIsExportOpen(true);
     }
   };
@@ -84,6 +87,7 @@ export function ImportExport({
   const handleExportAll = () => {
     const data = exportAllData();
     setExportedData(data);
+    setExportType("all");
     setIsExportOpen(true);
   };
 
@@ -205,9 +209,11 @@ export function ImportExport({
       <Dialog open={isExportOpen} onOpenChange={setIsExportOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Export Data</DialogTitle>
+            <DialogTitle>{exportType === "deck" ? "Export Deck" : "Export All Decks"}</DialogTitle>
             <DialogDescription>
-              Copy this data or download as a file to share or backup
+              {exportType === "deck"
+                ? "Copy this deck data or download as a file to share or backup"
+                : "Copy all your decks or download as a file to backup your entire collection"}
             </DialogDescription>
           </DialogHeader>
           <Textarea
