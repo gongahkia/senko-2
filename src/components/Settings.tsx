@@ -56,12 +56,34 @@ export function Settings({ studyMode, onStudyModeChange, keyboardMode, onKeyboar
             </div>
             <div className="space-y-2">
               <StudyModeSelector mode={studyMode} onModeChange={onStudyModeChange} />
-              <div className="mt-3 p-3 bg-muted/50 rounded-lg text-sm space-y-1">
-                <div><strong>Normal:</strong> Classic flashcard review</div>
-                <div><strong>Pomodoro:</strong> 25min work, 5min break cycles</div>
-                <div><strong>Sprint:</strong> Timed rapid-fire review</div>
-                <div><strong>Zen:</strong> No stats, pure concentration</div>
-              </div>
+
+              {studyMode === "normal" && (
+                <div className="mt-3 p-3 bg-muted/50 rounded-lg text-sm">
+                  <div className="font-semibold mb-2">Normal Mode:</div>
+                  <div>Classic flashcard review with active recall. Perfect for steady, comprehensive learning at your own pace.</div>
+                </div>
+              )}
+
+              {studyMode === "pomodoro" && (
+                <div className="mt-3 p-3 bg-muted/50 rounded-lg text-sm">
+                  <div className="font-semibold mb-2">Pomodoro Mode:</div>
+                  <div>Study in focused 25-minute work sessions followed by 5-minute breaks. Helps maintain concentration and prevents burnout.</div>
+                </div>
+              )}
+
+              {studyMode === "sprint" && (
+                <div className="mt-3 p-3 bg-muted/50 rounded-lg text-sm">
+                  <div className="font-semibold mb-2">Sprint Mode:</div>
+                  <div>Timed rapid-fire review sessions designed for quick, intensive practice. Great for last-minute review before exams.</div>
+                </div>
+              )}
+
+              {studyMode === "zen" && (
+                <div className="mt-3 p-3 bg-muted/50 rounded-lg text-sm">
+                  <div className="font-semibold mb-2">Zen Mode:</div>
+                  <div>Distraction-free studying with no statistics or counters visible. Focus purely on the material without performance pressure.</div>
+                </div>
+              )}
             </div>
           </div>
 

@@ -158,7 +158,7 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
                     <HelpCircle className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+                <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle className="text-2xl">Quick Start Guide</DialogTitle>
                     <DialogDescription>
@@ -261,7 +261,7 @@ What is the quadratic formula?
                           <Keyboard className="h-4 w-4" />
                           Keyboard Shortcuts
                         </h4>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div className="flex items-center gap-3 p-3 bg-muted/50 rounded">
                             <kbd className="px-3 py-1.5 bg-background border rounded font-mono text-sm font-semibold">Space</kbd>
                             <span className="text-sm text-muted-foreground">Flip card</span>
