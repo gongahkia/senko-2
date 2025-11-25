@@ -128,15 +128,18 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
                 How well did you know this?
               </p>
               {canUndo && (
-                <div className="mb-3 flex justify-center">
+                <div className="mb-3 flex flex-col items-center gap-1">
                   <Button
                     onClick={undoLastRating}
                     variant="outline"
                     size="sm"
-                    className="text-xs"
+                    className="text-xs sm:text-sm"
                   >
                     ↶ Undo Last Rating
                   </Button>
+                  <p className="text-xs text-muted-foreground hidden sm:block">
+                    Press <kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">Ctrl+Z</kbd> to undo
+                  </p>
                 </div>
               )}
               <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3">
