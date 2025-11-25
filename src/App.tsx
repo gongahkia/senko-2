@@ -15,7 +15,8 @@ import { MathJaxContext } from "better-react-mathjax";
 import { useDecks } from "@/hooks/useDecks";
 import { useKeyboardBindings } from "@/hooks/useKeyboardBindings";
 import { StudyMode, QuestionItem } from "@/types";
-import { BookOpen, HelpCircle, Copy, Check, Sparkles, Keyboard, Zap } from "lucide-react";
+import { BookOpen, HelpCircle, Copy, Check, Sparkles, Keyboard, Zap, Search, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 type KeyboardMode = "default" | "vim" | "emacs";
 import {
@@ -327,6 +328,35 @@ What is the quadratic formula?
               </Suspense>
               </div>
             </div>
+
+            {/* Deck Search */}
+            {decks.length > 3 && (
+              <div className="mb-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Search decks..."
+                    value={deckSearchQuery}
+                    onChange={(e) => setDeckSearchQuery(e.target.value)}
+                    className="pl-10 pr-10"
+                  />
+                  {deckSearchQuery && (
+                    <button
+                      onClick={() => setDeckSearchQuery("")}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+                {deckSearchQuery && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Showing {filteredDecks.length} of {decks.length} decks
+                  </p>
+                )}
+              </div>
+            )}
 
             <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4">
               <div data-onboarding="deck-selector" className="w-full sm:w-auto">
