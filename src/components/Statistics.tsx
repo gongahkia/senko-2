@@ -3,6 +3,9 @@ import { loadAppData, loadDailyStats } from "@/services/storage";
 import { DeckStats } from "@/types";
 
 export function Statistics() {
+  // Calculate all stats in useMemo to avoid duplicate localStorage reads.
+  // Previously, loadAppData() was called again during render for each deck,
+  // causing N localStorage reads. Now deck names are stored in deckStats.
   const stats = useMemo(() => {
     const data = loadAppData();
     const dailyStats = loadDailyStats();
