@@ -41,6 +41,7 @@ export function Statistics() {
 
       return {
         deckId: deck.id,
+        deckName: deck.name,
         totalCards: deck.questions.length,
         masteredCards: 0, // Would need to track per-card state
         learningCards: 0,
