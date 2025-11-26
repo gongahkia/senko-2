@@ -41,8 +41,6 @@ const studyModes = [
 ];
 
 export function StudyModeSelector({ mode, onModeChange }: StudyModeSelectorProps) {
-  const currentMode = studyModes.find((m) => m.value === mode);
-
   return (
     <div className="flex items-center gap-2">
       <Select value={mode} onValueChange={onModeChange}>
