@@ -32,6 +32,13 @@ export type Deck = {
   color?: string; // Optional color tag
 };
 
+export type CardReview = {
+  cardId: string;
+  rating: 1 | 2 | 3 | 4;
+  timestamp: number;
+  timeSpent: number; // seconds spent on this card
+};
+
 export type StudySession = {
   id: string;
   deckId: string;
@@ -45,6 +52,8 @@ export type StudySession = {
     3: number; // Better
     4: number; // Easy
   };
+  // Enhanced tracking for analytics
+  cardReviews?: CardReview[]; // Individual card reviews with timestamps
 };
 
 export type StudyMode = "normal" | "pomodoro" | "sprint" | "zen";
@@ -93,6 +102,11 @@ export type DailyStats = {
   cardsReviewed: number;
   cardsMastered: number;
   timeSpent: number; // in minutes
+  // Enhanced analytics
+  sessionsCount?: number; // number of study sessions
+  averageRating?: number; // average rating across all cards
+  accuracy?: number; // percentage of cards rated 3 or 4
+  cardsPerMinute?: number; // study efficiency
 };
 
 export type DeckStats = {
@@ -104,4 +118,29 @@ export type DeckStats = {
   unseenCards: number;
   averageRating: number;
   totalReviews: number;
+};
+
+// Enhanced statistics types
+export type HeatmapValue = {
+  date: string; // YYYY-MM-DD
+  count: number; // number of cards reviewed
+};
+
+export type StreakData = {
+  currentStreak: number; // days
+  longestStreak: number; // days
+  lastStudyDate: string | null; // YYYY-MM-DD
+};
+
+export type RetentionPoint = {
+  daysSinceReview: number;
+  retentionRate: number; // 0-1 (percentage of cards still remembered)
+  sampleSize: number; // number of cards in this data point
+};
+
+export type StudyEfficiency = {
+  cardsPerMinute: number;
+  averageTimePerCard: number; // in seconds
+  peakHour: number | null; // hour of day (0-23) with most reviews
+  totalStudyTime: number; // in minutes
 };
