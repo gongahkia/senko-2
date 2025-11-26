@@ -1,7 +1,7 @@
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 import { HeatmapValue } from '@/types';
-import { subDays, format } from 'date-fns';
+import { subDays } from 'date-fns';
 
 interface ActivityHeatmapProps {
   data: HeatmapValue[];
@@ -89,16 +89,6 @@ export function ActivityHeatmap({ data, daysBack = 365 }: ActivityHeatmapProps) 
             return 'color-empty';
           }
           return getColor(value.count);
-        }}
-        tooltipDataAttrs={(value: HeatmapValue | undefined) => {
-          if (!value || value.count === 0) {
-            return {
-              'data-tip': `${value?.date || 'No date'}: No reviews`,
-            };
-          }
-          return {
-            'data-tip': `${value.date}: ${value.count} card${value.count === 1 ? '' : 's'} reviewed`,
-          };
         }}
         showWeekdayLabels
         gutterSize={2}

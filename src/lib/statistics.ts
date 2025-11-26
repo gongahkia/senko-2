@@ -1,4 +1,4 @@
-import { format, parseISO, differenceInDays, startOfDay, subDays, eachDayOfInterval } from 'date-fns';
+import { format, parseISO, differenceInDays, subDays, eachDayOfInterval } from 'date-fns';
 import { DailyStats, StudySession, HeatmapValue, StreakData, RetentionPoint, StudyEfficiency } from '@/types';
 
 /**
