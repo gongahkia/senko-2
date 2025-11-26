@@ -161,38 +161,38 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
                     <HelpCircle className="h-4 w-4" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-5xl max-h-[85vh] overflow-y-auto">
+                <DialogContent className="max-w-full sm:max-w-3xl lg:max-w-5xl max-h-[85vh] overflow-y-auto">
                   <DialogHeader>
-                    <DialogTitle className="text-2xl">Quick Start Guide</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="text-xl sm:text-2xl">Quick Start Guide</DialogTitle>
+                    <DialogDescription className="text-sm sm:text-base">
                       Learn active recall in 3 simple steps
                     </DialogDescription>
                   </DialogHeader>
 
-                  <div className="space-y-6">
+                  <div className="space-y-4 sm:space-y-6">
                     {/* Quick Start Steps */}
-                    <div className="grid gap-4">
-                      <div className="flex gap-3 p-4 bg-muted/50 rounded-lg">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">1</div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold mb-1">Create a Deck</h4>
-                          <p className="text-sm text-muted-foreground">Click the + button to create your first deck for any subject</p>
+                    <div className="grid gap-3 sm:gap-4">
+                      <div className="flex gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm sm:text-base">1</div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold mb-1 text-sm sm:text-base">Create a Deck</h4>
+                          <p className="text-xs sm:text-sm text-muted-foreground">Click the + button to create your first deck for any subject</p>
                         </div>
                       </div>
 
-                      <div className="flex gap-3 p-4 bg-muted/50 rounded-lg">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">2</div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold mb-1">Add Questions</h4>
-                          <p className="text-sm text-muted-foreground">Switch to Questions tab and paste or write your flashcards</p>
+                      <div className="flex gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm sm:text-base">2</div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold mb-1 text-sm sm:text-base">Add Questions</h4>
+                          <p className="text-xs sm:text-sm text-muted-foreground">Switch to Questions tab and paste or write your flashcards</p>
                         </div>
                       </div>
 
-                      <div className="flex gap-3 p-4 bg-muted/50 rounded-lg">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">3</div>
-                        <div className="flex-1">
-                          <h4 className="font-semibold mb-1">Start Studying</h4>
-                          <p className="text-sm text-muted-foreground">Return to Recall tab and use <kbd className="px-1.5 py-0.5 bg-background border rounded text-xs">Space</kbd> to flip cards and <kbd className="px-1.5 py-0.5 bg-background border rounded text-xs">1-4</kbd> to rate yourself</p>
+                      <div className="flex gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm sm:text-base">3</div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold mb-1 text-sm sm:text-base">Start Studying</h4>
+                          <p className="text-xs sm:text-sm text-muted-foreground">Return to Recall tab and use <kbd className="px-1.5 py-0.5 bg-background border rounded text-xs">Space</kbd> to flip cards and <kbd className="px-1.5 py-0.5 bg-background border rounded text-xs">1-4</kbd> to rate yourself</p>
                         </div>
                       </div>
                     </div>
@@ -201,19 +201,19 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
                     <div className="border-t" />
 
                     {/* Detailed Sections */}
-                    <div className="space-y-5">
+                    <div className="space-y-4 sm:space-y-5">
 
                       {/* LLM Template */}
                       <div>
-                        <h4 className="font-semibold mb-3 flex items-center gap-2">
+                        <h4 className="font-semibold mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
                           <Sparkles className="h-4 w-4" />
                           Generate with AI
                         </h4>
-                        <p className="text-sm text-muted-foreground mb-2">
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-2">
                           Use this prompt with ChatGPT, Claude, or any LLM:
                         </p>
                         <div className="relative">
-                          <div className="bg-muted/70 p-4 pr-20 rounded-lg border font-mono text-xs max-h-[150px] overflow-y-auto overflow-x-hidden break-words whitespace-pre-wrap">
+                          <div className="bg-muted/70 p-3 sm:p-4 pr-16 sm:pr-20 rounded-lg border font-mono text-xs max-h-[150px] overflow-y-auto overflow-x-hidden break-words whitespace-pre-wrap">
                             {promptTemplate}
                           </div>
                           <Button
