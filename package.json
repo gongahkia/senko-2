@@ -23,9 +23,12 @@
     "better-react-mathjax": "^2.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.488.0",
     "react": "^19.0.0",
+    "react-calendar-heatmap": "^1.10.0",
     "react-dom": "^19.0.0",
+    "recharts": "^3.5.0",
     "tailwind-merge": "^3.2.0"
   },
   "devDependencies": {
@@ -33,6 +36,7 @@
     "@types/lodash": "^4.17.16",
     "@types/node": "^22.14.1",
     "@types/react": "^19.0.10",
+    "@types/react-calendar-heatmap": "^1.9.0",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
