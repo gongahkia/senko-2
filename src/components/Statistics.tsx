@@ -72,41 +72,41 @@ export function Statistics() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-foreground">Statistics</h2>
-        <p className="text-muted-foreground">
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground">Statistics</h2>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Track your learning progress and performance
         </p>
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="border rounded-lg p-4 bg-card">
-          <p className="text-sm text-muted-foreground">Total Decks</p>
-          <p className="text-3xl font-bold text-foreground">{stats.totalDecks}</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div className="border rounded-lg p-3 sm:p-4 bg-card">
+          <p className="text-xs sm:text-sm text-muted-foreground">Total Decks</p>
+          <p className="text-2xl sm:text-3xl font-bold text-foreground break-words">{stats.totalDecks}</p>
         </div>
-        <div className="border rounded-lg p-4 bg-card">
-          <p className="text-sm text-muted-foreground">Total Cards</p>
-          <p className="text-3xl font-bold text-foreground">{stats.totalCards}</p>
+        <div className="border rounded-lg p-3 sm:p-4 bg-card">
+          <p className="text-xs sm:text-sm text-muted-foreground">Total Cards</p>
+          <p className="text-2xl sm:text-3xl font-bold text-foreground break-words">{stats.totalCards}</p>
         </div>
-        <div className="border rounded-lg p-4 bg-card">
-          <p className="text-sm text-muted-foreground">Cards Reviewed</p>
-          <p className="text-3xl font-bold text-foreground">
+        <div className="border rounded-lg p-3 sm:p-4 bg-card">
+          <p className="text-xs sm:text-sm text-muted-foreground">Cards Reviewed</p>
+          <p className="text-2xl sm:text-3xl font-bold text-foreground break-words">
             {stats.totalCardsReviewed}
           </p>
         </div>
-        <div className="border rounded-lg p-4 bg-card">
-          <p className="text-sm text-muted-foreground">Sessions</p>
-          <p className="text-3xl font-bold text-foreground">
+        <div className="border rounded-lg p-3 sm:p-4 bg-card">
+          <p className="text-xs sm:text-sm text-muted-foreground">Sessions</p>
+          <p className="text-2xl sm:text-3xl font-bold text-foreground break-words">
             {stats.totalSessions}
           </p>
         </div>
       </div>
 
       {/* Last 7 Days Activity */}
-      <div className="border rounded-lg p-6 bg-card">
-        <h3 className="text-lg font-semibold mb-4">Last 7 Days Activity</h3>
+      <div className="border rounded-lg p-4 sm:p-6 bg-card">
+        <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Last 7 Days Activity</h3>
         {stats.last7Days.length > 0 ? (
           <div className="space-y-2">
             {stats.last7Days.map((day) => (
@@ -136,26 +136,26 @@ export function Statistics() {
       </div>
 
       {/* Deck Performance */}
-      <div className="border rounded-lg p-6 bg-card">
-        <h3 className="text-lg font-semibold mb-4">Deck Performance</h3>
+      <div className="border rounded-lg p-4 sm:p-6 bg-card">
+        <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Deck Performance</h3>
         {stats.deckStats.length > 0 ? (
           <div className="space-y-3">
             {/* Use pre-calculated deckName from stats to avoid duplicate localStorage reads */}
             {stats.deckStats.map((deckStat) => (
               <div
                 key={deckStat.deckId}
-                className="p-4 rounded bg-muted/50 space-y-2"
+                className="p-3 sm:p-4 rounded bg-muted/50 space-y-2"
               >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium">{deckStat.deckName}</p>
-                    <p className="text-sm text-muted-foreground">
+                <div className="flex justify-between items-start gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm sm:text-base truncate">{deckStat.deckName}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       {deckStat.totalCards} cards • {deckStat.totalReviews}{" "}
                       reviews
                     </p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-xs sm:text-sm font-medium whitespace-nowrap">
                       Avg: {deckStat.averageRating.toFixed(1)}/4
                     </p>
                   </div>
