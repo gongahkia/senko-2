@@ -1,6 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { loadAppData, loadDailyStats } from "@/services/storage";
 import { DeckStats } from "@/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AdvancedStatistics } from "./AdvancedStatistics";
 
 export function Statistics() {
   // Calculate all stats in useMemo to avoid duplicate localStorage reads.
@@ -71,6 +73,8 @@ export function Statistics() {
     };
   }, []);
 
+  const [activeTab, setActiveTab] = useState<string>("overview");
+
   return (
     <div className="space-y-4 sm:space-y-6">
       <div>
@@ -79,6 +83,14 @@ export function Statistics() {
           Track your learning progress and performance
         </p>
       </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="advanced">Advanced Analytics</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="mt-6 space-y-4 sm:space-y-6">
 
       {/* Overview Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
@@ -177,6 +189,12 @@ export function Statistics() {
           </p>
         )}
       </div>
+        </TabsContent>
+
+        <TabsContent value="advanced" className="mt-6">
+          <AdvancedStatistics />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
