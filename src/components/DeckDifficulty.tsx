@@ -123,9 +123,6 @@ export function DeckDifficulty({ deckStats }: DeckDifficultyProps) {
         </div>
       </div>
 
-      <div className="mt-3 text-xs text-muted-foreground">
-        <p>💡 Tip: Focus more time on difficult decks (red/orange) to improve overall performance.</p>
-      </div>
     </div>
   );
 }

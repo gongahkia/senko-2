@@ -86,9 +86,6 @@ export function RetentionCurve({ data }: RetentionCurveProps) {
         </LineChart>
       </ResponsiveContainer>
 
-      <div className="mt-3 text-xs text-muted-foreground">
-        <p>💡 Tip: The retention curve shows how well you remember cards over time. Regular review helps maintain high retention.</p>
-      </div>
     </div>
   );
 }
