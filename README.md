@@ -6,8 +6,8 @@ Memorise things faster.
 
 ## Stack
 
-* *Frontend*: [React](), [TypeScript]()
-* *Deploy*: [Github Actions](), [Github Pages]()
+* *Frontend*: [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
+* *Deploy*: [Github Actions](https://github.com/features/actions), [Github Pages](https://docs.github.com/en/pages)
 
 ## Usage
 
@@ -30,3 +30,4 @@ $ npm run build
 ## Other notes
 
 Also see [`senko`](https://github.com/gongahkia/senko).
+
