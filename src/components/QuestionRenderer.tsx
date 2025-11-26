@@ -39,17 +39,17 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   if (question.type === "flashcard") {
     return (
       <div className="space-y-4">
-        <div className="text-xl font-semibold">
+        <div className="text-lg sm:text-xl font-semibold break-words">
           <MathJax>{question.question}</MathJax>
         </div>
 
         {question.imageUrl && (
-          <img src={question.imageUrl} alt="Question" className="max-w-md mx-auto rounded" />
+          <img src={question.imageUrl} alt="Question" className="max-w-full w-full sm:max-w-md mx-auto rounded" />
         )}
 
         {mode === "answer-rating" && (
           <div className="mt-6 p-4 bg-muted rounded-lg">
-            <div className="text-lg">
+            <div className="text-base sm:text-lg break-words">
               <MathJax>{question.answer}</MathJax>
             </div>
           </div>
@@ -62,7 +62,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   if (question.type === "multiple-choice") {
     return (
       <div className="space-y-4">
-        <div className="text-xl font-semibold mb-4">
+        <div className="text-lg sm:text-xl font-semibold mb-4 break-words">
           <MathJax>{question.question}</MathJax>
         </div>
 
@@ -81,11 +81,13 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                   ? "default"
                   : "outline"
               }
-              className="w-full text-left justify-start h-auto py-3"
+              className="w-full text-left justify-start h-auto py-3 px-3 sm:px-4 break-words whitespace-normal"
               onClick={() => mode === "question" && handleMultipleChoiceSelect(option)}
               disabled={mode === "answer-rating"}
             >
-              <MathJax>{option}</MathJax>
+              <span className="block break-words">
+                <MathJax>{option}</MathJax>
+              </span>
             </Button>
           ))}
         </div>
@@ -103,17 +105,17 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   if (question.type === "true-false") {
     return (
       <div className="space-y-6">
-        <div className="text-xl font-semibold">
+        <div className="text-lg sm:text-xl font-semibold break-words">
           <MathJax>{question.question}</MathJax>
         </div>
 
-        <div className="flex gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
           <Button
             size="lg"
             variant={mode === "answer-rating" ? (question.answer === "True" ? "default" : "outline") : "outline"}
             onClick={() => mode === "question" && handleTrueFalseSelect("True")}
             disabled={mode === "answer-rating"}
-            className="min-w-[120px]"
+            className="w-full sm:w-auto sm:min-w-[120px]"
           >
             True
           </Button>
@@ -122,7 +124,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
             variant={mode === "answer-rating" ? (question.answer === "False" ? "default" : "outline") : "outline"}
             onClick={() => mode === "question" && handleTrueFalseSelect("False")}
             disabled={mode === "answer-rating"}
-            className="min-w-[120px]"
+            className="w-full sm:w-auto sm:min-w-[120px]"
           >
             False
           </Button>
@@ -141,7 +143,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   if (question.type === "fill-in-blank") {
     return (
       <div className="space-y-4">
-        <div className="text-xl font-semibold">
+        <div className="text-lg sm:text-xl font-semibold break-words">
           <MathJax>{question.question}</MathJax>
         </div>
 
@@ -152,9 +154,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
               placeholder={question.blanks && question.blanks.length > 1 ? "Separate answers with |" : "Type your answer"}
-              className="w-full p-3 border border-border rounded-lg bg-background text-foreground"
+              className="w-full p-3 text-sm sm:text-base border border-border rounded-lg bg-background text-foreground"
             />
-            <Button onClick={handleFillInBlankSubmit} className="w-full">
+            <Button onClick={handleFillInBlankSubmit} className="w-full py-5 sm:py-2">
               Submit Answer
             </Button>
           </>
@@ -163,7 +165,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
         {mode === "answer-rating" && (
           <div className="mt-4 p-4 bg-muted rounded-lg">
             <div className="text-sm font-semibold mb-2">Correct Answer(s):</div>
-            <div className="text-lg">
+            <div className="text-base sm:text-lg break-words">
               <MathJax>{question.answer}</MathJax>
             </div>
           </div>

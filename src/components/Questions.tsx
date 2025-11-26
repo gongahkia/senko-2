@@ -167,7 +167,7 @@ export function Questions({
                     <img
                       src={item.imageUrl}
                       alt="Question diagram"
-                      className="max-w-md rounded border"
+                      className="max-w-full w-full sm:max-w-md rounded border"
                     />
                   </div>
                 )}
