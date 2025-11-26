@@ -35,13 +35,18 @@ export function DeckDifficulty({ deckStats }: DeckDifficultyProps) {
     reviews: deck.totalReviews,
   }));
 
-  // Color based on difficulty (low rating = difficult = red, high rating = easy = green)
+  // Color based on difficulty using theme variables
+  // Low rating (difficult) = destructive, High rating (easy) = primary/accent
   const getColor = (rating: number): string => {
-    if (rating < 2) return 'hsl(0, 70%, 50%)'; // Red - Very Difficult
-    if (rating < 2.5) return 'hsl(25, 70%, 50%)'; // Orange - Difficult
-    if (rating < 3) return 'hsl(45, 70%, 50%)'; // Yellow - Moderate
-    if (rating < 3.5) return 'hsl(80, 60%, 45%)'; // Yellow-Green - Easy
-    return 'hsl(120, 50%, 40%)'; // Green - Very Easy
+    // Normalize rating from 0-4 scale to 0-1 scale
+    const normalized = rating / 4;
+
+    // Create gradient from destructive (difficult) to primary (easy) using theme colors
+    if (normalized < 0.25) return 'hsl(var(--destructive))'; // Very Difficult
+    if (normalized < 0.5) return 'hsl(var(--destructive) / 0.7)'; // Difficult
+    if (normalized < 0.625) return 'hsl(var(--muted-foreground))'; // Moderate
+    if (normalized < 0.875) return 'hsl(var(--primary) / 0.7)'; // Easy
+    return 'hsl(var(--primary))'; // Very Easy
   };
 
   return (
@@ -102,23 +107,23 @@ export function DeckDifficulty({ deckStats }: DeckDifficultyProps) {
       {/* Legend */}
       <div className="mt-3 flex flex-wrap gap-3 text-xs">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded" style={{ background: 'hsl(0, 70%, 50%)' }} />
-          <span className="text-muted-foreground">Very Difficult (&lt;2.0)</span>
+          <div className="w-3 h-3 rounded bg-destructive" />
+          <span className="text-muted-foreground">Very Difficult (&lt;1.0)</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded" style={{ background: 'hsl(25, 70%, 50%)' }} />
-          <span className="text-muted-foreground">Difficult (2.0-2.5)</span>
+          <div className="w-3 h-3 rounded" style={{ background: 'hsl(var(--destructive) / 0.7)' }} />
+          <span className="text-muted-foreground">Difficult (1.0-2.0)</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded" style={{ background: 'hsl(45, 70%, 50%)' }} />
-          <span className="text-muted-foreground">Moderate (2.5-3.0)</span>
+          <div className="w-3 h-3 rounded bg-muted-foreground" />
+          <span className="text-muted-foreground">Moderate (2.0-2.5)</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded" style={{ background: 'hsl(80, 60%, 45%)' }} />
-          <span className="text-muted-foreground">Easy (3.0-3.5)</span>
+          <div className="w-3 h-3 rounded" style={{ background: 'hsl(var(--primary) / 0.7)' }} />
+          <span className="text-muted-foreground">Easy (2.5-3.5)</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-3 rounded" style={{ background: 'hsl(120, 50%, 40%)' }} />
+          <div className="w-3 h-3 rounded bg-primary" />
           <span className="text-muted-foreground">Very Easy (&gt;3.5)</span>
         </div>
       </div>

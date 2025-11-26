@@ -1,4 +1,3 @@
-import { Clock, Zap, Target, TrendingUp } from 'lucide-react';
 import { StudyEfficiency } from '@/types';
 import { formatDuration, formatHour } from '@/lib/statistics';
 
