@@ -147,8 +147,7 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
           <div className="mb-4 sm:mb-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4">
               <div className="flex items-center gap-2 sm:gap-3">
-                <BookOpen className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">senko-2</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">せんこ 2</h1>
               </div>
               <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
                 <ImportExport

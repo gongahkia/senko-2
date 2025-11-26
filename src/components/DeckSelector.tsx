@@ -43,7 +43,6 @@ export function DeckSelector({
   return (
     <>
     <div className="flex items-center gap-2 w-full sm:w-auto">
-      <FolderOpen className="h-5 w-5 text-muted-foreground flex-shrink-0" />
 
       <Select value={currentDeckId || undefined} onValueChange={onSelectDeck}>
         <SelectTrigger className="w-full sm:w-[200px] min-w-0">

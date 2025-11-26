@@ -1,9 +1,0 @@
-Term	Definition
-Photosynthesis	The process by which plants convert sunlight into energy
-Mitochondria	The powerhouse of the cell
-DNA	Deoxyribonucleic acid - carries genetic information
-Osmosis	Movement of water across a semi-permeable membrane
-Enzyme	Biological catalyst that speeds up chemical reactions
-Respiration	Process of converting glucose into ATP
-Chloroplast	Organelle where photosynthesis occurs
-Nucleus	Control center of the cell containing DNA
