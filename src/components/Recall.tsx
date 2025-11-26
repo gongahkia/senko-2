@@ -129,7 +129,7 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
 
         {/* Content */}
         <div
-          className="flex flex-col h-full pt-12 sm:pt-10 cursor-pointer"
+          className="flex flex-col h-full pt-12 sm:pt-10 cursor-pointer overflow-y-auto"
           onClick={() => mode === "question" && handleFlipCard()}
           onTouchEnd={() => mode === "question" && handleFlipCard()}
         >
@@ -140,7 +140,7 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
 
           {/* Rating UI or Space prompt */}
           {mode === "answer-rating" ? (
-            <div className="mt-auto w-full pb-12 sm:pb-10">
+            <div className="mt-auto w-full pb-12 sm:pb-10 flex-shrink-0">
               <p className="mb-3 sm:mb-4 text-center text-sm sm:text-base text-muted-foreground">
                 How well did you know this?
               </p>
