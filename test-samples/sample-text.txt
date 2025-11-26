@@ -1,0 +1,22 @@
+What is HTTP? - Hypertext Transfer Protocol used for web communication
+
+What is REST? - Representational State Transfer, an architectural style for APIs
+
+What is JSON?: JavaScript Object Notation, a lightweight data format
+
+What is OAuth? | An open standard for access delegation
+
+What is a cookie?
+A small piece of data stored by the browser
+
+What is CORS?
+Cross-Origin Resource Sharing, a security feature in browsers
+
+1. What is DNS?
+Domain Name System - translates domain names to IP addresses
+
+2. What is TCP/IP?
+Transmission Control Protocol/Internet Protocol - foundation of internet communication
+
+3. What is SSL/TLS?
+Secure Sockets Layer/Transport Layer Security - protocols for secure communication
