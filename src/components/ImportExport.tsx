@@ -170,10 +170,10 @@ export function ImportExport({
             <Upload className="h-4 w-4" />
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-full sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Import Deck</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg sm:text-xl">Import Deck</DialogTitle>
+            <DialogDescription className="text-sm">
               Paste the exported deck JSON data below
             </DialogDescription>
           </DialogHeader>
@@ -181,18 +181,19 @@ export function ImportExport({
             placeholder='{"id": "deck-...", "name": "...", ...}'
             value={importData}
             onChange={(e) => setImportData(e.target.value)}
-            className="min-h-[300px] font-mono text-xs"
+            className="min-h-[200px] sm:min-h-[300px] font-mono text-xs"
           />
           <ValidationErrors errors={validationErrors} warnings={validationWarnings} />
-          <DialogFooter>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button
               variant="outline"
               onClick={() => setIsImportOpen(false)}
               disabled={isImporting}
+              className="w-full sm:w-auto"
             >
               Cancel
             </Button>
-            <Button onClick={handleImportDeck} disabled={isImporting}>
+            <Button onClick={handleImportDeck} disabled={isImporting} className="w-full sm:w-auto">
               {isImporting ? (
                 <>
                   <LoadingSpinner size="sm" className="mr-2" />
@@ -207,10 +208,10 @@ export function ImportExport({
       </Dialog>
 
       <Dialog open={isExportOpen} onOpenChange={setIsExportOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-full sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{exportType === "deck" ? "Export Deck" : "Export All Decks"}</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg sm:text-xl">{exportType === "deck" ? "Export Deck" : "Export All Decks"}</DialogTitle>
+            <DialogDescription className="text-sm">
               {exportType === "deck"
                 ? "Copy this deck data or download as a file to share or backup"
                 : "Copy all your decks or download as a file to backup your entire collection"}
@@ -219,13 +220,13 @@ export function ImportExport({
           <Textarea
             readOnly
             value={exportedData}
-            className="min-h-[300px] font-mono text-xs"
+            className="min-h-[200px] sm:min-h-[300px] font-mono text-xs"
           />
-          <DialogFooter>
-            <Button variant="outline" onClick={handleCopyToClipboard}>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={handleCopyToClipboard} className="w-full sm:w-auto">
               Copy to Clipboard
             </Button>
-            <Button onClick={handleDownload}>Download JSON</Button>
+            <Button onClick={handleDownload} className="w-full sm:w-auto">Download JSON</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
