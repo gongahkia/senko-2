@@ -62,6 +62,25 @@ export function useKeyboardBindings({
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Check if user is typing in an input field, textarea, or contenteditable element
+      const target = event.target as HTMLElement;
+      const isTyping =
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.isContentEditable;
+
+      // If user is typing, only allow global shortcuts with modifiers (like Ctrl+Z)
+      // but block all other shortcuts (Space, 1-4, navigation keys, etc.)
+      if (isTyping) {
+        // Allow Ctrl+Z/Cmd+Z for undo even when typing
+        if ((event.ctrlKey || event.metaKey) && event.key === "z" && !event.shiftKey && onUndo) {
+          // Don't prevent default here - let the browser handle undo in input fields
+          return;
+        }
+        // Block all other keyboard shortcuts when typing
+        return;
+      }
+
       // Global shortcuts (work in all modes)
       // Undo with Ctrl+Z (Windows/Linux) or Cmd+Z (Mac)
       if ((event.ctrlKey || event.metaKey) && event.key === "z" && !event.shiftKey && onUndo) {
