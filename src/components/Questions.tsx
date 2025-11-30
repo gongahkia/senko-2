@@ -3,11 +3,11 @@ import { useToastContext } from "@/contexts/ToastContext";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MathJax } from "better-react-mathjax";
 import { QuestionItem } from "@/types";
 import { parseQuestions, imageToBase64, isValidImageFile } from "@/lib/utils";
 import { Upload, Search, X } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { MarkdownText } from "@/components/MarkdownText";
 
 interface QuestionsProps {
   deckId: string;
@@ -154,13 +154,13 @@ export function Questions({
                 className="border rounded-md p-3 sm:p-4 bg-card text-card-foreground"
               >
                 <p className="font-medium text-sm sm:text-base">Question {index + 1}:</p>
-                <p className="ml-3 sm:ml-4 mt-1 whitespace-pre-wrap text-sm sm:text-base">
-                  <MathJax dynamic>{item.question}</MathJax>
-                </p>
+                <MarkdownText className="ml-3 sm:ml-4 mt-1 whitespace-pre-wrap text-sm sm:text-base">
+                  {item.question}
+                </MarkdownText>
                 <p className="font-medium mt-2 text-sm sm:text-base">Answer:</p>
-                <p className="ml-3 sm:ml-4 mt-1 whitespace-pre-wrap text-sm sm:text-base">
-                  <MathJax dynamic>{item.answer}</MathJax>
-                </p>
+                <MarkdownText className="ml-3 sm:ml-4 mt-1 whitespace-pre-wrap text-sm sm:text-base">
+                  {item.answer}
+                </MarkdownText>
 
                 {item.imageUrl && (
                   <div className="mt-2">

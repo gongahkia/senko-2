@@ -43,9 +43,40 @@ export function parseQuestions(inputText: string): QuestionItem[] {
 
   const questions: QuestionItem[] = [];
 
-  // Split by === delimiter
-  const sections = inputText.split(/\n===\n/);
+  // Split by === delimiter first
+  const rawSections = inputText.split(/\s*===\s*/);
 
+  // Reconstruct proper Q&A pairs by extracting embedded questions
+  const sections: string[] = [];
+
+  for (let i = 0; i < rawSections.length; i++) {
+    const section = rawSections[i].trim();
+    if (!section) continue;
+
+    // Check if this section contains multiple parts separated by blank lines
+    const parts = section.split(/\n\n+/);
+
+    if (parts.length > 1 && i % 2 === 1) {
+      // This is an answer section with embedded next question
+      // parts[0...n-1] = answer content
+      // parts[n] = next question (if it ends with ?)
+      const lastPart = parts[parts.length - 1].trim();
+
+      if (lastPart.endsWith('?')) {
+        // Last part is a question - split it off
+        sections.push(parts.slice(0, -1).join('\n\n').trim());  // Answer
+        sections.push(lastPart);  // Next question
+      } else {
+        // All parts are answer
+        sections.push(section);
+      }
+    } else {
+      // This is a standalone question or answer without embedded content
+      sections.push(section);
+    }
+  }
+
+  // Now pair them up: sections[0,1], sections[2,3], etc.
   for (let i = 0; i < sections.length - 1; i += 2) {
     if (i + 1 >= sections.length) break;
 
@@ -116,4 +147,36 @@ export function isValidImageFile(file: File): boolean {
   const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
   const maxSize = 5 * 1024 * 1024; // 5MB
   return validTypes.includes(file.type) && file.size <= maxSize;
+}
+
+// Parse and render markdown formatting
+export function parseMarkdown(text: string): string {
+  if (!text) return '';
+
+  let result = text;
+
+  // Handle numbered lists (must come before other processing to preserve structure)
+  result = result.replace(/^(\d+)\.\s+(.+)$/gm, '<li class="ml-4 list-decimal list-inside">$2</li>');
+
+  // Handle bulleted lists (lines starting with - or *)
+  result = result.replace(/^[-*]\s+(.+)$/gm, '<li class="ml-4 list-disc list-inside">$1</li>');
+
+  // Wrap consecutive <li> tags in <ul> or <ol>
+  result = result.replace(/(<li class="ml-4 list-disc list-inside">.*?<\/li>(\n|$))+/g, (match) => {
+    return '<ul class="my-2 space-y-1">' + match + '</ul>';
+  });
+  result = result.replace(/(<li class="ml-4 list-decimal list-inside">.*?<\/li>(\n|$))+/g, (match) => {
+    return '<ol class="my-2 space-y-1">' + match + '</ol>';
+  });
+
+  // Handle bold + italic (***text***)
+  result = result.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+
+  // Handle bold (**text**)
+  result = result.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+  // Handle italic (*text*)
+  result = result.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+  return result;
 }

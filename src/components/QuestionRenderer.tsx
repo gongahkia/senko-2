@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { MathJax } from "better-react-mathjax";
 import { Button } from "@/components/ui/button";
 import { QuestionItem } from "@/types";
+import { MarkdownText } from "@/components/MarkdownText";
 
 interface QuestionRendererProps {
   question: QuestionItem;
@@ -39,9 +39,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   if (question.type === "flashcard") {
     return (
       <div className="space-y-4">
-        <div className="text-lg sm:text-xl font-semibold break-words">
-          <MathJax>{question.question}</MathJax>
-        </div>
+        <MarkdownText className="text-lg sm:text-xl font-semibold break-words">
+          {question.question}
+        </MarkdownText>
 
         {question.imageUrl && (
           <img src={question.imageUrl} alt="Question" className="max-w-full w-full sm:max-w-md mx-auto rounded" />
@@ -49,9 +49,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
 
         {mode === "answer-rating" && (
           <div className="mt-6 p-4 bg-muted rounded-lg">
-            <div className="text-base sm:text-lg break-words">
-              <MathJax>{question.answer}</MathJax>
-            </div>
+            <MarkdownText className="text-base sm:text-lg break-words">
+              {question.answer}
+            </MarkdownText>
           </div>
         )}
       </div>
@@ -62,9 +62,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   if (question.type === "multiple-choice") {
     return (
       <div className="space-y-4">
-        <div className="text-lg sm:text-xl font-semibold mb-4 break-words">
-          <MathJax>{question.question}</MathJax>
-        </div>
+        <MarkdownText className="text-lg sm:text-xl font-semibold mb-4 break-words">
+          {question.question}
+        </MarkdownText>
 
         <div className="space-y-2">
           {question.options?.map((option, idx) => (
@@ -85,9 +85,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
               onClick={() => mode === "question" && handleMultipleChoiceSelect(option)}
               disabled={mode === "answer-rating"}
             >
-              <span className="block break-words">
-                <MathJax>{option}</MathJax>
-              </span>
+              <MarkdownText className="block break-words">
+                {option}
+              </MarkdownText>
             </Button>
           ))}
         </div>
@@ -105,9 +105,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   if (question.type === "true-false") {
     return (
       <div className="space-y-6">
-        <div className="text-lg sm:text-xl font-semibold break-words">
-          <MathJax>{question.question}</MathJax>
-        </div>
+        <MarkdownText className="text-lg sm:text-xl font-semibold break-words">
+          {question.question}
+        </MarkdownText>
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
           <Button
@@ -143,9 +143,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   if (question.type === "fill-in-blank") {
     return (
       <div className="space-y-4">
-        <div className="text-lg sm:text-xl font-semibold break-words">
-          <MathJax>{question.question}</MathJax>
-        </div>
+        <MarkdownText className="text-lg sm:text-xl font-semibold break-words">
+          {question.question}
+        </MarkdownText>
 
         {mode === "question" && (
           <>
@@ -165,9 +165,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
         {mode === "answer-rating" && (
           <div className="mt-4 p-4 bg-muted rounded-lg">
             <div className="text-sm font-semibold mb-2">Correct Answer(s):</div>
-            <div className="text-base sm:text-lg break-words">
-              <MathJax>{question.answer}</MathJax>
-            </div>
+            <MarkdownText className="text-base sm:text-lg break-words">
+              {question.answer}
+            </MarkdownText>
           </div>
         )}
       </div>
