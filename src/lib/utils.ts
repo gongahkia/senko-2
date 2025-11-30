@@ -49,50 +49,42 @@ export function parseQuestions(inputText: string): QuestionItem[] {
     .map(s => s.trim())
     .filter(s => s.length > 0);
 
-  // Process all sections to properly extract Q&A pairs
-  // The format is: Q1 === A1\n\nQ2 === A2\n\nQ3 === A3...
+  // Process sections to extract Q&A pairs
+  // Format: Q1 === A1\n\nQ2 === A2\n\nQ3 === ...
+  // After splitting by ===:
+  //   rawSections[0] = Q1
+  //   rawSections[1] = A1\n\nQ2
+  //   rawSections[2] = A2\n\nQ3
+  //   ...
   const processedSections: string[] = [];
 
-  let i = 0;
-  while (i < rawSections.length) {
+  for (let i = 0; i < rawSections.length; i++) {
     const section = rawSections[i];
 
-    // First section is always a question
     if (i === 0) {
+      // First section is always just a question
       processedSections.push(section);
-      i++;
-      continue;
-    }
+    } else {
+      // All subsequent sections contain: Answer\n\nNextQuestion
+      // Split by double newlines to separate answer from next question
+      const parts = section.split(/\n\n+/);
 
-    // All other sections are answers (potentially with embedded next question)
-    // Split by double newlines to find paragraphs
-    const parts = section.split(/\n\n+/);
+      if (parts.length >= 2) {
+        // Last part is likely the next question, everything else is the answer
+        const lastPart = parts[parts.length - 1].trim();
+        const answerParts = parts.slice(0, -1);
+        const answer = answerParts.join('\n\n').trim();
 
-    if (parts.length > 1) {
-      // Check if last part looks like a question
-      const lastPart = parts[parts.length - 1].trim();
-
-      const isQuestion = lastPart.endsWith('?') ||
-                        /^(What|How|Why|When|Where|Who|Which|Define|Describe|Explain|List|State|Differentiate|According to|In the context)/i.test(lastPart);
-
-      if (isQuestion) {
-        // Split: everything except last part is the answer
-        const answer = parts.slice(0, -1).join('\n\n').trim();
         if (answer) {
           processedSections.push(answer);
         }
-        // Last part is the next question
+        // Add the next question (last part)
         processedSections.push(lastPart);
       } else {
-        // All parts are the answer
+        // Only one part - this is just the final answer with no following question
         processedSections.push(section);
       }
-    } else {
-      // Single paragraph - could be just an answer, or just a question
-      processedSections.push(section);
     }
-
-    i++;
   }
 
   // Now pair them up: processedSections[0,1], processedSections[2,3], etc.
