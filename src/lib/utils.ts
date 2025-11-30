@@ -43,45 +43,64 @@ export function parseQuestions(inputText: string): QuestionItem[] {
 
   const questions: QuestionItem[] = [];
 
-  // Split by === delimiter first
-  const rawSections = inputText.split(/\s*===\s*/);
+  // Split by === delimiter
+  const rawSections = inputText
+    .split(/\s*===\s*/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
 
-  // Reconstruct proper Q&A pairs by extracting embedded questions
-  const sections: string[] = [];
+  // Process all sections to properly extract Q&A pairs
+  // The format is: Q1 === A1\n\nQ2 === A2\n\nQ3 === A3...
+  const processedSections: string[] = [];
 
-  for (let i = 0; i < rawSections.length; i++) {
-    const section = rawSections[i].trim();
-    if (!section) continue;
+  let i = 0;
+  while (i < rawSections.length) {
+    const section = rawSections[i];
 
-    // Check if this section contains multiple parts separated by blank lines
+    // First section is always a question
+    if (i === 0) {
+      processedSections.push(section);
+      i++;
+      continue;
+    }
+
+    // All other sections are answers (potentially with embedded next question)
+    // Split by double newlines to find paragraphs
     const parts = section.split(/\n\n+/);
 
-    if (parts.length > 1 && i % 2 === 1) {
-      // This is an answer section with embedded next question
-      // parts[0...n-1] = answer content
-      // parts[n] = next question (if it ends with ?)
+    if (parts.length > 1) {
+      // Check if last part looks like a question
       const lastPart = parts[parts.length - 1].trim();
 
-      if (lastPart.endsWith('?')) {
-        // Last part is a question - split it off
-        sections.push(parts.slice(0, -1).join('\n\n').trim());  // Answer
-        sections.push(lastPart);  // Next question
+      const isQuestion = lastPart.endsWith('?') ||
+                        /^(What|How|Why|When|Where|Who|Which|Define|Describe|Explain|List|State|Differentiate|According to|In the context)/i.test(lastPart);
+
+      if (isQuestion) {
+        // Split: everything except last part is the answer
+        const answer = parts.slice(0, -1).join('\n\n').trim();
+        if (answer) {
+          processedSections.push(answer);
+        }
+        // Last part is the next question
+        processedSections.push(lastPart);
       } else {
-        // All parts are answer
-        sections.push(section);
+        // All parts are the answer
+        processedSections.push(section);
       }
     } else {
-      // This is a standalone question or answer without embedded content
-      sections.push(section);
+      // Single paragraph - could be just an answer, or just a question
+      processedSections.push(section);
     }
+
+    i++;
   }
 
-  // Now pair them up: sections[0,1], sections[2,3], etc.
-  for (let i = 0; i < sections.length - 1; i += 2) {
-    if (i + 1 >= sections.length) break;
+  // Now pair them up: processedSections[0,1], processedSections[2,3], etc.
+  for (let i = 0; i < processedSections.length - 1; i += 2) {
+    if (i + 1 >= processedSections.length) break;
 
-    const questionText = sections[i].trim();
-    const answerText = sections[i + 1].trim();
+    const questionText = processedSections[i].trim();
+    const answerText = processedSections[i + 1].trim();
 
     if (!questionText || !answerText) continue;
 
