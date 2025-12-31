@@ -103,8 +103,23 @@ export function parseQuestions(inputText: string): QuestionItem[] {
     let options: string[] | undefined;
     let blanks: string[] | undefined;
 
-    // Multiple choice: Check for [MC] prefix and options
-    if (questionText.startsWith("[MC]")) {
+    const isNewMC = /^Question\s*\d+:/.test(questionText) && /\n[A-Z]\./.test(questionText);
+
+    if (isNewMC) {
+      type = "multiple-choice";
+      const lines = questionText.split('\n').filter(line => line.trim() !== '');
+      question = lines[0].trim();
+      options = lines.slice(1).map(line => line.trim());
+
+      const correctOptionPrefix = answerText.trim().toUpperCase() + ".";
+      const correctOption = options.find(opt => opt.toUpperCase().startsWith(correctOptionPrefix));
+
+      if (correctOption) {
+        answer = correctOption;
+      } else {
+        answer = answerText;
+      }
+    } else if (questionText.startsWith("[MC]")) {
       type = "multiple-choice";
       question = questionText.substring(4).trim();
 

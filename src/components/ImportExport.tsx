@@ -74,7 +74,7 @@ export function ImportExport({
         const deckValidation = validateDeckStructure(data);
         setValidationErrors(deckValidation.errors);
         setValidationWarnings(deckValidation.warnings);
-      } catch (e) {
+      } catch {
         setValidationErrors(["Failed to parse JSON"]);
         setValidationWarnings([]);
       }
