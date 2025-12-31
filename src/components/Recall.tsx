@@ -140,7 +140,7 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
 
           {/* Rating UI or Space prompt */}
           {mode === "answer-rating" ? (
-            <div className="mt-auto w-full pb-12 sm:pb-10 flex-shrink-0">
+            <div className="mt-auto pt-6 w-full pb-12 sm:pb-10 flex-shrink-0">
               <p className="mb-3 sm:mb-4 text-center text-sm sm:text-base text-muted-foreground">
                 How well did you know this?
               </p>
@@ -179,7 +179,7 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
               </div>
             </div>
           ) : (
-            <div className="flex-grow flex items-center justify-center">
+            <div className="flex-grow flex items-center justify-center mt-4">
               <div className="text-center text-muted-foreground text-sm sm:text-base">
                 <div className="mb-2 sm:hidden">Tap anywhere to reveal</div>
                 <div className="hidden sm:block">
