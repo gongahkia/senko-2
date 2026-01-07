@@ -88,7 +88,17 @@ export type ColorScheme =
   | "everforest-dark"
   | "rose-pine"
   | "rose-pine-moon"
-  | "kanagawa";
+  | "kanagawa"
+  | "github-light"
+  | "github-dark"
+  | "night-owl"
+  | "palenight"
+  | "synthwave-84"
+  | "horizon"
+  | "andromeda"
+  | "cobalt2"
+  | "shades-of-purple"
+  | "oceanic-next";
 
 export type AppSettings = {
   colorScheme: ColorScheme;

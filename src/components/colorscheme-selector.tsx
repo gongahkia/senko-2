@@ -33,6 +33,16 @@ const colorSchemes: { value: ColorScheme; label: string }[] = [
   { value: "rose-pine", label: "Rosé Pine" },
   { value: "rose-pine-moon", label: "Rosé Pine Moon" },
   { value: "kanagawa", label: "Kanagawa" },
+  { value: "github-light", label: "GitHub Light" },
+  { value: "github-dark", label: "GitHub Dark" },
+  { value: "night-owl", label: "Night Owl" },
+  { value: "palenight", label: "Palenight" },
+  { value: "synthwave-84", label: "Synthwave '84" },
+  { value: "horizon", label: "Horizon" },
+  { value: "andromeda", label: "Andromeda" },
+  { value: "cobalt2", label: "Cobalt2" },
+  { value: "shades-of-purple", label: "Shades of Purple" },
+  { value: "oceanic-next", label: "Oceanic Next" },
 ];
 
 export function ColorSchemeSelector() {

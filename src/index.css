@@ -560,3 +560,223 @@
   --input: 225 12% 26%;
   --ring: 196 50% 55%;
 }
+
+/* GitHub Light */
+.theme-github-light {
+  --background: 0 0% 100%;
+  --foreground: 210 12% 16%;
+  --card: 210 17% 98%;
+  --card-foreground: 210 12% 16%;
+  --popover: 210 17% 98%;
+  --popover-foreground: 210 12% 16%;
+  --primary: 212 92% 45%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 14% 93%;
+  --secondary-foreground: 210 12% 16%;
+  --muted: 210 14% 93%;
+  --muted-foreground: 210 9% 46%;
+  --accent: 212 92% 45%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 72% 51%;
+  --border: 210 14% 89%;
+  --input: 210 14% 89%;
+  --ring: 212 92% 45%;
+}
+
+/* GitHub Dark */
+.theme-github-dark {
+  --background: 215 21% 11%;
+  --foreground: 210 17% 82%;
+  --card: 215 19% 14%;
+  --card-foreground: 210 17% 82%;
+  --popover: 215 19% 14%;
+  --popover-foreground: 210 17% 82%;
+  --primary: 212 92% 58%;
+  --primary-foreground: 215 21% 11%;
+  --secondary: 215 14% 20%;
+  --secondary-foreground: 210 17% 82%;
+  --muted: 215 14% 20%;
+  --muted-foreground: 210 10% 53%;
+  --accent: 212 92% 58%;
+  --accent-foreground: 215 21% 11%;
+  --destructive: 0 72% 63%;
+  --border: 215 14% 20%;
+  --input: 215 14% 20%;
+  --ring: 212 92% 58%;
+}
+
+/* Night Owl */
+.theme-night-owl {
+  --background: 207 95% 8%;
+  --foreground: 199 18% 81%;
+  --card: 206 80% 11%;
+  --card-foreground: 199 18% 81%;
+  --popover: 206 80% 11%;
+  --popover-foreground: 199 18% 81%;
+  --primary: 180 100% 75%;
+  --primary-foreground: 207 95% 8%;
+  --secondary: 207 50% 16%;
+  --secondary-foreground: 199 18% 81%;
+  --muted: 207 50% 16%;
+  --muted-foreground: 199 12% 55%;
+  --accent: 286 60% 67%;
+  --accent-foreground: 207 95% 8%;
+  --destructive: 1 90% 64%;
+  --border: 207 50% 16%;
+  --input: 207 50% 16%;
+  --ring: 180 100% 75%;
+}
+
+/* Palenight */
+.theme-palenight {
+  --background: 229 30% 21%;
+  --foreground: 228 22% 80%;
+  --card: 229 28% 25%;
+  --card-foreground: 228 22% 80%;
+  --popover: 229 28% 25%;
+  --popover-foreground: 228 22% 80%;
+  --primary: 261 51% 73%;
+  --primary-foreground: 229 30% 21%;
+  --secondary: 229 20% 32%;
+  --secondary-foreground: 228 22% 80%;
+  --muted: 229 20% 32%;
+  --muted-foreground: 228 15% 55%;
+  --accent: 176 79% 63%;
+  --accent-foreground: 229 30% 21%;
+  --destructive: 353 85% 69%;
+  --border: 229 20% 32%;
+  --input: 229 20% 32%;
+  --ring: 261 51% 73%;
+}
+
+/* Synthwave '84 */
+.theme-synthwave-84 {
+  --background: 263 46% 13%;
+  --foreground: 300 100% 95%;
+  --card: 263 40% 17%;
+  --card-foreground: 300 100% 95%;
+  --popover: 263 40% 17%;
+  --popover-foreground: 300 100% 95%;
+  --primary: 321 90% 51%;
+  --primary-foreground: 263 46% 13%;
+  --secondary: 263 30% 25%;
+  --secondary-foreground: 300 100% 95%;
+  --muted: 263 30% 25%;
+  --muted-foreground: 280 30% 60%;
+  --accent: 177 100% 50%;
+  --accent-foreground: 263 46% 13%;
+  --destructive: 0 100% 67%;
+  --border: 263 30% 25%;
+  --input: 263 30% 25%;
+  --ring: 321 90% 51%;
+}
+
+/* Horizon */
+.theme-horizon {
+  --background: 228 24% 12%;
+  --foreground: 30 17% 90%;
+  --card: 228 20% 16%;
+  --card-foreground: 30 17% 90%;
+  --popover: 228 20% 16%;
+  --popover-foreground: 30 17% 90%;
+  --primary: 337 70% 65%;
+  --primary-foreground: 228 24% 12%;
+  --secondary: 228 15% 24%;
+  --secondary-foreground: 30 17% 90%;
+  --muted: 228 15% 24%;
+  --muted-foreground: 225 10% 53%;
+  --accent: 25 90% 66%;
+  --accent-foreground: 228 24% 12%;
+  --destructive: 357 80% 65%;
+  --border: 228 15% 24%;
+  --input: 228 15% 24%;
+  --ring: 337 70% 65%;
+}
+
+/* Andromeda */
+.theme-andromeda {
+  --background: 250 20% 16%;
+  --foreground: 220 14% 85%;
+  --card: 250 18% 20%;
+  --card-foreground: 220 14% 85%;
+  --popover: 250 18% 20%;
+  --popover-foreground: 220 14% 85%;
+  --primary: 177 68% 60%;
+  --primary-foreground: 250 20% 16%;
+  --secondary: 250 12% 28%;
+  --secondary-foreground: 220 14% 85%;
+  --muted: 250 12% 28%;
+  --muted-foreground: 220 10% 55%;
+  --accent: 326 78% 68%;
+  --accent-foreground: 250 20% 16%;
+  --destructive: 356 75% 65%;
+  --border: 250 12% 28%;
+  --input: 250 12% 28%;
+  --ring: 177 68% 60%;
+}
+
+/* Cobalt2 */
+.theme-cobalt2 {
+  --background: 214 84% 14%;
+  --foreground: 48 100% 67%;
+  --card: 214 70% 18%;
+  --card-foreground: 48 100% 67%;
+  --popover: 214 70% 18%;
+  --popover-foreground: 48 100% 67%;
+  --primary: 48 100% 67%;
+  --primary-foreground: 214 84% 14%;
+  --secondary: 214 50% 25%;
+  --secondary-foreground: 48 100% 67%;
+  --muted: 214 50% 25%;
+  --muted-foreground: 200 30% 55%;
+  --accent: 194 100% 58%;
+  --accent-foreground: 214 84% 14%;
+  --destructive: 1 80% 56%;
+  --border: 214 50% 25%;
+  --input: 214 50% 25%;
+  --ring: 48 100% 67%;
+}
+
+/* Shades of Purple */
+.theme-shades-of-purple {
+  --background: 260 50% 16%;
+  --foreground: 60 30% 96%;
+  --card: 260 45% 20%;
+  --card-foreground: 60 30% 96%;
+  --popover: 260 45% 20%;
+  --popover-foreground: 60 30% 96%;
+  --primary: 280 100% 70%;
+  --primary-foreground: 260 50% 16%;
+  --secondary: 260 30% 28%;
+  --secondary-foreground: 60 30% 96%;
+  --muted: 260 30% 28%;
+  --muted-foreground: 260 20% 60%;
+  --accent: 179 100% 65%;
+  --accent-foreground: 260 50% 16%;
+  --destructive: 0 100% 67%;
+  --border: 260 30% 28%;
+  --input: 260 30% 28%;
+  --ring: 280 100% 70%;
+}
+
+/* Oceanic Next */
+.theme-oceanic-next {
+  --background: 200 20% 17%;
+  --foreground: 180 7% 75%;
+  --card: 200 18% 21%;
+  --card-foreground: 180 7% 75%;
+  --popover: 200 18% 21%;
+  --popover-foreground: 180 7% 75%;
+  --primary: 176 50% 55%;
+  --primary-foreground: 200 20% 17%;
+  --secondary: 200 12% 28%;
+  --secondary-foreground: 180 7% 75%;
+  --muted: 200 12% 28%;
+  --muted-foreground: 180 5% 50%;
+  --accent: 40 100% 70%;
+  --accent-foreground: 200 20% 17%;
+  --destructive: 0 65% 58%;
+  --border: 200 12% 28%;
+  --input: 200 12% 28%;
+  --ring: 176 50% 55%;
+}

@@ -229,6 +229,20 @@ export function parseMarkdown(text: string): string {
 
   let result = text;
 
+  // Fix underscore blanks inside LaTeX that would be interpreted as subscripts
+  // Replace ___ (3+ underscores) with \text{___} inside $...$ blocks
+  result = result.replace(/\$([^$]+)\$/g, (_match, content) => {
+    // Replace consecutive underscores with escaped version or placeholder
+    const fixed = content.replace(/_{2,}/g, (underscores: string) => `\\text{${underscores}}`);
+    return `$${fixed}$`;
+  });
+  
+  // Same for display math $$...$$
+  result = result.replace(/\$\$([^$]+)\$\$/g, (_match, content) => {
+    const fixed = content.replace(/_{2,}/g, (underscores: string) => `\\text{${underscores}}`);
+    return `$$${fixed}$$`;
+  });
+
   // Handle numbered lists (must come before other processing to preserve structure)
   result = result.replace(/^(\d+)\.\s+(.+)$/gm, '<li class="ml-4 list-decimal list-inside">$2</li>');
 

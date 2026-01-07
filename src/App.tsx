@@ -45,6 +45,18 @@ const mathJaxConfig = {
   options: {
     skipHtmlTags: ["script", "noscript", "style", "textarea", "pre", "code"],
     enableMenu: false,
+    renderActions: {
+      addMenu: [],
+      checkLoading: [],
+    },
+    ignoreHtmlClass: 'tex2jax_ignore',
+    processHtmlClass: 'tex2jax_process',
+  },
+  startup: {
+    typeset: false,
+  },
+  loader: {
+    load: ['[tex]/noerrors'],
   },
 };
 
