@@ -11,14 +11,6 @@ const DEFAULT_SETTINGS: AppSettings = {
   colorScheme: "default-light",
   autoPlayMode: false,
   soundEnabled: false,
-  defaultStudyMode: "normal",
-  pomodoroSettings: {
-    workDuration: 25,
-    breakDuration: 5,
-  },
-  sprintSettings: {
-    timePerCard: 30,
-  },
 };
 
 const DEFAULT_APP_DATA: AppData = {

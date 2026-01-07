@@ -102,14 +102,6 @@ export type AppSettings = {
   colorScheme: ColorScheme;
   autoPlayMode: boolean;
   soundEnabled: boolean;
-  defaultStudyMode: StudyMode;
-  pomodoroSettings: {
-    workDuration: number; // in minutes
-    breakDuration: number;
-  };
-  sprintSettings: {
-    timePerCard: number; // in seconds
-  };
 };
 
 export type AppData = {
