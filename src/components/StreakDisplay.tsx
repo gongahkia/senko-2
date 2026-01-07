@@ -50,7 +50,7 @@ export function StreakDisplay({ streakData }: StreakDisplayProps) {
         )}
         {currentStreak >= 7 && (
           <p className="text-xs text-orange-600 dark:text-orange-400 mt-2 font-medium">
-            Amazing consistency! 🔥
+            Amazing consistency!
           </p>
         )}
       </div>
@@ -80,7 +80,7 @@ export function StreakDisplay({ streakData }: StreakDisplayProps) {
         )}
         {longestStreak > 0 && currentStreak === longestStreak && (
           <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2 font-medium">
-            You're at your peak! 🏆
+            You're at your peak!
           </p>
         )}
         {longestStreak > 0 && currentStreak < longestStreak && (

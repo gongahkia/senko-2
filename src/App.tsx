@@ -492,7 +492,7 @@ ANSWERS: A, C, E`
                     <div className="space-y-4 sm:space-y-5">
                       <div>
                         <h4 className="font-semibold mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
-                          📝 Question Formats
+                          Question Formats
                         </h4>
                         <p className="text-xs sm:text-sm text-muted-foreground mb-3">
                           Click on a format to see examples and copy AI prompts:
@@ -681,7 +681,7 @@ ANSWERS: A, C, E`
           {/* Footer */}
           <footer className="mt-12 pt-8 pb-4 border-t border-border text-center text-sm text-muted-foreground">
             <p>
-              Made with ❤️ by{" "}
+              Made by{" "}
               <a
                 href="https://gabrielongzm.com"
                 target="_blank"

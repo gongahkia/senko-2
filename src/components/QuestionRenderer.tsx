@@ -459,7 +459,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                           {idx + 1}
                         </span>
                         <span className={isCorrect ? '' : 'text-muted-foreground'}>{userAnswer || '(empty)'}</span>
-                        {isCorrect && <span className="text-green-500">✓</span>}
+                        {isCorrect && <span className="text-green-500 font-bold">OK</span>}
                       </div>
                     );
                   })}
@@ -609,7 +609,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                         <MarkdownText className={isCorrect ? '' : 'text-muted-foreground'}>
                           {userAnswer || '(not answered)'}
                         </MarkdownText>
-                        {isCorrect && <span className="text-green-500">✓</span>}
+                        {isCorrect && <span className="text-green-500 font-bold">OK</span>}
                       </div>
                     );
                   })}
@@ -729,7 +729,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                         </span>
                         <span className={isCorrectPosition ? '' : 'text-muted-foreground'}>{item}</span>
                         {isCorrectPosition && (
-                          <span className="text-green-500">✓</span>
+                          <span className="text-green-500 font-bold">OK</span>
                         )}
                       </div>
                     );
@@ -778,7 +778,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
               >
                 <div className="flex items-center gap-2">
                   <div className={`w-4 h-4 border rounded flex items-center justify-center ${isSelected ? 'bg-primary-foreground' : ''}`}>
-                    {isSelected && <span className="text-xs">✓</span>}
+                    {isSelected && <span className="text-xs font-bold">x</span>}
                   </div>
                   <MarkdownText className="block break-words">
                     {option}
