@@ -3,18 +3,14 @@ import { Button } from "@/components/ui/button";
 import { QuestionRenderer } from "@/components/QuestionRenderer";
 import { useStudySession } from "@/hooks/useStudySession";
 import { useKeyboardBindings } from "@/hooks/useKeyboardBindings";
-import { QuestionItem, StudyMode } from "@/types";
-
-type KeyboardMode = "default" | "vim" | "emacs";
+import { QuestionItem } from "@/types";
 
 interface RecallProps {
   deckId: string;
   questions: QuestionItem[];
-  studyMode: StudyMode;
-  keyboardMode: KeyboardMode;
 }
 
-export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
+export function Recall({ deckId, questions }: RecallProps) {
   const [mode, setMode] = useState<"question" | "answer-rating">("question");
 
   const {
@@ -45,7 +41,6 @@ export function Recall({ deckId, questions, keyboardMode }: RecallProps) {
 
   // Keyboard bindings
   useKeyboardBindings({
-    mode: keyboardMode,
     onFlipCard: handleFlipCard,
     onRate: onRating,
     onUndo: canUndo ? undoLastRating : undefined,

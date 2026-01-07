@@ -13,11 +13,9 @@ const Settings = lazy(() => import("@/components/Settings"));
 import { MathJaxContext } from "better-react-mathjax";
 import { useDecks } from "@/hooks/useDecks";
 import { useKeyboardBindings } from "@/hooks/useKeyboardBindings";
-import { StudyMode, QuestionItem } from "@/types";
+import { QuestionItem } from "@/types";
 import { BookOpen, HelpCircle, Copy, Check, Sparkles, Search, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
-
-type KeyboardMode = "default" | "vim" | "emacs";
 import {
   Dialog,
   DialogContent,
@@ -71,8 +69,6 @@ function App() {
     setCurrentDeckId,
   } = useDecks();
 
-  const [studyMode, setStudyMode] = useState<StudyMode>("normal");
-  const [keyboardMode, setKeyboardMode] = useState<KeyboardMode>("default");
   const [currentTab, setCurrentTab] = useState<"recall" | "questions" | "stats">("recall");
   const [refreshKey, setRefreshKey] = useState(0);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
@@ -108,7 +104,6 @@ function App() {
 
   // Global keyboard bindings for tab navigation
   useKeyboardBindings({
-    mode: keyboardMode,
     onNavigate: handleNavigate,
     enabled: !!currentDeck,
   });
@@ -639,12 +634,7 @@ ANSWERS: A, C, E`
               </Dialog>
 
               <Suspense fallback={<LoadingSpinner />}>
-                <Settings
-                  studyMode={studyMode}
-                  onStudyModeChange={setStudyMode}
-                  keyboardMode={keyboardMode}
-                  onKeyboardModeChange={setKeyboardMode}
-                />
+                <Settings />
               </Suspense>
               </div>
             </div>
@@ -715,8 +705,6 @@ ANSWERS: A, C, E`
                     key={`${currentDeckId}-${refreshKey}`}
                     deckId={currentDeck.id}
                     questions={currentDeck.questions}
-                    studyMode={studyMode}
-                    keyboardMode={keyboardMode}
                   />
                 </Suspense>
               </TabsContent>

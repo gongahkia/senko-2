@@ -62,8 +62,6 @@ export type StudySession = {
   cardReviews?: CardReview[]; // Individual card reviews with timestamps
 };
 
-export type StudyMode = "normal" | "pomodoro" | "sprint" | "zen";
-
 export type ColorScheme =
   | "default-light"
   | "default-dark"
