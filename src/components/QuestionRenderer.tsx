@@ -399,28 +399,73 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
         </MarkdownText>
 
         {mode === "question" && (
-          <>
+          <div 
+            className="space-y-4"
+            onClick={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
             <input
               type="text"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-              onTouchEnd={(e) => e.stopPropagation()}
               placeholder={question.blanks && question.blanks.length > 1 ? "Separate answers with |" : "Type your answer"}
               className="w-full p-3 text-sm sm:text-base border border-border rounded-lg bg-background text-foreground"
             />
-            <Button onClick={(e) => { e.stopPropagation(); handleFillInBlankSubmit(); }} className="w-full py-5 sm:py-2">
+            <Button 
+              onClick={handleFillInBlankSubmit} 
+              className="w-full py-5 sm:py-2"
+            >
               Submit Answer
             </Button>
-          </>
+          </div>
         )}
 
         {mode === "answer-rating" && (
-          <div className="mt-4 p-4 bg-muted rounded-lg">
-            <div className="text-sm font-semibold mb-2">Correct Answer(s):</div>
-            <MarkdownText className="text-base sm:text-lg break-words">
-              {question.answer}
-            </MarkdownText>
+          <div className="mt-4 p-4 bg-muted rounded-lg space-y-4">
+            <div>
+              <div className="text-sm font-semibold mb-2">Correct Answer(s):</div>
+              <div className="space-y-1">
+                {question.blanks?.map((blank, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-sm">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 text-green-500 text-xs flex items-center justify-center font-medium">
+                      {idx + 1}
+                    </span>
+                    <MarkdownText>{blank}</MarkdownText>
+                  </div>
+                )) || (
+                  <MarkdownText className="text-base sm:text-lg break-words">
+                    {question.answer}
+                  </MarkdownText>
+                )}
+              </div>
+            </div>
+            
+            {userInput && (
+              <div className="pt-3 border-t border-border">
+                <div className="text-sm font-semibold mb-2">Your Answer:</div>
+                <div className="space-y-1">
+                  {userInput.split("|").map((ans, idx) => {
+                    const correctAnswer = question.blanks?.[idx]?.toLowerCase().trim();
+                    const userAnswer = ans.trim();
+                    const isCorrect = userAnswer.toLowerCase() === correctAnswer;
+                    return (
+                      <div key={idx} className="flex items-center gap-2 text-sm">
+                        <span className={`flex-shrink-0 w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${
+                          isCorrect 
+                            ? 'bg-green-500/20 text-green-500' 
+                            : 'bg-red-500/20 text-red-500'
+                        }`}>
+                          {idx + 1}
+                        </span>
+                        <span className={isCorrect ? '' : 'text-muted-foreground'}>{userAnswer || '(empty)'}</span>
+                        {isCorrect && <span className="text-green-500">✓</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -485,7 +530,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                               : 'border-border bg-muted/50 hover:bg-muted'
                         }`}
                       >
-                        {left}
+                        <MarkdownText>{left}</MarkdownText>
                       </div>
                     );
                   })}
@@ -508,7 +553,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                               : 'border-border bg-muted/50'
                         }`}
                       >
-                        {right}
+                        <MarkdownText>{right}</MarkdownText>
                       </div>
                     );
                   })}
@@ -526,24 +571,51 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
         )}
 
         {mode === "answer-rating" && (
-          <div className="mt-4 p-4 bg-muted rounded-lg">
-            <div className="text-sm font-semibold mb-2">Correct Matches:</div>
-            <div className="space-y-1">
-              {effectiveMatchPairs.map((pair, idx) => (
-                <div key={idx} className="text-sm sm:text-base flex items-center gap-2">
-                  <span className="font-medium">{pair.left}</span>
-                  <span className="text-muted-foreground">→</span>
-                  <span>{pair.right}</span>
-                  {matchSelections.get(pair.left) === pair.right ? (
-                    <span className="text-green-500">✓</span>
-                  ) : matchSelections.get(pair.left) ? (
-                    <span className="text-red-500">✗ (You chose: {matchSelections.get(pair.left)})</span>
-                  ) : (
-                    <span className="text-red-500">✗ (Not answered)</span>
-                  )}
-                </div>
-              ))}
+          <div className="mt-4 p-4 bg-muted rounded-lg space-y-4">
+            <div>
+              <div className="text-sm font-semibold mb-2">Correct Matches:</div>
+              <div className="space-y-1">
+                {effectiveMatchPairs.map((pair, idx) => (
+                    <div key={idx} className="flex items-center gap-2 text-sm">
+                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 text-green-500 text-xs flex items-center justify-center font-medium">
+                        {idx + 1}
+                      </span>
+                      <MarkdownText className="font-medium">{pair.left}</MarkdownText>
+                      <span className="text-muted-foreground">→</span>
+                      <MarkdownText>{pair.right}</MarkdownText>
+                    </div>
+                ))}
+              </div>
             </div>
+            
+            {matchSelections.size > 0 && (
+              <div className="pt-3 border-t border-border">
+                <div className="text-sm font-semibold mb-2">Your Matches:</div>
+                <div className="space-y-1">
+                  {effectiveMatchPairs.map((pair, idx) => {
+                    const userAnswer = matchSelections.get(pair.left);
+                    const isCorrect = userAnswer === pair.right;
+                    return (
+                      <div key={idx} className="flex items-center gap-2 text-sm">
+                        <span className={`flex-shrink-0 w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${
+                          isCorrect 
+                            ? 'bg-green-500/20 text-green-500' 
+                            : 'bg-red-500/20 text-red-500'
+                        }`}>
+                          {idx + 1}
+                        </span>
+                        <MarkdownText className={isCorrect ? '' : 'text-muted-foreground'}>{pair.left}</MarkdownText>
+                        <span className="text-muted-foreground">→</span>
+                        <MarkdownText className={isCorrect ? '' : 'text-muted-foreground'}>
+                          {userAnswer || '(not answered)'}
+                        </MarkdownText>
+                        {isCorrect && <span className="text-green-500">✓</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -656,9 +728,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                           {idx + 1}
                         </span>
                         <span className={isCorrectPosition ? '' : 'text-muted-foreground'}>{item}</span>
-                        {!isCorrectPosition && (
-                          <span className="text-xs text-muted-foreground">(should be #{correctIdx + 1})</span>
-                        )}
                         {isCorrectPosition && (
                           <span className="text-green-500">✓</span>
                         )}
