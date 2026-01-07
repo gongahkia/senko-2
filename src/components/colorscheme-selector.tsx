@@ -23,6 +23,16 @@ const colorSchemes: { value: ColorScheme; label: string }[] = [
   { value: "nord", label: "Nord" },
   { value: "tokyo-night", label: "Tokyo Night" },
   { value: "dracula", label: "Dracula" },
+  { value: "solarized-light", label: "Solarized Light" },
+  { value: "solarized-dark", label: "Solarized Dark" },
+  { value: "one-dark", label: "One Dark" },
+  { value: "one-light", label: "One Light" },
+  { value: "monokai", label: "Monokai" },
+  { value: "everforest-light", label: "Everforest Light" },
+  { value: "everforest-dark", label: "Everforest Dark" },
+  { value: "rose-pine", label: "Rosé Pine" },
+  { value: "rose-pine-moon", label: "Rosé Pine Moon" },
+  { value: "kanagawa", label: "Kanagawa" },
 ];
 
 export function ColorSchemeSelector() {

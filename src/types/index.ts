@@ -78,7 +78,17 @@ export type ColorScheme =
   | "ayu-mirage"
   | "nord"
   | "tokyo-night"
-  | "dracula";
+  | "dracula"
+  | "solarized-light"
+  | "solarized-dark"
+  | "one-dark"
+  | "one-light"
+  | "monokai"
+  | "everforest-light"
+  | "everforest-dark"
+  | "rose-pine"
+  | "rose-pine-moon"
+  | "kanagawa";
 
 export type AppSettings = {
   colorScheme: ColorScheme;
