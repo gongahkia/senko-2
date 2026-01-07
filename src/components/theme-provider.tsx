@@ -127,6 +127,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       "theme-chalk",
       "theme-flat",
       "theme-isotope",
+      "theme-xcode",
     ];
 
     root.classList.remove(...themeClasses);

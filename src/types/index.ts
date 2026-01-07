@@ -161,7 +161,8 @@ export type ColorScheme =
   | "tomorrow-night-bright"
   | "chalk"
   | "flat"
-  | "isotope";
+  | "isotope"
+  | "xcode";
 
 export type AppSettings = {
   colorScheme: ColorScheme;

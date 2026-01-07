@@ -112,6 +112,7 @@ const colorSchemes: { value: ColorScheme; label: string; category: string }[] = 
   { value: "chalk", label: "Chalk", category: "Pastel" },
   { value: "flat", label: "Flat", category: "Modern" },
   { value: "isotope", label: "Isotope", category: "Vivid" },
+  { value: "xcode", label: "Xcode", category: "Apple" },
 ];
 
 export function Settings() {
