@@ -96,7 +96,27 @@ export type ColorScheme =
   | "andromeda"
   | "cobalt2"
   | "shades-of-purple"
-  | "oceanic-next";
+  | "oceanic-next"
+  | "material-dark"
+  | "panda"
+  | "snazzy"
+  | "darcula"
+  | "moonlight"
+  | "vitesse-dark"
+  | "winter-is-coming"
+  | "vesper"
+  | "flexoki-light"
+  | "flexoki-dark"
+  | "arc-dark"
+  | "iceberg"
+  | "tomorrow-night"
+  | "monokai-pro"
+  | "bluloco-dark"
+  | "laserwave"
+  | "slack-dark"
+  | "fairy-floss"
+  | "aura-dark"
+  | "catppuccin-rose";
 
 export type AppSettings = {
   colorScheme: ColorScheme;
