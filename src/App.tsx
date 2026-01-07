@@ -595,6 +595,30 @@ ANSWERS: A, C, E`
                       {/* Divider */}
                       <div className="border-t" />
 
+                      {/* Keyboard Shortcuts */}
+                      <div>
+                        <h4 className="font-semibold mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
+                          ⌨️ Keyboard Shortcuts
+                        </h4>
+                        <div className="p-3 bg-muted/50 rounded-lg text-xs sm:text-sm space-y-2">
+                          <div className="flex items-center gap-2">
+                            <kbd className="px-2 py-1 bg-background border rounded text-xs min-w-[60px] text-center">Space</kbd>
+                            <span className="text-muted-foreground">Flip card to reveal answer</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <kbd className="px-2 py-1 bg-background border rounded text-xs min-w-[60px] text-center">1-4</kbd>
+                            <span className="text-muted-foreground">Rate recall (1=Bad, 4=Easy)</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <kbd className="px-2 py-1 bg-background border rounded text-xs min-w-[60px] text-center">Ctrl+Z</kbd>
+                            <span className="text-muted-foreground">Undo last rating</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="border-t" />
+
                       {/* LLM Template */}
                       <div>
                         <h4 className="font-semibold mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
