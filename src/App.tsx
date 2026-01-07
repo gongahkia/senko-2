@@ -71,7 +71,6 @@ function App() {
 
   const [currentTab, setCurrentTab] = useState<"recall" | "questions" | "stats">("recall");
   const [refreshKey, setRefreshKey] = useState(0);
-  const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [showCreatePrompt, setShowCreatePrompt] = useState(false);
   const [deckSearchQuery, setDeckSearchQuery] = useState("");
 
@@ -108,58 +107,29 @@ function App() {
     enabled: !!currentDeck,
   });
 
-  const promptTemplate = `Generate flashcard questions and answers for active recall study on the topic: [YOUR TOPIC HERE]
-
-Please format your response EXACTLY as follows:
-
-Question 1 text here
-===
-Answer 1 text here
-
-Question 2 text here
-===
-Answer 2 text here
-
-Requirements:
-- Generate 15-20 questions
-- Questions should test understanding, not just memorization
-- Answers should be concise but complete
-- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
-- Separate each question-answer pair with a blank line
-- Do NOT number the questions
-- Do NOT add any extra formatting or commentary
-
-Example:
-What is the derivative of $x^2$?
-===
-The derivative of $x^2$ is $2x$, found using the power rule.
-
-What is Newton's Second Law?
-===
-Newton's Second Law states that $F = ma$, where force equals mass times acceleration.`;
-
   const questionFormatsDoc = [
     {
-      type: "Flashcard (Default)",
-      prefix: "None",
+      type: "Flashcard",
+      prefix: "[FC]",
       description: "Traditional question/answer format. Simply reveal the answer after thinking.",
-      format: `What is the capital of France?
+      format: `[FC] What is the capital of France?
 ===
 Paris`,
       prompt: `Generate flashcard questions and answers for active recall study on the topic: [YOUR TOPIC HERE]
 
 Please format your response EXACTLY as follows:
 
-Question 1 text here
+[FC] Question 1 text here
 ===
 Answer 1 text here
 
-Question 2 text here
+[FC] Question 2 text here
 ===
 Answer 2 text here
 
 Requirements:
 - Generate 15-20 questions
+- Each question MUST start with [FC] prefix
 - Questions should test understanding, not just memorization
 - Answers should be concise but complete
 - Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
@@ -168,11 +138,11 @@ Requirements:
 - Do NOT add any extra formatting or commentary
 
 Example:
-What is the derivative of $x^2$?
+[FC] What is the derivative of $x^2$?
 ===
 The derivative of $x^2$ is $2x$, found using the power rule.
 
-What is Newton's Second Law?
+[FC] What is Newton's Second Law?
 ===
 Newton's Second Law states that $F = ma$, where force equals mass times acceleration.`
     },
@@ -456,12 +426,6 @@ ANSWERS: A, C, E`
     setTimeout(() => setCopiedFormatPrompt(null), 2000);
   };
 
-  const copyPromptToClipboard = () => {
-    navigator.clipboard.writeText(promptTemplate);
-    setCopiedPrompt(true);
-    setTimeout(() => setCopiedPrompt(false), 2000);
-  };
-
   return (
     <ErrorBoundary>
       <ToastProvider>
@@ -516,7 +480,7 @@ ANSWERS: A, C, E`
                         <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm sm:text-base">3</div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold mb-1 text-sm sm:text-base">Start Studying</h4>
-                          <p className="text-xs sm:text-sm text-muted-foreground">Return to Recall tab and use <kbd className="px-1.5 py-0.5 bg-background border rounded text-xs">Space</kbd> to flip cards and <kbd className="px-1.5 py-0.5 bg-background border rounded text-xs">1-4</kbd> to rate yourself</p>
+                          <p className="text-xs sm:text-sm text-muted-foreground">Return to Recall tab to begin your study session</p>
                         </div>
                       </div>
                     </div>
@@ -613,43 +577,6 @@ ANSWERS: A, C, E`
                             <kbd className="px-2 py-1 bg-background border rounded text-xs min-w-[60px] text-center">Ctrl+Z</kbd>
                             <span className="text-muted-foreground">Undo last rating</span>
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Divider */}
-                      <div className="border-t" />
-
-                      {/* LLM Template */}
-                      <div>
-                        <h4 className="font-semibold mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
-                          <Sparkles className="h-4 w-4" />
-                          Generate with AI (Basic Flashcards)
-                        </h4>
-                        <p className="text-xs sm:text-sm text-muted-foreground mb-2">
-                          Use this prompt with ChatGPT, Claude, or any LLM:
-                        </p>
-                        <div className="relative">
-                          <div className="bg-muted/70 p-3 sm:p-4 pr-16 sm:pr-20 rounded-lg border font-mono text-xs max-h-[150px] overflow-y-auto overflow-x-hidden break-words whitespace-pre-wrap">
-                            {promptTemplate}
-                          </div>
-                          <Button
-                            onClick={copyPromptToClipboard}
-                            size="sm"
-                            variant="secondary"
-                            className="absolute top-2 right-2 shadow-md"
-                          >
-                            {copiedPrompt ? (
-                              <>
-                                <Check className="h-3 w-3 mr-1" />
-                                Copied!
-                              </>
-                            ) : (
-                              <>
-                                <Copy className="h-3 w-3 mr-1" />
-                                Copy
-                              </>
-                            )}
-                          </Button>
                         </div>
                       </div>
                     </div>

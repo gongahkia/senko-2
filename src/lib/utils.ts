@@ -106,6 +106,12 @@ export function parseQuestions(inputText: string): QuestionItem[] {
     let orderItems: string[] | undefined;
     let correctAnswers: string[] | undefined;
 
+    // Flashcard: Check for [FC] prefix (or no prefix for backwards compatibility)
+    if (questionText.startsWith("[FC]")) {
+      type = "flashcard";
+      question = questionText.substring(4).trim();
+    }
+
     const isNewMC = /^Question\s*\d+:/.test(questionText) && /\n[A-Z]\./.test(questionText);
 
     if (isNewMC) {
