@@ -82,6 +82,16 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       "theme-fairy-floss",
       "theme-aura-dark",
       "theme-catppuccin-rose",
+      "theme-atom-one-dark-pro",
+      "theme-sublime-material",
+      "theme-twilight",
+      "theme-zenburn",
+      "theme-afterglow",
+      "theme-spacegray",
+      "theme-merbivore",
+      "theme-apprentice",
+      "theme-papercolor-light",
+      "theme-base16-ocean",
     ];
 
     root.classList.remove(...themeClasses);

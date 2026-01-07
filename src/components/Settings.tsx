@@ -67,6 +67,16 @@ const colorSchemes: { value: ColorScheme; label: string; category: string }[] = 
   { value: "fairy-floss", label: "Fairy Floss", category: "Pastel" },
   { value: "aura-dark", label: "Aura Dark", category: "Aura" },
   { value: "catppuccin-rose", label: "Catppuccin Rosé", category: "Catppuccin" },
+  { value: "atom-one-dark-pro", label: "Atom One Dark Pro", category: "Atom" },
+  { value: "sublime-material", label: "Sublime Material", category: "Material" },
+  { value: "twilight", label: "Twilight", category: "Classic" },
+  { value: "zenburn", label: "Zenburn", category: "Classic" },
+  { value: "afterglow", label: "Afterglow", category: "Warm" },
+  { value: "spacegray", label: "Spacegray", category: "Minimal" },
+  { value: "merbivore", label: "Merbivore", category: "Unique" },
+  { value: "apprentice", label: "Apprentice", category: "Vim" },
+  { value: "papercolor-light", label: "PaperColor Light", category: "Light" },
+  { value: "base16-ocean", label: "Base16 Ocean", category: "Base16" },
 ];
 
 export function Settings() {

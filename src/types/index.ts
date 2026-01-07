@@ -116,7 +116,17 @@ export type ColorScheme =
   | "slack-dark"
   | "fairy-floss"
   | "aura-dark"
-  | "catppuccin-rose";
+  | "catppuccin-rose"
+  | "atom-one-dark-pro"
+  | "sublime-material"
+  | "twilight"
+  | "zenburn"
+  | "afterglow"
+  | "spacegray"
+  | "merbivore"
+  | "apprentice"
+  | "papercolor-light"
+  | "base16-ocean";
 
 export type AppSettings = {
   colorScheme: ColorScheme;
