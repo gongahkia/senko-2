@@ -126,7 +126,27 @@ export type ColorScheme =
   | "merbivore"
   | "apprentice"
   | "papercolor-light"
-  | "base16-ocean";
+  | "base16-ocean"
+  | "gruvbox-material"
+  | "poimandres"
+  | "bearded-arc"
+  | "noctis"
+  | "rainglow"
+  | "embark"
+  | "plastic"
+  | "min-dark"
+  | "pear"
+  | "serendipity"
+  | "seti"
+  | "material-palenight"
+  | "high-contrast"
+  | "quiet-light"
+  | "blueberry"
+  | "sunburst"
+  | "autumn"
+  | "earthsong"
+  | "alabaster"
+  | "cobalt";
 
 export type AppSettings = {
   colorScheme: ColorScheme;
