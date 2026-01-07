@@ -112,6 +112,21 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       "theme-earthsong",
       "theme-alabaster",
       "theme-cobalt",
+      "theme-brackets-light",
+      "theme-brackets-dark",
+      "theme-espresso",
+      "theme-hopscotch",
+      "theme-ir-black",
+      "theme-kimbie-dark",
+      "theme-marrakesh",
+      "theme-paraiso-dark",
+      "theme-railscasts",
+      "theme-summerfruit-dark",
+      "theme-tomorrow-night-blue",
+      "theme-tomorrow-night-bright",
+      "theme-chalk",
+      "theme-flat",
+      "theme-isotope",
     ];
 
     root.classList.remove(...themeClasses);

@@ -146,7 +146,22 @@ export type ColorScheme =
   | "autumn"
   | "earthsong"
   | "alabaster"
-  | "cobalt";
+  | "cobalt"
+  | "brackets-light"
+  | "brackets-dark"
+  | "espresso"
+  | "hopscotch"
+  | "ir-black"
+  | "kimbie-dark"
+  | "marrakesh"
+  | "paraiso-dark"
+  | "railscasts"
+  | "summerfruit-dark"
+  | "tomorrow-night-blue"
+  | "tomorrow-night-bright"
+  | "chalk"
+  | "flat"
+  | "isotope";
 
 export type AppSettings = {
   colorScheme: ColorScheme;

@@ -97,6 +97,21 @@ const colorSchemes: { value: ColorScheme; label: string; category: string }[] = 
   { value: "earthsong", label: "Earthsong", category: "Earth" },
   { value: "alabaster", label: "Alabaster", category: "Light" },
   { value: "cobalt", label: "Cobalt", category: "Blue" },
+  { value: "brackets-light", label: "Brackets Light", category: "Light" },
+  { value: "brackets-dark", label: "Brackets Dark", category: "Dark" },
+  { value: "espresso", label: "Espresso", category: "Warm" },
+  { value: "hopscotch", label: "Hopscotch", category: "Colorful" },
+  { value: "ir-black", label: "IR Black", category: "Dark" },
+  { value: "kimbie-dark", label: "Kimbie Dark", category: "Warm" },
+  { value: "marrakesh", label: "Marrakesh", category: "Earth" },
+  { value: "paraiso-dark", label: "Paraiso Dark", category: "Colorful" },
+  { value: "railscasts", label: "Railscasts", category: "Classic" },
+  { value: "summerfruit-dark", label: "Summerfruit Dark", category: "Vivid" },
+  { value: "tomorrow-night-blue", label: "Tomorrow Night Blue", category: "Tomorrow" },
+  { value: "tomorrow-night-bright", label: "Tomorrow Night Bright", category: "Tomorrow" },
+  { value: "chalk", label: "Chalk", category: "Pastel" },
+  { value: "flat", label: "Flat", category: "Modern" },
+  { value: "isotope", label: "Isotope", category: "Vivid" },
 ];
 
 export function Settings() {
