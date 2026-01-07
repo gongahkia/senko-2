@@ -26,8 +26,28 @@ export function Questions({
       .map((q) => {
         const prefix = q.type === "multiple-choice" ? "[MC] " :
                       q.type === "true-false" ? "[TF] " :
-                      q.type === "fill-in-blank" ? "[FIB] " : "";
-        return `${prefix}${q.question}\n===\n${q.answer}`;
+                      q.type === "fill-in-blank" ? "[FIB] " :
+                      q.type === "matching" ? "[MATCH] " :
+                      q.type === "ordering" ? "[ORDER] " :
+                      q.type === "multi-select" ? "[MS] " : "";
+        
+        // Format answer based on question type
+        let formattedAnswer = q.answer;
+        if (q.type === "ordering" && q.orderItems) {
+          formattedAnswer = q.orderItems.join(" | ");
+        } else if (q.type === "matching" && q.matchPairs) {
+          formattedAnswer = q.matchPairs.map(p => `${p.left} -> ${p.right}`).join(" | ");
+        } else if (q.type === "fill-in-blank" && q.blanks) {
+          formattedAnswer = q.blanks.join(" | ");
+        } else if (q.type === "multiple-choice" && q.options) {
+          const correctOption = q.options.find(opt => opt === q.answer);
+          const answerLetter = correctOption ? correctOption.charAt(0) : "A";
+          formattedAnswer = q.options.join("\n") + `\nANSWER: ${answerLetter})`;
+        } else if (q.type === "multi-select" && q.options && q.correctAnswers) {
+          formattedAnswer = q.options.join("\n") + `\nANSWERS: ${q.correctAnswers.join(", ")}`;
+        }
+        
+        return `${prefix}${q.question}\n===\n${formattedAnswer}`;
       })
       .join("\n\n");
   });

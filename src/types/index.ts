@@ -1,6 +1,6 @@
 // Core data structures
 
-export type QuestionType = "flashcard" | "multiple-choice" | "true-false" | "fill-in-blank";
+export type QuestionType = "flashcard" | "multiple-choice" | "true-false" | "fill-in-blank" | "matching" | "ordering" | "multi-select";
 
 export type QuestionItem = {
   type: QuestionType;
@@ -11,6 +11,12 @@ export type QuestionItem = {
   options?: string[];
   // For fill-in-blank questions
   blanks?: string[]; // Array of correct answers for each blank
+  // For matching questions
+  matchPairs?: { left: string; right: string }[]; // Array of pairs to match
+  // For ordering questions
+  orderItems?: string[]; // Array of items in correct order
+  // For multi-select questions
+  correctAnswers?: string[]; // Array of correct option indices/values
 };
 
 export type FlashCard = QuestionItem & {

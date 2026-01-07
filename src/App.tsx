@@ -14,7 +14,7 @@ import { MathJaxContext } from "better-react-mathjax";
 import { useDecks } from "@/hooks/useDecks";
 import { useKeyboardBindings } from "@/hooks/useKeyboardBindings";
 import { StudyMode, QuestionItem } from "@/types";
-import { BookOpen, HelpCircle, Copy, Check, Sparkles, Search, X } from "lucide-react";
+import { BookOpen, HelpCircle, Copy, Check, Sparkles, Search, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 type KeyboardMode = "default" | "vim" | "emacs";
@@ -131,6 +131,324 @@ What is Newton's Second Law?
 ===
 Newton's Second Law states that $F = ma$, where force equals mass times acceleration.`;
 
+  const questionFormatsDoc = [
+    {
+      type: "Flashcard (Default)",
+      prefix: "None",
+      description: "Traditional question/answer format. Simply reveal the answer after thinking.",
+      format: `What is the capital of France?
+===
+Paris`,
+      prompt: `Generate flashcard questions and answers for active recall study on the topic: [YOUR TOPIC HERE]
+
+Please format your response EXACTLY as follows:
+
+Question 1 text here
+===
+Answer 1 text here
+
+Question 2 text here
+===
+Answer 2 text here
+
+Requirements:
+- Generate 15-20 questions
+- Questions should test understanding, not just memorization
+- Answers should be concise but complete
+- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
+- Separate each question-answer pair with a blank line
+- Do NOT number the questions
+- Do NOT add any extra formatting or commentary
+
+Example:
+What is the derivative of $x^2$?
+===
+The derivative of $x^2$ is $2x$, found using the power rule.
+
+What is Newton's Second Law?
+===
+Newton's Second Law states that $F = ma$, where force equals mass times acceleration.`
+    },
+    {
+      type: "Multiple Choice",
+      prefix: "[MC]",
+      description: "Single correct answer from multiple options. Good for testing recognition.",
+      format: `[MC] What is 2 + 2?
+===
+A) 3
+B) 4
+C) 5
+D) 6
+ANSWER: B)`,
+      prompt: `Generate multiple choice questions for active recall study on the topic: [YOUR TOPIC HERE]
+
+Please format your response EXACTLY as follows:
+
+[MC] Question 1 text here
+===
+A) Option A
+B) Option B
+C) Option C
+D) Option D
+ANSWER: X)
+
+[MC] Question 2 text here
+===
+A) Option A
+B) Option B
+C) Option C
+D) Option D
+ANSWER: X)
+
+Requirements:
+- Generate 10-15 questions
+- Each question must have exactly 4 options (A, B, C, D)
+- Include realistic distractors (wrong answers should be plausible)
+- The correct answer line must start with "ANSWER:" followed by the letter and )
+- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
+- Separate each question-answer pair with a blank line
+- Do NOT number the questions beyond the [MC] prefix
+- Do NOT add any extra formatting or commentary
+
+Example:
+[MC] What is the derivative of $x^2$?
+===
+A) $x$
+B) $2x$
+C) $x^2$
+D) $2x^2$
+ANSWER: B)
+
+[MC] Which law states that $F = ma$?
+===
+A) Newton's First Law
+B) Newton's Second Law
+C) Newton's Third Law
+D) Law of Conservation of Energy
+ANSWER: B)`
+    },
+    {
+      type: "True/False",
+      prefix: "[TF]",
+      description: "Binary choice questions. Great for testing factual recall.",
+      format: `[TF] The Earth is flat.
+===
+False`,
+      prompt: `Generate true/false questions for active recall study on the topic: [YOUR TOPIC HERE]
+
+Please format your response EXACTLY as follows:
+
+[TF] Statement 1 that is either true or false
+===
+True
+
+[TF] Statement 2 that is either true or false
+===
+False
+
+Requirements:
+- Generate 15-20 questions
+- Mix of true and false answers (roughly 50/50)
+- Statements should be clear and unambiguous
+- Avoid trick questions or overly subtle wording
+- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
+- Separate each question-answer pair with a blank line
+- Answer must be exactly "True" or "False"
+- Do NOT add any extra formatting or commentary
+
+Example:
+[TF] The derivative of $x^2$ is $2x$.
+===
+True
+
+[TF] Newton's Second Law states that $F = m/a$.
+===
+False`
+    },
+    {
+      type: "Fill in the Blank",
+      prefix: "[FIB]",
+      description: "Type the missing word(s). Use | to separate multiple blanks.",
+      format: `[FIB] The chemical formula for water is ___.
+===
+H2O`,
+      prompt: `Generate fill-in-the-blank questions for active recall study on the topic: [YOUR TOPIC HERE]
+
+Please format your response EXACTLY as follows:
+
+[FIB] Sentence with ___ representing the blank
+===
+correct answer
+
+[FIB] Another sentence with ___ for the blank
+===
+correct answer
+
+Requirements:
+- Generate 15-20 questions
+- Use ___ (three underscores) to indicate each blank
+- Answers should be single words or short phrases
+- For multiple blanks in one question, separate answers with | (e.g., answer1 | answer2)
+- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
+- Separate each question-answer pair with a blank line
+- Do NOT add any extra formatting or commentary
+
+Example:
+[FIB] The derivative of $x^2$ is ___.
+===
+$2x$
+
+[FIB] Newton's Second Law states that Force equals ___ times ___.
+===
+mass | acceleration`
+    },
+    {
+      type: "Matching",
+      prefix: "[MATCH]",
+      description: "Connect items from two columns. Perfect for vocabulary or associations.",
+      format: `[MATCH] Match the countries to their capitals
+===
+France -> Paris | Germany -> Berlin | Japan -> Tokyo`,
+      prompt: `Generate matching questions for active recall study on the topic: [YOUR TOPIC HERE]
+
+Please format your response EXACTLY as follows:
+
+[MATCH] Instruction for what to match
+===
+Item1 -> Match1 | Item2 -> Match2 | Item3 -> Match3 | Item4 -> Match4
+
+[MATCH] Another matching instruction
+===
+ItemA -> MatchA | ItemB -> MatchB | ItemC -> MatchC
+
+Requirements:
+- Generate 8-10 matching questions
+- Each question should have 3-5 pairs to match
+- Use -> to connect each item to its match
+- Use | to separate different pairs
+- Pairs should be related and test meaningful associations
+- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
+- Separate each question-answer pair with a blank line
+- Do NOT add any extra formatting or commentary
+
+Example:
+[MATCH] Match the mathematical functions to their derivatives
+===
+$x^2$ -> $2x$ | $x^3$ -> $3x^2$ | $e^x$ -> $e^x$ | $\\ln(x)$ -> $1/x$
+
+[MATCH] Match the scientists to their laws
+===
+Newton -> Laws of Motion | Ohm -> $V = IR$ | Einstein -> $E = mc^2$`
+    },
+    {
+      type: "Ordering",
+      prefix: "[ORDER]",
+      description: "Arrange items in correct sequence. Ideal for processes or timelines.",
+      format: `[ORDER] Arrange these events chronologically
+===
+World War I | World War II | Cold War | Fall of Berlin Wall`,
+      prompt: `Generate ordering questions for active recall study on the topic: [YOUR TOPIC HERE]
+
+Please format your response EXACTLY as follows:
+
+[ORDER] Instruction for how to order the items
+===
+First item | Second item | Third item | Fourth item
+
+[ORDER] Another ordering instruction
+===
+Step 1 | Step 2 | Step 3 | Step 4 | Step 5
+
+Requirements:
+- Generate 8-10 ordering questions
+- Each question should have 3-6 items to arrange
+- Items must be listed in the CORRECT order in the answer
+- Use | to separate each item
+- Good for timelines, processes, sequences, rankings
+- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
+- Separate each question-answer pair with a blank line
+- Do NOT add any extra formatting or commentary
+
+Example:
+[ORDER] Arrange the steps of differentiation using the chain rule
+===
+Identify the outer function | Differentiate the outer function | Multiply by the derivative of the inner function
+
+[ORDER] Order these numbers from smallest to largest
+===
+$\\pi$ | $e^2$ | $10$ | $4^2$`
+    },
+    {
+      type: "Multi-Select",
+      prefix: "[MS]",
+      description: "Multiple correct answers. Common in certification-style exams.",
+      format: `[MS] Which are primary colors?
+===
+A) Red
+B) Green
+C) Blue
+D) Yellow
+ANSWERS: A, C`,
+      prompt: `Generate multi-select questions for active recall study on the topic: [YOUR TOPIC HERE]
+
+Please format your response EXACTLY as follows:
+
+[MS] Question where multiple answers are correct (select all that apply)
+===
+A) Option A
+B) Option B
+C) Option C
+D) Option D
+ANSWERS: X, Y
+
+[MS] Another multi-select question
+===
+A) Option A
+B) Option B
+C) Option C
+D) Option D
+E) Option E
+ANSWERS: X, Y, Z
+
+Requirements:
+- Generate 10-12 questions
+- Each question must have 4-5 options
+- Each question should have 2-3 correct answers
+- The ANSWERS line must list all correct options separated by commas
+- Include plausible distractors (wrong answers)
+- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
+- Separate each question-answer pair with a blank line
+- Do NOT add any extra formatting or commentary
+
+Example:
+[MS] Which of the following are valid derivatives? (Select all that apply)
+===
+A) $\\frac{d}{dx}(x^2) = 2x$
+B) $\\frac{d}{dx}(e^x) = e^x$
+C) $\\frac{d}{dx}(\\ln x) = x$
+D) $\\frac{d}{dx}(\\sin x) = \\cos x$
+ANSWERS: A, B, D
+
+[MS] Which scientists contributed to classical mechanics?
+===
+A) Isaac Newton
+B) Albert Einstein
+C) Galileo Galilei
+D) Max Planck
+E) Johannes Kepler
+ANSWERS: A, C, E`
+    }
+  ];
+
+  const [expandedFormat, setExpandedFormat] = useState<string | null>(null);
+  const [copiedFormatPrompt, setCopiedFormatPrompt] = useState<string | null>(null);
+
+  const copyFormatPrompt = (type: string, prompt: string) => {
+    navigator.clipboard.writeText(prompt);
+    setCopiedFormatPrompt(type);
+    setTimeout(() => setCopiedFormatPrompt(null), 2000);
+  };
+
   const copyPromptToClipboard = () => {
     navigator.clipboard.writeText(promptTemplate);
     setCopiedPrompt(true);
@@ -199,14 +517,82 @@ Newton's Second Law states that $F = ma$, where force equals mass times accelera
                     {/* Divider */}
                     <div className="border-t" />
 
-                    {/* Detailed Sections */}
+                    {/* Question Formats Documentation */}
                     <div className="space-y-4 sm:space-y-5">
+                      <div>
+                        <h4 className="font-semibold mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
+                          📝 Question Formats
+                        </h4>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-3">
+                          Click on a format to see examples and copy AI prompts:
+                        </p>
+
+                        <div className="space-y-2">
+                          {questionFormatsDoc.map((format) => (
+                            <div key={format.type} className="border rounded-lg overflow-hidden">
+                              <button
+                                onClick={() => setExpandedFormat(expandedFormat === format.type ? null : format.type)}
+                                className="w-full flex items-center justify-between p-3 bg-muted/30 hover:bg-muted/50 transition-colors text-left"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <code className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded">{format.prefix}</code>
+                                  <span className="font-medium text-sm">{format.type}</span>
+                                </div>
+                                {expandedFormat === format.type ? (
+                                  <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                                ) : (
+                                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                                )}
+                              </button>
+
+                              {expandedFormat === format.type && (
+                                <div className="p-3 space-y-3 border-t bg-background">
+                                  <p className="text-xs sm:text-sm text-muted-foreground">{format.description}</p>
+
+                                  <div>
+                                    <p className="text-xs font-semibold mb-1">Format Example:</p>
+                                    <pre className="bg-muted/50 p-2 rounded text-xs overflow-x-auto whitespace-pre-wrap">{format.format}</pre>
+                                  </div>
+
+                                  <div>
+                                    <div className="flex items-center justify-between mb-1">
+                                      <p className="text-xs font-semibold">AI Prompt:</p>
+                                      <Button
+                                        onClick={() => copyFormatPrompt(format.type, format.prompt)}
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-6 px-2 text-xs"
+                                      >
+                                        {copiedFormatPrompt === format.type ? (
+                                          <>
+                                            <Check className="h-3 w-3 mr-1" />
+                                            Copied!
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Copy className="h-3 w-3 mr-1" />
+                                            Copy
+                                          </>
+                                        )}
+                                      </Button>
+                                    </div>
+                                    <pre className="bg-muted/50 p-2 rounded text-xs overflow-x-auto whitespace-pre-wrap">{format.prompt}</pre>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="border-t" />
 
                       {/* LLM Template */}
                       <div>
                         <h4 className="font-semibold mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
                           <Sparkles className="h-4 w-4" />
-                          Generate with AI
+                          Generate with AI (Basic Flashcards)
                         </h4>
                         <p className="text-xs sm:text-sm text-muted-foreground mb-2">
                           Use this prompt with ChatGPT, Claude, or any LLM:

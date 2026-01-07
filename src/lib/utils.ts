@@ -102,6 +102,9 @@ export function parseQuestions(inputText: string): QuestionItem[] {
     let answer = answerText;
     let options: string[] | undefined;
     let blanks: string[] | undefined;
+    let matchPairs: { left: string; right: string }[] | undefined;
+    let orderItems: string[] | undefined;
+    let correctAnswers: string[] | undefined;
 
     const isNewMC = /^Question\s*\d+:/.test(questionText) && /\n[A-Z]\./.test(questionText);
 
@@ -151,8 +154,53 @@ export function parseQuestions(inputText: string): QuestionItem[] {
       blanks = answerText.split("|").map(a => a.trim());
       answer = blanks.join(" / "); // Display format
     }
+    // Matching: Check for [MATCH] prefix
+    else if (questionText.startsWith("[MATCH]")) {
+      type = "matching";
+      question = questionText.substring(7).trim();
 
-    questions.push({ type, question, answer, options, blanks });
+      // Parse match pairs (format: left1 -> right1 | left2 -> right2)
+      const pairs = answerText.split("|").map(pair => {
+        const [left, right] = pair.split("->").map(s => s.trim());
+        return { left: left || "", right: right || "" };
+      }).filter(p => p.left && p.right);
+
+      matchPairs = pairs;
+      answer = pairs.map(p => `${p.left} → ${p.right}`).join(", ");
+    }
+    // Ordering: Check for [ORDER] prefix
+    else if (questionText.startsWith("[ORDER]")) {
+      type = "ordering";
+      question = questionText.substring(7).trim();
+
+      // Parse ordered items (format: item1 | item2 | item3)
+      orderItems = answerText.split("|").map(item => item.trim()).filter(Boolean);
+      answer = orderItems.join(" → ");
+    }
+    // Multi-Select: Check for [MS] prefix
+    else if (questionText.startsWith("[MS]")) {
+      type = "multi-select";
+      question = questionText.substring(4).trim();
+
+      // Parse options and correct answers (format: A) option1 \n B) option2 \n ... \n ANSWERS: A, B)
+      const optionLines = answerText.split("\n").filter(line => line.trim());
+      options = [];
+      correctAnswers = [];
+
+      for (const line of optionLines) {
+        if (line.startsWith("ANSWERS:")) {
+          // Parse multiple correct answers (format: ANSWERS: A, B, C)
+          const answersStr = line.substring(8).trim();
+          correctAnswers = answersStr.split(",").map(a => a.trim());
+        } else if (/^[A-Z]\)/.test(line)) {
+          options.push(line);
+        }
+      }
+
+      answer = `Correct: ${correctAnswers.join(", ")}`;
+    }
+
+    questions.push({ type, question, answer, options, blanks, matchPairs, orderItems, correctAnswers });
   }
 
   return questions;
