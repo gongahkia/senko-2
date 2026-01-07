@@ -7,7 +7,7 @@ import {
   deleteDeck,
   setCurrentDeckId as saveCurrentDeckId,
 } from "@/services/storage";
-import { generateId } from "@/lib/utils";
+import { generateId, normalizeQuestion } from "@/lib/utils";
 
 export function useDecks() {
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -16,7 +16,12 @@ export function useDecks() {
   // Load decks on mount
   useEffect(() => {
     const data = loadAppData();
-    setDecks(data.decks);
+    // Normalize all questions in all decks to ensure derived fields are populated
+    const normalizedDecks = data.decks.map(deck => ({
+      ...deck,
+      questions: deck.questions.map(normalizeQuestion)
+    }));
+    setDecks(normalizedDecks);
     setCurrentDeckIdState(data.currentDeckId);
   }, []);
 

@@ -254,3 +254,47 @@ export function parseMarkdown(text: string): string {
 
   return result;
 }
+
+// Normalize a question to ensure all derived fields are populated
+export function normalizeQuestion(q: QuestionItem): QuestionItem {
+  const normalized = { ...q };
+  
+  // Normalize ordering questions
+  if (q.type === "ordering" && (!q.orderItems || q.orderItems.length === 0) && q.answer) {
+    normalized.orderItems = q.answer.split(/\s*(?:→|\|)\s*/).map(s => s.trim()).filter(Boolean);
+  }
+  
+  // Normalize matching questions
+  if (q.type === "matching" && (!q.matchPairs || q.matchPairs.length === 0) && q.answer) {
+    const pairs = q.answer.split(/\s*(?:\||,)\s*/).map(pair => {
+      const parts = pair.split(/\s*(?:→|->)\s*/);
+      if (parts.length >= 2) {
+        return { left: parts[0]?.trim() || "", right: parts[1]?.trim() || "" };
+      }
+      return { left: "", right: "" };
+    }).filter(p => p.left && p.right);
+    normalized.matchPairs = pairs;
+  }
+  
+  // Normalize fill-in-blank questions
+  if (q.type === "fill-in-blank" && (!q.blanks || q.blanks.length === 0) && q.answer) {
+    normalized.blanks = q.answer.split(/\s*(?:\/|\|)\s*/).map(s => s.trim()).filter(Boolean);
+  }
+  
+  // Normalize multi-select questions
+  if (q.type === "multi-select") {
+    // Extract correctAnswers from answer if not present
+    if ((!q.correctAnswers || q.correctAnswers.length === 0) && q.answer) {
+      // Answer format: "Correct: A, B, C" or "A, B, C" or "ANSWERS: A, B"
+      let answersStr = q.answer;
+      if (answersStr.toLowerCase().startsWith("correct:")) {
+        answersStr = answersStr.substring(8).trim();
+      } else if (answersStr.toLowerCase().startsWith("answers:")) {
+        answersStr = answersStr.substring(8).trim();
+      }
+      normalized.correctAnswers = answersStr.split(/\s*,\s*/).map(a => a.trim()).filter(Boolean);
+    }
+  }
+  
+  return normalized;
+}

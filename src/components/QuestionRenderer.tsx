@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { QuestionItem } from "@/types";
 import { MarkdownText } from "@/components/MarkdownText";
@@ -18,29 +18,46 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   const [orderSelections, setOrderSelections] = useState<string[]>([]);
   
   // Derive orderItems from answer if not present (for backwards compatibility)
-  const effectiveOrderItems = question.orderItems || 
-    (question.type === "ordering" && question.answer 
-      ? question.answer.split(/\s*(?:→|\|)\s*/).map(s => s.trim()).filter(Boolean)
-      : []);
+  const effectiveOrderItems = useMemo(() => {
+    if (question.orderItems && question.orderItems.length > 0) {
+      return question.orderItems;
+    }
+    if (question.type === "ordering" && question.answer) {
+      // Handle both → and | separators
+      return question.answer.split(/\s*(?:→|\|)\s*/).map(s => s.trim()).filter(Boolean);
+    }
+    return [];
+  }, [question.orderItems, question.type, question.answer]);
   
   // Derive matchPairs from answer if not present (for backwards compatibility)
-  const effectiveMatchPairs = question.matchPairs ||
-    (question.type === "matching" && question.answer
-      ? question.answer.split(/\s*(?:\||,)\s*/).map(pair => {
-          const [left, right] = pair.split(/\s*(?:→|->)\s*/);
-          return { left: left?.trim() || "", right: right?.trim() || "" };
-        }).filter(p => p.left && p.right)
-      : []);
+  const effectiveMatchPairs = useMemo(() => {
+    if (question.matchPairs && question.matchPairs.length > 0) {
+      return question.matchPairs;
+    }
+    if (question.type === "matching" && question.answer) {
+      // Answer format: "France → Paris, Germany → Berlin" or "France -> Paris | Germany -> Berlin"
+      const pairs = question.answer.split(/\s*(?:\||,)\s*/).map(pair => {
+        const parts = pair.split(/\s*(?:→|->)\s*/);
+        if (parts.length >= 2) {
+          return { left: parts[0]?.trim() || "", right: parts[1]?.trim() || "" };
+        }
+        return { left: "", right: "" };
+      }).filter(p => p.left && p.right);
+      return pairs;
+    }
+    return [];
+  }, [question.matchPairs, question.type, question.answer]);
 
-  const [shuffledItems] = useState(() => {
-    if (question.type === "matching") {
+  // Use useMemo with a stable shuffle (seeded by question content)
+  const shuffledItems = useMemo(() => {
+    if (question.type === "matching" && effectiveMatchPairs.length > 0) {
       return shuffle(effectiveMatchPairs.map(p => p.right));
     }
-    if (question.type === "ordering") {
+    if (question.type === "ordering" && effectiveOrderItems.length > 0) {
       return shuffle([...effectiveOrderItems]);
     }
     return [];
-  });
+  }, [question.type, effectiveMatchPairs, effectiveOrderItems]);
 
   const handleMultipleChoiceSelect = (option: string) => {
     setSelectedOption(option);
