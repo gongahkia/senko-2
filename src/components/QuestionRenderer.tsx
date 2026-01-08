@@ -60,6 +60,10 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     setMatchSelections(new Map());
     // Always use initialOrderItems when resetting, not conditional
     setOrderSelections(initialOrderItems);
+    // Clear matching question refs to prevent memory leak
+    leftItemRefs.current.clear();
+    rightItemRefs.current.clear();
+    setLinePositions([]);
   }, [question, initialOrderItems]);
 
   // Use orderSelections directly since we initialize it properly
