@@ -174,6 +174,14 @@ export function parseQuestions(inputText: string): ParseResult {
         warnings.push(`Block ${i + 1}: Question added but may not render correctly`);
       }
 
+      // Validate image URL if present
+      if (newItem.imageUrl) {
+        const imageValidation = isValidImageUrl(newItem.imageUrl);
+        if (!imageValidation.valid) {
+          warnings.push(`Block ${i + 1}: Invalid image URL - ${imageValidation.error}`);
+        }
+      }
+
       // Post-process to generate a display answer for complex types
       if (newItem.type === 'multiple-choice' && newItem.options && newItem.answer) {
         const correctOpt = newItem.options.find(opt => opt.startsWith(newItem.answer as string));
@@ -265,6 +273,43 @@ export function isValidImageFile(file: File): boolean {
   return validTypes.includes(file.type) && file.size <= maxSize;
 }
 
+// Validate image URL (base64 or external URL)
+export function isValidImageUrl(imageUrl: string): { valid: boolean; type: 'base64' | 'url' | 'invalid'; error?: string } {
+  if (!imageUrl || typeof imageUrl !== 'string') {
+    return { valid: false, type: 'invalid', error: 'Image URL is empty or not a string' };
+  }
+
+  // Check if it's a base64 data URL
+  const base64Pattern = /^data:image\/(jpeg|jpg|png|gif|webp);base64,/i;
+  if (base64Pattern.test(imageUrl)) {
+    // Validate base64 format
+    const base64Data = imageUrl.split(',')[1];
+    if (!base64Data || base64Data.length === 0) {
+      return { valid: false, type: 'invalid', error: 'Invalid base64 data' };
+    }
+
+    // Check approximate size (base64 is ~33% larger than binary)
+    const approximateSize = (base64Data.length * 3) / 4;
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (approximateSize > maxSize) {
+      return { valid: false, type: 'invalid', error: 'Base64 image exceeds 5MB limit' };
+    }
+
+    return { valid: true, type: 'base64' };
+  }
+
+  // Check if it's a valid HTTP(S) URL
+  try {
+    const url = new URL(imageUrl);
+    if (url.protocol === 'http:' || url.protocol === 'https:') {
+      return { valid: true, type: 'url' };
+    }
+    return { valid: false, type: 'invalid', error: 'URL must use http or https protocol' };
+  } catch {
+    return { valid: false, type: 'invalid', error: 'Invalid URL format' };
+  }
+}
+
 // Parse and render markdown formatting
 export function parseMarkdown(text: string): string {
   if (!text) return '';
@@ -329,6 +374,15 @@ export function normalizeQuestion(q: QuestionItem): QuestionItem {
   normalized.type = normalized.type || 'flashcard';
   normalized.question = normalized.question || '';
   normalized.answer = normalized.answer || '';
+
+  // Validate and clean image URL if present
+  if (normalized.imageUrl) {
+    const imageValidation = isValidImageUrl(normalized.imageUrl);
+    if (!imageValidation.valid) {
+      console.warn(`Invalid image URL removed: ${imageValidation.error}`);
+      normalized.imageUrl = undefined;
+    }
+  }
 
   // Ensure complex fields are properly typed - initialize as undefined if not present
   // (Don't initialize as empty arrays - that would hide missing required fields)
