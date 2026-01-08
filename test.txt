@@ -1,0 +1,186 @@
+---
+type: flashcard
+---
+What is the capital of France?
+===
+Paris
+
+---
+type: flashcard
+---
+**Bold text** and *italic text* with LaTeX: $E = mc^2$
+===
+This demonstrates **markdown** with *LaTeX* subscripts: $x_i$ and superscripts: $x^2$
+
+---
+type: multiple-choice
+answer: B
+options:
+  - A) Mercury
+  - B) Venus
+  - C) Mars
+  - D) Jupiter
+---
+Which planet is closest to the Sun after Mercury?
+
+---
+type: multiple-choice
+answer: TypeScript
+options:
+  - JavaScript
+  - TypeScript
+  - Python
+  - Ruby
+---
+Which language is this project built with? (No prefix format)
+
+---
+type: true-false
+answer: True
+---
+The Earth orbits around the Sun.
+
+---
+type: true-false
+answer: False
+---
+Water boils at 90 degrees Celsius at sea level.
+
+---
+type: fill-in-the-blank
+blanks:
+  - Paris
+  - France
+---
+The capital of ___ is ___.
+
+---
+type: fill-in-the-blank
+blanks:
+  - photosynthesis
+---
+The process by which plants convert light into energy is called ___.
+
+---
+type: fill-in-the-blank
+blanks:
+  - color
+  - center
+---
+Test fuzzy matching: American spelling is ___ and ___.
+
+---
+type: matching
+pairs:
+  Apple: Red
+  Banana: Yellow
+  Grape: Purple
+  Orange: Orange
+---
+Match each fruit with its typical color:
+
+---
+type: matching
+pairs:
+  React: JavaScript Library
+  Vue: Progressive Framework
+  Angular: Full Platform
+---
+Match the frontend frameworks with their descriptions:
+
+---
+type: ordering
+items:
+  - First
+  - Second
+  - Third
+  - Fourth
+---
+Arrange these items in numerical order:
+
+---
+type: ordering
+items:
+  - Plant seed
+  - Water regularly
+  - Seedling emerges
+  - Plant grows
+  - Harvest
+---
+Put these gardening steps in the correct order:
+
+---
+type: multi-select
+answers:
+  - A) Hydrogen
+  - C) Oxygen
+options:
+  - A) Hydrogen
+  - B) Carbon Dioxide
+  - C) Oxygen
+  - D) Nitrogen
+---
+Which elements make up water (H₂O)? Select all that apply:
+
+---
+type: multi-select
+answers:
+  - Python
+  - JavaScript
+  - TypeScript
+options:
+  - Python
+  - JavaScript
+  - TypeScript
+  - Java
+  - C++
+---
+Which languages are dynamically typed? (No prefix format)
+
+---
+type: flashcard
+---
+**Edge case test:** Multiple === in content
+===
+First part === Second part === Third part
+
+---
+type: multiple-choice
+answer: A
+options:
+  - A) $x = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}$
+  - B) $x = a^2 + b^2$
+  - C) $x = \\pi r^2$
+---
+What is the quadratic formula with LaTeX?
+
+---
+type: fill-in-the-blank
+blanks:
+  - "$\\pi r^2$"
+  - "$2\\pi r$"
+---
+The area of a circle is ___ and the circumference is ___.
+
+---
+type: matching
+pairs:
+  "$x^2$": "X squared"
+  "$x_i$": "X subscript i"
+  "$\\sqrt{x}$": "Square root of X"
+---
+Match LaTeX notation with descriptions:
+
+---
+type: multi-select
+answers:
+  - A) Lists: `- item`
+  - B) Bold: `**text**`
+  - C) LaTeX: `$equation$`
+options:
+  - A) Lists: `- item`
+  - B) Bold: `**text**`
+  - C) LaTeX: `$equation$`
+  - D) Headers: `### title`
+---
+Which markdown features are supported? Select all that work:
