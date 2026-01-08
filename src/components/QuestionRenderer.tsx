@@ -447,7 +447,12 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
               onChange={(e) => setUserInput(e.target.value)}
               placeholder={blanks.length > 1 ? "Separate answers with |" : "Type your answer"}
               className="w-full p-3 text-sm sm:text-base border border-border rounded-lg bg-background text-foreground"
+              aria-label={`Fill in the blank answer${blanks.length > 1 ? 's' : ''}`}
+              aria-describedby="fill-in-blank-instructions"
             />
+            <span id="fill-in-blank-instructions" className="sr-only">
+              {blanks.length > 1 ? `Enter ${blanks.length} answers separated by vertical bar` : 'Enter your answer'}
+            </span>
             <Button 
               onClick={handleFillInBlankSubmit} 
               className="w-full py-5 sm:py-2"
@@ -531,11 +536,14 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
 
         {mode === "question" && (
           <>
-            <p className="text-sm text-muted-foreground">Click an item on the left, then click its match on the right. Click the × button to remove a match.</p>
-            <div 
+            <p className="text-sm text-muted-foreground" id="matching-instructions">Click an item on the left, then click its match on the right. Click the × button to remove a match.</p>
+            <div
               ref={matchContainerRef}
               className="relative"
               onClick={(e) => e.stopPropagation()}
+              role="application"
+              aria-label="Matching question interface"
+              aria-describedby="matching-instructions"
             >
               <svg 
                 className="absolute inset-0 w-full h-full pointer-events-none z-10"
@@ -556,7 +564,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
               </svg>
               
               <div className="flex gap-4 sm:gap-8">
-                <div className="flex-1 space-y-2">
+                <div className="flex-1 space-y-2" role="list" aria-label="Items to match">
                   {leftItems.map((left, idx) => {
                     const isMatched = matchSelections.has(left);
                     const isSelected = selectedLeftItem === left;
@@ -565,6 +573,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                         key={idx}
                         ref={(el) => { if (el) leftItemRefs.current.set(left, el); }}
                         onClick={() => !isMatched && handleLeftItemClick(left)}
+                        role="listitem button"
+                        aria-pressed={isSelected}
+                        aria-label={`${left}${isMatched ? ' - matched' : isSelected ? ' - selected' : ' - select to match'}`}
                         className={`relative p-3 rounded-lg border-2 cursor-pointer transition-all text-sm sm:text-base ${
                           isSelected
                             ? 'border-primary bg-primary/10'
@@ -593,7 +604,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                   })}
                 </div>
                 
-                <div className="flex-1 space-y-2">
+                <div className="flex-1 space-y-2" role="list" aria-label="Matching options">
                   {rightItems.map((right, idx) => {
                     const isMatched = Array.from(matchSelections.values()).includes(right);
                     return (
@@ -601,6 +612,8 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                         key={idx}
                         ref={(el) => { if (el) rightItemRefs.current.set(right, el); }}
                         onClick={() => handleRightItemClick(right)}
+                        role="listitem button"
+                        aria-label={`${right}${isMatched ? ' - already matched' : ''}`}
                         className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-sm sm:text-base ${
                           isMatched 
                             ? 'border-primary/50 bg-primary/5' 
@@ -702,8 +715,8 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
 
         {mode === "question" && currentOrderItems.length > 0 && (
           <>
-            <p className="text-sm text-muted-foreground">Drag and drop to arrange in correct order, or use arrows:</p>
-            <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+            <p className="text-sm text-muted-foreground" id="ordering-instructions">Drag and drop to arrange in correct order, or use arrows:</p>
+            <div className="space-y-2" onClick={(e) => e.stopPropagation()} role="list" aria-label="Items to order" aria-describedby="ordering-instructions">
               {currentOrderItems.map((item, idx) => (
                 <div
                   key={`${item}-${idx}`}
@@ -714,6 +727,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                   onDrop={(e) => handleDrop(e, idx)}
                   onDragEnd={handleDragEnd}
                   onClick={(e) => e.stopPropagation()}
+                  role="listitem"
+                  aria-label={`Position ${idx + 1}: ${item}`}
+                  aria-grabbed={draggedIndex === idx}
                   className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-move transition-all ${
                     draggedIndex === idx 
                       ? 'opacity-50 border-primary bg-primary/10' 
