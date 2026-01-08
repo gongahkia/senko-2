@@ -320,21 +320,78 @@ export function normalizeQuestion(q: QuestionItem): QuestionItem {
   normalized.question = normalized.question || '';
   normalized.answer = normalized.answer || '';
 
-  // Ensure complex fields are arrays if they exist
-  if (normalized.options && !Array.isArray(normalized.options)) normalized.options = [];
-  if (normalized.blanks && !Array.isArray(normalized.blanks)) normalized.blanks = [];
-  if (normalized.matchPairs && !Array.isArray(normalized.matchPairs)) normalized.matchPairs = [];
-  if (normalized.orderItems && !Array.isArray(normalized.orderItems)) normalized.orderItems = [];
-  if (normalized.correctAnswers && !Array.isArray(normalized.correctAnswers)) normalized.correctAnswers = [];
-
-  // Specific normalizations
-  if (normalized.type === 'multiple-choice') {
-    // Ensure the full answer text is stored, not just the letter
-    const correctOption = normalized.options?.find(opt => opt.startsWith(String(normalized.answer)));
-    if (correctOption) {
-      normalized.answer = correctOption;
-    }
+  // Ensure complex fields are properly typed - initialize as undefined if not present
+  // (Don't initialize as empty arrays - that would hide missing required fields)
+  if (normalized.options !== undefined && !Array.isArray(normalized.options)) {
+    normalized.options = [];
   }
-  
+  if (normalized.blanks !== undefined && !Array.isArray(normalized.blanks)) {
+    normalized.blanks = [];
+  }
+  if (normalized.matchPairs !== undefined && !Array.isArray(normalized.matchPairs)) {
+    normalized.matchPairs = [];
+  }
+  if (normalized.orderItems !== undefined && !Array.isArray(normalized.orderItems)) {
+    normalized.orderItems = [];
+  }
+  if (normalized.correctAnswers !== undefined && !Array.isArray(normalized.correctAnswers)) {
+    normalized.correctAnswers = [];
+  }
+
+  // Type-specific normalizations
+  switch (normalized.type) {
+    case 'multiple-choice':
+      // Ensure the full answer text is stored, not just the letter
+      if (normalized.options && normalized.answer) {
+        const correctOption = normalized.options.find(opt =>
+          opt.trim().toLowerCase().startsWith(String(normalized.answer).trim().toLowerCase())
+        );
+        if (correctOption) {
+          normalized.answer = correctOption;
+        }
+      }
+      break;
+
+    case 'true-false':
+      // Normalize boolean answers to string "True" or "False"
+      if (normalized.answer === true || normalized.answer === 'true' || normalized.answer === 'True') {
+        normalized.answer = 'True';
+      } else if (normalized.answer === false || normalized.answer === 'false' || normalized.answer === 'False') {
+        normalized.answer = 'False';
+      }
+      break;
+
+    case 'fill-in-the-blank':
+      // Ensure blanks are trimmed
+      if (normalized.blanks) {
+        normalized.blanks = normalized.blanks.map(b => String(b).trim());
+      }
+      break;
+
+    case 'matching':
+      // Ensure match pairs have string keys and values
+      if (normalized.matchPairs) {
+        normalized.matchPairs = normalized.matchPairs.map(pair => ({
+          left: String(pair.left).trim(),
+          right: String(pair.right).trim()
+        }));
+      }
+      break;
+
+    case 'ordering':
+      // Ensure order items are trimmed strings
+      if (normalized.orderItems) {
+        normalized.orderItems = normalized.orderItems.map(item => String(item).trim());
+      }
+      break;
+
+    case 'multi-select':
+      // Ensure correct answers are trimmed
+      if (normalized.correctAnswers) {
+        normalized.correctAnswers = normalized.correctAnswers.map(a => String(a).trim());
+      }
+      break;
+  }
+
   return normalized;
 }
