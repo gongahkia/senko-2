@@ -98,11 +98,14 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
 
   const handleMultiSelectSubmit = () => {
     if (onAnswer && correctAnswers.length > 0) {
-      const selectedPrefixes = Array.from(selectedOptions).map(opt => opt.charAt(0).toUpperCase());
-      const correctPrefixes = correctAnswers.map(a => a.charAt(0).toUpperCase());
-      const isCorrect = selectedPrefixes.length === correctPrefixes.length &&
-        selectedPrefixes.every(s => correctPrefixes.includes(s)) &&
-        correctPrefixes.every(c => selectedPrefixes.includes(c));
+      // Compare full option text for accuracy, not just prefixes
+      const selectedSet = new Set(Array.from(selectedOptions).map(opt => opt.trim().toLowerCase()));
+      const correctSet = new Set(correctAnswers.map(a => a.trim().toLowerCase()));
+
+      // Check if sets are equal (same size and all elements match)
+      const isCorrect = selectedSet.size === correctSet.size &&
+        Array.from(selectedSet).every(s => correctSet.has(s));
+
       onAnswer(isCorrect);
     }
   };
@@ -801,8 +804,8 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
         <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
           {options.map((option, idx) => {
             const isSelected = selectedOptions.has(option);
-            const optionPrefix = option.charAt(0).toUpperCase();
-            const isCorrect = correctAnswers.some(a => a.charAt(0).toUpperCase() === optionPrefix);
+            // Compare full option text, not just prefix
+            const isCorrect = correctAnswers.some(a => a.trim().toLowerCase() === option.trim().toLowerCase());
 
             return (
               <Button
