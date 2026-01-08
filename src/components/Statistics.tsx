@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { loadAppData, loadDailyStats } from "@/services/storage";
 import { DeckStats } from "@/types";
 import { RetentionCurve } from "./RetentionCurve";
-import { DeckDifficulty } from "./DeckDifficulty";
 import { StudyEfficiencyMetrics } from "./StudyEfficiencyMetrics";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import {
   calculateRetentionCurve,
   calculateStudyEfficiency,
@@ -115,30 +115,24 @@ export function Statistics() {
         </div>
       </div>
 
-      {/* Last 7 Days Activity */}
+      {/* Progress Bar Graph: Last 7 Days */}
       <div className="border rounded-lg p-4 sm:p-6 bg-card">
-        <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Last 7 Days Activity</h3>
+        <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Progress (Last 7 Days)</h3>
         {stats.last7Days.length > 0 ? (
-          <div className="space-y-2">
-            {stats.last7Days.map((day) => (
-              <div
-                key={day.date}
-                className="flex items-center justify-between p-3 rounded bg-muted/50"
-              >
-                <div className="flex-1">
-                  <p className="font-medium">{day.date}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {day.cardsReviewed} cards • {day.timeSpent} min
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-accent">
-                    {day.cardsMastered} mastered
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={stats.last7Days.map(day => ({
+              date: day.date.slice(5), // MM-DD
+              reviewed: day.cardsReviewed,
+              mastered: day.cardsMastered,
+            }))}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+              <YAxis stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} allowDecimals={false} />
+              <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', border: '1px solid hsl(var(--border))', borderRadius: '6px', color: 'hsl(var(--popover-foreground))' }} />
+              <Bar dataKey="reviewed" fill="hsl(var(--primary))" name="Reviewed" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="mastered" fill="hsl(var(--accent))" name="Mastered" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         ) : (
           <p className="text-muted-foreground text-center py-8">
             No study sessions yet. Start reviewing to see your progress!
@@ -146,48 +140,6 @@ export function Statistics() {
         )}
       </div>
 
-      {/* Deck Performance */}
-      <div className="border rounded-lg p-4 sm:p-6 bg-card">
-        <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Deck Performance</h3>
-        {stats.deckStats.length > 0 ? (
-          <div className="space-y-3">
-            {/* Use pre-calculated deckName from stats to avoid duplicate localStorage reads */}
-            {stats.deckStats.map((deckStat) => (
-              <div
-                key={deckStat.deckId}
-                className="p-3 sm:p-4 rounded bg-muted/50 space-y-2"
-              >
-                <div className="flex justify-between items-start gap-2">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm sm:text-base truncate">{deckStat.deckName}</p>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      {deckStat.totalCards} cards • {deckStat.totalReviews}{" "}
-                      reviews
-                    </p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-xs sm:text-sm font-medium whitespace-nowrap">
-                      Avg: {deckStat.averageRating.toFixed(1)}/4
-                    </p>
-                  </div>
-                </div>
-                <div className="h-2 bg-background rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary"
-                    style={{
-                      width: `${(deckStat.averageRating / 4) * 100}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-muted-foreground text-center py-8">
-            Create decks and start studying to see performance metrics.
-          </p>
-        )}
-      </div>
 
       {/* Study Efficiency Metrics */}
       {stats.hasData && (
@@ -203,12 +155,7 @@ export function Statistics() {
         </div>
       )}
 
-      {/* Deck Difficulty */}
-      {stats.deckStats.length > 0 && (
-        <div className="border rounded-lg p-4 sm:p-6 bg-card">
-          <DeckDifficulty deckStats={stats.deckStats} />
-        </div>
-      )}
+      {/* Deck Difficulty removed for compactness */}
     </div>
   );
 }
