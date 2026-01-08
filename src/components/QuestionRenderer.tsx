@@ -598,10 +598,10 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                 </div>
               </div>
             </div>
-            <Button 
-              onClick={(e) => { e.stopPropagation(); handleMatchSubmit(); }} 
-              className="w-full py-5 sm:py-2" 
-              disabled={matchSelections.size !== leftItems.length}
+            <Button
+              onClick={(e) => { e.stopPropagation(); handleMatchSubmit(); }}
+              className="w-full py-5 sm:py-2"
+              disabled={matchSelections.size === 0}
             >
               Submit Matches ({matchSelections.size}/{leftItems.length} connected)
             </Button>
