@@ -57,10 +57,12 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     setSelectedOptions(new Set());
     setUserInput("");
     setMatchSelections(new Map());
-    setOrderSelections(question.type === "ordering" ? initialOrderItems : []);
+    // Always use initialOrderItems when resetting, not conditional
+    setOrderSelections(initialOrderItems);
   }, [question, initialOrderItems]);
 
-  const currentOrderItems = orderSelections.length > 0 ? orderSelections : initialOrderItems;
+  // Use orderSelections directly since we initialize it properly
+  const currentOrderItems = orderSelections;
 
   const handleMultipleChoiceSelect = (option: string) => {
     setSelectedOption(option);
