@@ -139,18 +139,28 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   useEffect(() => {
     const updateLinePositions = () => {
       if (!matchContainerRef.current) return;
-    
+
+      // Verify all refs are populated before calculating
+      let allRefsReady = true;
+      matchSelections.forEach((right, left) => {
+        if (!leftItemRefs.current.get(left) || !rightItemRefs.current.get(right)) {
+          allRefsReady = false;
+        }
+      });
+
+      if (!allRefsReady) return;
+
       const containerRect = matchContainerRef.current.getBoundingClientRect();
       const newLines: {x1: number, y1: number, x2: number, y2: number, left: string, right: string}[] = [];
-      
+
       matchSelections.forEach((right, left) => {
         const leftEl = leftItemRefs.current.get(left);
         const rightEl = rightItemRefs.current.get(right);
-        
+
         if (leftEl && rightEl) {
           const leftRect = leftEl.getBoundingClientRect();
           const rightRect = rightEl.getBoundingClientRect();
-          
+
           newLines.push({
             x1: leftRect.right - containerRect.left,
             y1: leftRect.top + leftRect.height / 2 - containerRect.top,
@@ -161,15 +171,22 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
           });
         }
       });
-      
+
       setLinePositions(newLines);
     }
 
-    const animationFrameId = requestAnimationFrame(updateLinePositions);
+    // Use double requestAnimationFrame to ensure refs are ready
+    // First frame: refs are populated
+    // Second frame: safe to calculate positions
+    const firstFrameId = requestAnimationFrame(() => {
+      const secondFrameId = requestAnimationFrame(updateLinePositions);
+      return () => cancelAnimationFrame(secondFrameId);
+    });
+
     window.addEventListener('resize', updateLinePositions);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      cancelAnimationFrame(firstFrameId);
       window.removeEventListener('resize', updateLinePositions);
     };
   }, [matchSelections]);
