@@ -129,7 +129,7 @@ export function Recall({ deckId, questions }: RecallProps) {
           onTouchEnd={() => mode === "question" && handleFlipCard()}
         >
           <QuestionRenderer
-            question={{ ...currentCard, type: currentCard.type || "flashcard" }}
+            question={currentCard}
             mode={mode}
           />
 
