@@ -531,7 +531,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
 
         {mode === "question" && (
           <>
-            <p className="text-sm text-muted-foreground">Click an item on the left, then click its match on the right. Click a connected item to remove the match.</p>
+            <p className="text-sm text-muted-foreground">Click an item on the left, then click its match on the right. Click the × button to remove a match.</p>
             <div 
               ref={matchContainerRef}
               className="relative"
@@ -564,16 +564,30 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                       <div
                         key={idx}
                         ref={(el) => { if (el) leftItemRefs.current.set(left, el); }}
-                        onClick={() => isMatched ? handleRemoveMatch(left) : handleLeftItemClick(left)}
-                        className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-sm sm:text-base ${
-                          isSelected 
-                            ? 'border-primary bg-primary/10' 
-                            : isMatched 
-                              ? 'border-primary/50 bg-primary/5' 
+                        onClick={() => !isMatched && handleLeftItemClick(left)}
+                        className={`relative p-3 rounded-lg border-2 cursor-pointer transition-all text-sm sm:text-base ${
+                          isSelected
+                            ? 'border-primary bg-primary/10'
+                            : isMatched
+                              ? 'border-primary/50 bg-primary/5 cursor-default'
                               : 'border-border bg-muted/50 hover:bg-muted'
                         }`}
                       >
                         <MarkdownText>{left}</MarkdownText>
+                        {isMatched && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemoveMatch(left);
+                            }}
+                            className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-destructive/10 hover:bg-destructive/20 text-destructive transition-colors"
+                            aria-label="Remove match"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        )}
                       </div>
                     );
                   })}
