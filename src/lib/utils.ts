@@ -141,11 +141,19 @@ export function parseQuestions(inputText: string): ParseResult {
       let question = '';
       let answer = '';
 
-      // For flashcards, content is "question===answer"
-      // For others, content is just the question
+      // Flashcards: content can be "question===answer" (two-sided) or just "question" (one-sided)
+      // Other types: content is just the question, answer comes from metadata
       if (type === 'flashcard') {
-        question = content.trim();
-        // The actual answer is handled by the renderer by showing the back
+        const contentParts = content.split('===');
+        question = contentParts[0]?.trim() || '';
+        // If there's a === separator, the second part is the answer
+        if (contentParts.length > 1) {
+          answer = contentParts.slice(1).join('===').trim();
+        }
+        // If no === separator and metadata.answer exists, use that
+        if (!answer && metadata.answer) {
+          answer = String(metadata.answer);
+        }
       } else {
         question = content.trim();
       }
@@ -158,7 +166,7 @@ export function parseQuestions(inputText: string): ParseResult {
       const newItem: QuestionItem = {
         type,
         question,
-        answer: metadata.answer || '',
+        answer: answer || metadata.answer || '',
         options: metadata.options || undefined,
         blanks: metadata.blanks || undefined,
         matchPairs: metadata.pairs ? Object.entries(metadata.pairs).map(([left, right]) => ({ left: String(left), right: String(right) })) : undefined,
