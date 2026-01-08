@@ -713,13 +713,14 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                     {idx + 1}
                   </span>
                   <span className="flex-1 text-sm sm:text-base select-none">{item}</span>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1" draggable={false} onMouseDown={(e) => e.stopPropagation()}>
                     <button
                       type="button"
                       onClick={(e) => { e.stopPropagation(); moveItem(idx, 'up'); }}
                       disabled={idx === 0}
                       className="p-1 rounded hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed"
                       aria-label="Move up"
+                      draggable={false}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -731,6 +732,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                       disabled={idx === currentOrderItems.length - 1}
                       className="p-1 rounded hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed"
                       aria-label="Move down"
+                      draggable={false}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
