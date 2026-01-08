@@ -271,18 +271,22 @@ export function parseMarkdown(text: string): string {
 
   let result = text;
 
-  // Fix underscore blanks inside LaTeX that would be interpreted as subscripts
-  // Replace ___ (3+ underscores) with \text{___} inside $...$ blocks
-  result = result.replace(/\$([^$]+)\$/g, (_match, content) => {
-    // Replace consecutive underscores with escaped version or placeholder
-    const fixed = content.replace(/_{2,}/g, (underscores: string) => `\\text{${underscores}}`);
-    return `$${fixed}$`;
-  });
-  
-  // Same for display math $$...$$
+  // Protect LaTeX blocks from markdown processing
+  // Store LaTeX blocks temporarily and restore them after markdown processing
+  const latexBlocks: string[] = [];
+
+  // Handle display math $$...$$ first (must come before inline math)
   result = result.replace(/\$\$([^$]+)\$\$/g, (_match, content) => {
-    const fixed = content.replace(/_{2,}/g, (underscores: string) => `\\text{${underscores}}`);
-    return `$$${fixed}$$`;
+    const placeholder = `__LATEX_DISPLAY_${latexBlocks.length}__`;
+    latexBlocks.push(`$$${content}$$`);
+    return placeholder;
+  });
+
+  // Handle inline math $...$ (non-greedy, doesn't match $$)
+  result = result.replace(/\$([^$\n]+)\$/g, (_match, content) => {
+    const placeholder = `__LATEX_INLINE_${latexBlocks.length}__`;
+    latexBlocks.push(`$${content}$`);
+    return placeholder;
   });
 
   // Handle numbered lists (must come before other processing to preserve structure)
@@ -307,6 +311,12 @@ export function parseMarkdown(text: string): string {
 
   // Handle italic (*text*)
   result = result.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+  // Restore LaTeX blocks (reverse order to maintain indices)
+  for (let i = latexBlocks.length - 1; i >= 0; i--) {
+    result = result.replace(`__LATEX_DISPLAY_${i}__`, latexBlocks[i]);
+    result = result.replace(`__LATEX_INLINE_${i}__`, latexBlocks[i]);
+  }
 
   return result;
 }
