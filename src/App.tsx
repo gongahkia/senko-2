@@ -110,310 +110,334 @@ function App() {
   const questionFormatsDoc = [
     {
       type: "Flashcard",
-      prefix: "[FC]",
-      description: "Traditional question/answer format. Simply reveal the answer after thinking.",
-      format: `[FC] What is the capital of France?
+      prefix: "type: flashcard",
+      description: "Traditional question/answer format. Question and answer are separated by '==='.",
+      format: `---
+type: flashcard
+---
+What is the capital of France?
 ===
 Paris`,
-      prompt: `Generate flashcard questions and answers for active recall study on the topic: [YOUR TOPIC HERE]
+      prompt: `Generate flashcard questions for active recall study on the topic: [YOUR TOPIC HERE]
 
-Please format your response EXACTLY as follows:
+Please format your response EXACTLY as follows, using YAML front matter for each card:
 
-[FC] Question 1 text here
+---
+type: flashcard
+---
+Question 1 text here
 ===
 Answer 1 text here
 
-[FC] Question 2 text here
+---
+type: flashcard
+---
+Question 2 text here
 ===
 Answer 2 text here
 
 Requirements:
-- Generate 15-20 questions
-- Each question MUST start with [FC] prefix
-- Questions should test understanding, not just memorization
-- Answers should be concise but complete
-- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
-- Separate each question-answer pair with a blank line
-- Do NOT number the questions
-- Do NOT add any extra formatting or commentary
+- Generate 15-20 questions.
+- Each card MUST start with a YAML block containing "type: flashcard".
+- The YAML block MUST be enclosed in "---" separators.
+- The question and answer MUST be separated by "===".
+- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block).
+- Separate each card block with a blank line.
+- Do NOT add any extra formatting or commentary.
 
 Example:
-[FC] What is the derivative of $x^2$?
+---
+type: flashcard
+---
+What is the derivative of $x^2$?
 ===
-The derivative of $x^2$ is $2x$, found using the power rule.
-
-[FC] What is Newton's Second Law?
-===
-Newton's Second Law states that $F = ma$, where force equals mass times acceleration.`
+The derivative of $x^2$ is $2x$, found using the power rule.`
     },
     {
       type: "Multiple Choice",
-      prefix: "[MC]",
+      prefix: "type: multiple-choice",
       description: "Single correct answer from multiple options. Good for testing recognition.",
-      format: `[MC] What is 2 + 2?
-===
-A) 3
-B) 4
-C) 5
-D) 6
-ANSWER: B)`,
+      format: `---
+type: multiple-choice
+answer: B
+options:
+  - A) 3
+  - B) 4
+  - C) 5
+  - D) 6
+---
+What is 2 + 2?`,
       prompt: `Generate multiple choice questions for active recall study on the topic: [YOUR TOPIC HERE]
 
-Please format your response EXACTLY as follows:
+Please format your response EXACTLY as follows, using YAML front matter for each card:
 
-[MC] Question 1 text here
-===
-A) Option A
-B) Option B
-C) Option C
-D) Option D
-ANSWER: X)
+---
+type: multiple-choice
+answer: B # The correct option letter
+options:
+  - A) Option A
+  - B) Option B
+  - C) Option C
+  - D) Option D
+---
+Question 1 text here
 
-[MC] Question 2 text here
-===
-A) Option A
-B) Option B
-C) Option C
-D) Option D
-ANSWER: X)
+---
+type: multiple-choice
+answer: C
+options:
+  - A) Option A
+  - B) Option B
+  - C) Option C
+  - D) Option D
+---
+Question 2 text here
 
 Requirements:
-- Generate 10-15 questions
-- Each question must have exactly 4 options (A, B, C, D)
-- Include realistic distractors (wrong answers should be plausible)
-- The correct answer line must start with "ANSWER:" followed by the letter and )
-- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
-- Separate each question-answer pair with a blank line
-- Do NOT number the questions beyond the [MC] prefix
-- Do NOT add any extra formatting or commentary
+- Generate 10-15 questions.
+- Each card MUST have a YAML block with "type: multiple-choice", the correct "answer" letter, and a list of "options".
+- Each question must have exactly 4 options.
+- The question text comes AFTER the YAML block.
+- Use LaTeX math notation where appropriate.
+- Separate each card block with a blank line.
 
 Example:
-[MC] What is the derivative of $x^2$?
-===
-A) $x$
-B) $2x$
-C) $x^2$
-D) $2x^2$
-ANSWER: B)
-
-[MC] Which law states that $F = ma$?
-===
-A) Newton's First Law
-B) Newton's Second Law
-C) Newton's Third Law
-D) Law of Conservation of Energy
-ANSWER: B)`
+---
+type: multiple-choice
+answer: B
+options:
+  - A) $x$
+  - B) $2x$
+  - C) $x^2$
+  - D) $2x^2$
+---
+What is the derivative of $x^2$?`
     },
     {
       type: "True/False",
-      prefix: "[TF]",
+      prefix: "type: true-false",
       description: "Binary choice questions. Great for testing factual recall.",
-      format: `[TF] The Earth is flat.
-===
-False`,
+      format: `---
+type: true-false
+answer: False
+---
+The Earth is flat.`,
       prompt: `Generate true/false questions for active recall study on the topic: [YOUR TOPIC HERE]
 
-Please format your response EXACTLY as follows:
+Please format your response EXACTLY as follows, using YAML front matter for each card:
 
-[TF] Statement 1 that is either true or false
-===
-True
+---
+type: true-false
+answer: True
+---
+Statement 1 that is either true or false.
 
-[TF] Statement 2 that is either true or false
-===
-False
+---
+type: true-false
+answer: False
+---
+Statement 2 that is either true or false.
 
 Requirements:
-- Generate 15-20 questions
-- Mix of true and false answers (roughly 50/50)
-- Statements should be clear and unambiguous
-- Avoid trick questions or overly subtle wording
-- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
-- Separate each question-answer pair with a blank line
-- Answer must be exactly "True" or "False"
-- Do NOT add any extra formatting or commentary
+- Generate 15-20 questions.
+- Each card MUST have a YAML block with "type: true-false" and the correct "answer" (True or False).
+- The question statement comes AFTER the YAML block.
+- Mix of true and false answers (roughly 50/50).
+- Use LaTeX math notation where appropriate.
+- Separate each card block with a blank line.
 
 Example:
-[TF] The derivative of $x^2$ is $2x$.
-===
-True
-
-[TF] Newton's Second Law states that $F = m/a$.
-===
-False`
+---
+type: true-false
+answer: True
+---
+The derivative of $x^2$ is $2x$.`
     },
     {
       type: "Fill in the Blank",
-      prefix: "[FIB]",
-      description: "Type the missing word(s). Use | to separate multiple blanks.",
-      format: `[FIB] The chemical formula for water is ___.
-===
-H2O`,
+      prefix: "type: fill-in-the-blank",
+      description: "Type the missing word(s). Use ___ for blanks in the question.",
+      format: `---
+type: fill-in-the-blank
+blanks:
+  - H2O
+---
+The chemical formula for water is ___.`,
       prompt: `Generate fill-in-the-blank questions for active recall study on the topic: [YOUR TOPIC HERE]
 
-Please format your response EXACTLY as follows:
+Please format your response EXACTLY as follows, using YAML front matter for each card:
 
-[FIB] Sentence with ___ representing the blank
-===
-correct answer
+---
+type: fill-in-the-blank
+blanks:
+  - correct answer
+---
+Sentence with ___ representing the blank.
 
-[FIB] Another sentence with ___ for the blank
-===
-correct answer
+---
+type: fill-in-the-blank
+blanks:
+  - mass
+  - acceleration
+---
+Newton's Second Law states that Force equals ___ times ___.
 
 Requirements:
-- Generate 15-20 questions
-- Use ___ (three underscores) to indicate each blank
-- Answers should be single words or short phrases
-- For multiple blanks in one question, separate answers with | (e.g., answer1 | answer2)
-- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
-- Separate each question-answer pair with a blank line
-- Do NOT add any extra formatting or commentary
+- Generate 15-20 questions.
+- Each card MUST have a YAML block with "type: fill-in-the-blank" and a list of "blanks" (the answers).
+- Use ___ (three underscores) to indicate each blank in the question text.
+- The question text comes AFTER the YAML block.
+- Use LaTeX math notation where appropriate.
+- Separate each card block with a blank line.
 
 Example:
-[FIB] The derivative of $x^2$ is ___.
-===
-$2x$
-
-[FIB] Newton's Second Law states that Force equals ___ times ___.
-===
-mass | acceleration`
+---
+type: fill-in-the-blank
+blanks:
+  - $2x$
+---
+The derivative of $x^2$ is ___.`
     },
     {
       type: "Matching",
-      prefix: "[MATCH]",
+      prefix: "type: matching",
       description: "Connect items from two columns. Perfect for vocabulary or associations.",
-      format: `[MATCH] Match the countries to their capitals
-===
-France -> Paris | Germany -> Berlin | Japan -> Tokyo`,
+      format: `---
+type: matching
+pairs:
+  - France: Paris
+  - Germany: Berlin
+  - Japan: Tokyo
+---
+Match the countries to their capitals.`,
       prompt: `Generate matching questions for active recall study on the topic: [YOUR TOPIC HERE]
 
-Please format your response EXACTLY as follows:
+Please format your response EXACTLY as follows, using YAML front matter for each card:
 
-[MATCH] Instruction for what to match
-===
-Item1 -> Match1 | Item2 -> Match2 | Item3 -> Match3 | Item4 -> Match4
-
-[MATCH] Another matching instruction
-===
-ItemA -> MatchA | ItemB -> MatchB | ItemC -> MatchC
+---
+type: matching
+pairs:
+  - Item1: Match1
+  - Item2: Match2
+  - Item3: Match3
+---
+Instruction for what to match.
 
 Requirements:
-- Generate 8-10 matching questions
-- Each question should have 3-5 pairs to match
-- Use -> to connect each item to its match
-- Use | to separate different pairs
-- Pairs should be related and test meaningful associations
-- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
-- Separate each question-answer pair with a blank line
-- Do NOT add any extra formatting or commentary
+- Generate 8-10 questions.
+- Each card MUST have a YAML block with "type: matching" and a list of "pairs".
+- Each pair should be in "Key: Value" format.
+- The question instruction comes AFTER the YAML block.
+- Use LaTeX math notation where appropriate.
+- Separate each card block with a blank line.
 
 Example:
-[MATCH] Match the mathematical functions to their derivatives
-===
-$x^2$ -> $2x$ | $x^3$ -> $3x^2$ | $e^x$ -> $e^x$ | $\\ln(x)$ -> $1/x$
-
-[MATCH] Match the scientists to their laws
-===
-Newton -> Laws of Motion | Ohm -> $V = IR$ | Einstein -> $E = mc^2$`
+---
+type: matching
+pairs:
+  - $x^2$: $2x$
+  - $x^3$: $3x^2$
+  - $e^x$: $e^x$
+---
+Match the mathematical functions to their derivatives.`
     },
     {
       type: "Ordering",
-      prefix: "[ORDER]",
+      prefix: "type: ordering",
       description: "Arrange items in correct sequence. Ideal for processes or timelines.",
-      format: `[ORDER] Arrange these events chronologically
-===
-World War I | World War II | Cold War | Fall of Berlin Wall`,
+      format: `---
+type: ordering
+items:
+  - World War I
+  - World War II
+  - Cold War
+---
+Arrange these events chronologically.`,
       prompt: `Generate ordering questions for active recall study on the topic: [YOUR TOPIC HERE]
 
-Please format your response EXACTLY as follows:
+Please format your response EXACTLY as follows, using YAML front matter for each card:
 
-[ORDER] Instruction for how to order the items
-===
-First item | Second item | Third item | Fourth item
-
-[ORDER] Another ordering instruction
-===
-Step 1 | Step 2 | Step 3 | Step 4 | Step 5
+---
+type: ordering
+items:
+  - First item
+  - Second item
+  - Third item
+  - Fourth item
+---
+Instruction for how to order the items.
 
 Requirements:
-- Generate 8-10 ordering questions
-- Each question should have 3-6 items to arrange
-- Items must be listed in the CORRECT order in the answer
-- Use | to separate each item
-- Good for timelines, processes, sequences, rankings
-- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
-- Separate each question-answer pair with a blank line
-- Do NOT add any extra formatting or commentary
+- Generate 8-10 questions.
+- Each card MUST have a YAML block with "type: ordering" and a list of "items" in the CORRECT order.
+- The question instruction comes AFTER the YAML block.
+- Use LaTeX math notation where appropriate.
+- Separate each card block with a blank line.
 
 Example:
-[ORDER] Arrange the steps of differentiation using the chain rule
-===
-Identify the outer function | Differentiate the outer function | Multiply by the derivative of the inner function
-
-[ORDER] Order these numbers from smallest to largest
-===
-$\\pi$ | $e^2$ | $10$ | $4^2$`
+---
+type: ordering
+items:
+  - Identify the outer function
+  - Differentiate the outer function
+  - Multiply by the derivative of the inner function
+---
+Arrange the steps of differentiation using the chain rule.`
     },
     {
       type: "Multi-Select",
-      prefix: "[MS]",
+      prefix: "type: multi-select",
       description: "Multiple correct answers. Common in certification-style exams.",
-      format: `[MS] Which are primary colors?
-===
-A) Red
-B) Green
-C) Blue
-D) Yellow
-ANSWERS: A, C`,
+      format: `---
+type: multi-select
+answers:
+  - A
+  - C
+options:
+  - A) Red
+  - B) Green
+  - C) Blue
+  - D) Yellow
+---
+Which are primary colors?`,
       prompt: `Generate multi-select questions for active recall study on the topic: [YOUR TOPIC HERE]
 
-Please format your response EXACTLY as follows:
+Please format your response EXACTLY as follows, using YAML front matter for each card:
 
-[MS] Question where multiple answers are correct (select all that apply)
-===
-A) Option A
-B) Option B
-C) Option C
-D) Option D
-ANSWERS: X, Y
-
-[MS] Another multi-select question
-===
-A) Option A
-B) Option B
-C) Option C
-D) Option D
-E) Option E
-ANSWERS: X, Y, Z
+---
+type: multi-select
+answers: # List of correct option letters
+  - A
+  - D
+options:
+  - A) Option A
+  - B) Option B
+  - C) Option C
+  - D) Option D
+---
+Question where multiple answers are correct (select all that apply).
 
 Requirements:
-- Generate 10-12 questions
-- Each question must have 4-5 options
-- Each question should have 2-3 correct answers
-- The ANSWERS line must list all correct options separated by commas
-- Include plausible distractors (wrong answers)
-- Use LaTeX math notation where appropriate ($...$ for inline, $$...$$ for block)
-- Separate each question-answer pair with a blank line
-- Do NOT add any extra formatting or commentary
+- Generate 10-12 questions.
+- Each card MUST have a YAML block with "type: multi-select", a list of correct "answers", and a list of "options".
+- The question text comes AFTER the YAML block.
+- Use LaTeX math notation where appropriate.
+- Separate each card block with a blank line.
 
 Example:
-[MS] Which of the following are valid derivatives? (Select all that apply)
-===
-A) $\\frac{d}{dx}(x^2) = 2x$
-B) $\\frac{d}{dx}(e^x) = e^x$
-C) $\\frac{d}{dx}(\\ln x) = x$
-D) $\\frac{d}{dx}(\\sin x) = \\cos x$
-ANSWERS: A, B, D
-
-[MS] Which scientists contributed to classical mechanics?
-===
-A) Isaac Newton
-B) Albert Einstein
-C) Galileo Galilei
-D) Max Planck
-E) Johannes Kepler
-ANSWERS: A, C, E`
+---
+type: multi-select
+answers:
+  - A
+  - B
+  - D
+options:
+  - A) $\\frac{d}{dx}(x^2) = 2x$
+  - B) $\\frac{d}{dx}(e^x) = e^x$
+  - C) $\\frac{d}{dx}(\\ln x) = x$
+  - D) $\\frac{d}{dx}(\\sin x) = \\cos x$
+---
+Which of the following are valid derivatives? (Select all that apply)`
     }
   ];
 

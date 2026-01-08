@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { QuestionItem, QuestionType } from "@/types";
+import * as yaml from 'js-yaml';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -37,180 +38,121 @@ export function shuffle<T>(array: T[]): T[] {
   return shuffled;
 }
 
-// Parse questions from text
+// Parse questions from the new YAML front matter format
 export function parseQuestions(inputText: string): QuestionItem[] {
   if (!inputText.trim()) return [];
 
   const questions: QuestionItem[] = [];
+  const blocks = inputText.split(/^-{3,}\s*$/m).filter(block => block.trim());
 
-  // Split by === delimiter
-  const rawSections = inputText
-    .split(/\s*===\s*/)
-    .map(s => s.trim())
-    .filter(s => s.length > 0);
+  for (const block of blocks) {
+    try {
+      const parts = block.trim().split(/\n===\n/);
+      const frontMatterText = parts[0];
+      const content = parts.length > 1 ? parts.slice(1).join('\n===\n') : '';
+      
+      const metadata = yaml.load(frontMatterText) as any;
+      if (!metadata || typeof metadata !== 'object' || !metadata.type) {
+        continue; // Skip invalid blocks
+      }
 
-  // Process sections to extract Q&A pairs
-  // Format: Q1 === A1\n\nQ2 === A2\n\nQ3 === ...
-  // After splitting by ===:
-  //   rawSections[0] = Q1
-  //   rawSections[1] = A1\n\nQ2
-  //   rawSections[2] = A2\n\nQ3
-  //   ...
-  const processedSections: string[] = [];
+      const type = metadata.type as QuestionType;
+      let question = '';
+      let answer = '';
 
-  for (let i = 0; i < rawSections.length; i++) {
-    const section = rawSections[i];
-
-    if (i === 0) {
-      // First section is always just a question
-      processedSections.push(section);
-    } else {
-      // All subsequent sections contain: Answer\n\nNextQuestion
-      // Split by double newlines to separate answer from next question
-      const parts = section.split(/\n\n+/);
-
-      if (parts.length >= 2) {
-        // Last part is likely the next question, everything else is the answer
-        const lastPart = parts[parts.length - 1].trim();
-        const answerParts = parts.slice(0, -1);
-        const answer = answerParts.join('\n\n').trim();
-
-        if (answer) {
-          processedSections.push(answer);
-        }
-        // Add the next question (last part)
-        processedSections.push(lastPart);
+      // For flashcards, content is "question===answer"
+      // For others, content is just the question
+      if (type === 'flashcard') {
+        question = content.trim();
+        // The actual answer is handled by the renderer by showing the back
       } else {
-        // Only one part - this is just the final answer with no following question
-        processedSections.push(section);
-      }
-    }
-  }
-
-  // Now pair them up: processedSections[0,1], processedSections[2,3], etc.
-  for (let i = 0; i < processedSections.length - 1; i += 2) {
-    if (i + 1 >= processedSections.length) break;
-
-    const questionText = processedSections[i].trim();
-    const answerText = processedSections[i + 1].trim();
-
-    if (!questionText || !answerText) continue;
-
-    // Detect question type based on format
-    let type: QuestionType = "flashcard";
-    let question = questionText;
-    let answer = answerText;
-    let options: string[] | undefined;
-    let blanks: string[] | undefined;
-    let matchPairs: { left: string; right: string }[] | undefined;
-    let orderItems: string[] | undefined;
-    let correctAnswers: string[] | undefined;
-
-    // Flashcard: Check for [FC] prefix (or no prefix for backwards compatibility)
-    if (questionText.startsWith("[FC]")) {
-      type = "flashcard";
-      question = questionText.substring(4).trim();
-    }
-
-    const isNewMC = /^Question\s*\d+:/.test(questionText) && /\n[A-Z]\./.test(questionText);
-
-    if (isNewMC) {
-      type = "multiple-choice";
-      const lines = questionText.split('\n').filter(line => line.trim() !== '');
-      question = lines[0].trim();
-      options = lines.slice(1).map(line => line.trim());
-
-      const correctOptionPrefix = answerText.trim().toUpperCase() + ".";
-      const correctOption = options.find(opt => opt.toUpperCase().startsWith(correctOptionPrefix));
-
-      if (correctOption) {
-        answer = correctOption;
-      } else {
-        answer = answerText;
-      }
-    } else if (questionText.startsWith("[MC]")) {
-      type = "multiple-choice";
-      question = questionText.substring(4).trim();
-
-      // Parse options from answer (format: A) option1 \n B) option2 \n ... \n ANSWER: A)
-      const optionLines = answerText.split("\n").filter(line => line.trim());
-      options = [];
-
-      for (const line of optionLines) {
-        if (line.startsWith("ANSWER:")) {
-          answer = line.substring(7).trim();
-        } else if (/^[A-Z]\)/.test(line)) {
-          options.push(line);
-        }
-      }
-    }
-    // True/False: Check for [TF] prefix
-    else if (questionText.startsWith("[TF]")) {
-      type = "true-false";
-      question = questionText.substring(4).trim();
-      // Answer should be "True" or "False"
-      answer = answerText.toLowerCase().includes("true") ? "True" : "False";
-    }
-    // Fill in blank: Check for [FIB] prefix and ___
-    else if (questionText.startsWith("[FIB]")) {
-      type = "fill-in-blank";
-      question = questionText.substring(5).trim();
-
-      // Parse multiple blanks if present (format: answer1 | answer2 | answer3)
-      blanks = answerText.split("|").map(a => a.trim());
-      answer = blanks.join(" / "); // Display format
-    }
-    // Matching: Check for [MATCH] prefix
-    else if (questionText.startsWith("[MATCH]")) {
-      type = "matching";
-      question = questionText.substring(7).trim();
-
-      // Parse match pairs (format: left1 -> right1 | left2 -> right2)
-      const pairs = answerText.split("|").map(pair => {
-        const [left, right] = pair.split("->").map(s => s.trim());
-        return { left: left || "", right: right || "" };
-      }).filter(p => p.left && p.right);
-
-      matchPairs = pairs;
-      answer = pairs.map(p => `${p.left} → ${p.right}`).join(", ");
-    }
-    // Ordering: Check for [ORDER] prefix
-    else if (questionText.startsWith("[ORDER]")) {
-      type = "ordering";
-      question = questionText.substring(7).trim();
-
-      // Parse ordered items (format: item1 | item2 | item3)
-      orderItems = answerText.split("|").map(item => item.trim()).filter(Boolean);
-      answer = orderItems.join(" → ");
-    }
-    // Multi-Select: Check for [MS] prefix
-    else if (questionText.startsWith("[MS]")) {
-      type = "multi-select";
-      question = questionText.substring(4).trim();
-
-      // Parse options and correct answers (format: A) option1 \n B) option2 \n ... \n ANSWERS: A, B)
-      const optionLines = answerText.split("\n").filter(line => line.trim());
-      options = [];
-      correctAnswers = [];
-
-      for (const line of optionLines) {
-        if (line.startsWith("ANSWERS:")) {
-          // Parse multiple correct answers (format: ANSWERS: A, B, C)
-          const answersStr = line.substring(8).trim();
-          correctAnswers = answersStr.split(",").map(a => a.trim());
-        } else if (/^[A-Z]\)/.test(line)) {
-          options.push(line);
-        }
+        question = content.trim();
       }
 
-      answer = `Correct: ${correctAnswers.join(", ")}`;
-    }
+      const newItem: QuestionItem = {
+        type,
+        question,
+        answer: metadata.answer || '',
+        options: metadata.options || undefined,
+        blanks: metadata.blanks || undefined,
+        matchPairs: metadata.pairs ? Object.entries(metadata.pairs).map(([left, right]) => ({ left: String(left), right: String(right) })) : undefined,
+        orderItems: metadata.items || undefined,
+        correctAnswers: metadata.answers || undefined,
+      };
 
-    questions.push({ type, question, answer, options, blanks, matchPairs, orderItems, correctAnswers });
+      // Post-process to generate a display answer for complex types
+      if (newItem.type === 'multiple-choice' && newItem.options && newItem.answer) {
+        const correctOpt = newItem.options.find(opt => opt.startsWith(newItem.answer as string));
+        newItem.answer = correctOpt || String(newItem.answer);
+      } else if (newItem.type === 'true-false') {
+        newItem.answer = String(metadata.answer);
+      } else if (newItem.type === 'fill-in-the-blank' && newItem.blanks) {
+        newItem.answer = newItem.blanks.join(' / ');
+      } else if (newItem.type === 'matching' && newItem.matchPairs) {
+        newItem.answer = newItem.matchPairs.map(p => `${p.left} → ${p.right}`).join(', ');
+      } else if (newItem.type === 'ordering' && newItem.orderItems) {
+        newItem.answer = newItem.orderItems.join(' → ');
+      } else if (newItem.type === 'multi-select' && newItem.correctAnswers) {
+        newItem.answer = `Correct: ${newItem.correctAnswers.join(', ')}`;
+      }
+
+      questions.push(normalizeQuestion(newItem));
+    } catch (e) {
+      console.error("Failed to parse question block:", e);
+      // Optionally, provide feedback to the user about the parsing error
+    }
   }
 
   return questions;
 }
+
+// Convert an array of QuestionItems back to the YAML string format
+export function stringifyQuestions(questions: QuestionItem[]): string {
+  return questions.map(q => {
+    const metadata: any = { type: q.type };
+    let content = q.question;
+
+    if (q.type === 'flashcard') {
+      content = `${q.question}\n===\n${q.answer}`;
+    }
+    if (q.type === 'multiple-choice') {
+      const answerLetter = typeof q.answer === 'string' ? q.answer.charAt(0) : '';
+      metadata.answer = answerLetter;
+      metadata.options = q.options;
+    }
+    if (q.type === 'true-false') {
+      metadata.answer = q.answer;
+    }
+    if (q.type === 'fill-in-the-blank') {
+      metadata.blanks = q.blanks;
+    }
+    if (q.type === 'matching' && q.matchPairs) {
+      metadata.pairs = q.matchPairs.reduce((acc, pair) => {
+        acc[pair.left] = pair.right;
+        return acc;
+      }, {} as Record<string, string>);
+    }
+    if (q.type === 'ordering') {
+      metadata.items = q.orderItems;
+    }
+    if (q.type === 'multi-select') {
+      metadata.answers = q.correctAnswers;
+      metadata.options = q.options;
+    }
+    
+    // Remove null/undefined fields from metadata
+    Object.keys(metadata).forEach(key => {
+      if (metadata[key] === undefined || metadata[key] === null) {
+        delete metadata[key];
+      }
+    });
+
+    const yamlText = yaml.dump(metadata, { skipInvalid: true });
+
+    return `---\n${yamlText}---\n${content}`;
+  }).join('\n\n');
+}
+
 
 // Convert image file to base64
 export function imageToBase64(file: File): Promise<string> {
@@ -275,44 +217,28 @@ export function parseMarkdown(text: string): string {
   return result;
 }
 
-// Normalize a question to ensure all derived fields are populated
+// Normalize a question to ensure all derived fields are populated correctly
 export function normalizeQuestion(q: QuestionItem): QuestionItem {
   const normalized = { ...q };
-  
-  // Normalize ordering questions
-  if (q.type === "ordering" && (!q.orderItems || q.orderItems.length === 0) && q.answer) {
-    normalized.orderItems = q.answer.split(/\s*(?:→|\|)\s*/).map(s => s.trim()).filter(Boolean);
-  }
-  
-  // Normalize matching questions
-  if (q.type === "matching" && (!q.matchPairs || q.matchPairs.length === 0) && q.answer) {
-    const pairs = q.answer.split(/\s*(?:\||,)\s*/).map(pair => {
-      const parts = pair.split(/\s*(?:→|->)\s*/);
-      if (parts.length >= 2) {
-        return { left: parts[0]?.trim() || "", right: parts[1]?.trim() || "" };
-      }
-      return { left: "", right: "" };
-    }).filter(p => p.left && p.right);
-    normalized.matchPairs = pairs;
-  }
-  
-  // Normalize fill-in-blank questions
-  if (q.type === "fill-in-blank" && (!q.blanks || q.blanks.length === 0) && q.answer) {
-    normalized.blanks = q.answer.split(/\s*(?:\/|\|)\s*/).map(s => s.trim()).filter(Boolean);
-  }
-  
-  // Normalize multi-select questions
-  if (q.type === "multi-select") {
-    // Extract correctAnswers from answer if not present
-    if ((!q.correctAnswers || q.correctAnswers.length === 0) && q.answer) {
-      // Answer format: "Correct: A, B, C" or "A, B, C" or "ANSWERS: A, B"
-      let answersStr = q.answer;
-      if (answersStr.toLowerCase().startsWith("correct:")) {
-        answersStr = answersStr.substring(8).trim();
-      } else if (answersStr.toLowerCase().startsWith("answers:")) {
-        answersStr = answersStr.substring(8).trim();
-      }
-      normalized.correctAnswers = answersStr.split(/\s*,\s*/).map(a => a.trim()).filter(Boolean);
+
+  // Ensure basic fields are present
+  normalized.type = normalized.type || 'flashcard';
+  normalized.question = normalized.question || '';
+  normalized.answer = normalized.answer || '';
+
+  // Ensure complex fields are arrays if they exist
+  if (normalized.options && !Array.isArray(normalized.options)) normalized.options = [];
+  if (normalized.blanks && !Array.isArray(normalized.blanks)) normalized.blanks = [];
+  if (normalized.matchPairs && !Array.isArray(normalized.matchPairs)) normalized.matchPairs = [];
+  if (normalized.orderItems && !Array.isArray(normalized.orderItems)) normalized.orderItems = [];
+  if (normalized.correctAnswers && !Array.isArray(normalized.correctAnswers)) normalized.correctAnswers = [];
+
+  // Specific normalizations
+  if (normalized.type === 'multiple-choice') {
+    // Ensure the full answer text is stored, not just the letter
+    const correctOption = normalized.options?.find(opt => opt.startsWith(String(normalized.answer)));
+    if (correctOption) {
+      normalized.answer = correctOption;
     }
   }
   
