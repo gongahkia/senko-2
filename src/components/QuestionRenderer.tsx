@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, useEffect, useLayoutEffect } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { QuestionItem } from "@/types";
 import { MarkdownText } from "@/components/MarkdownText";
@@ -136,41 +136,43 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     setMatchSelections(newSelections);
   };
 
-  const updateLinePositions = useCallback(() => {
-    if (!matchContainerRef.current) return;
+  useEffect(() => {
+    const updateLinePositions = () => {
+      if (!matchContainerRef.current) return;
     
-    const containerRect = matchContainerRef.current.getBoundingClientRect();
-    const newLines: {x1: number, y1: number, x2: number, y2: number, left: string, right: string}[] = [];
-    
-    matchSelections.forEach((right, left) => {
-      const leftEl = leftItemRefs.current.get(left);
-      const rightEl = rightItemRefs.current.get(right);
+      const containerRect = matchContainerRef.current.getBoundingClientRect();
+      const newLines: {x1: number, y1: number, x2: number, y2: number, left: string, right: string}[] = [];
       
-      if (leftEl && rightEl) {
-        const leftRect = leftEl.getBoundingClientRect();
-        const rightRect = rightEl.getBoundingClientRect();
+      matchSelections.forEach((right, left) => {
+        const leftEl = leftItemRefs.current.get(left);
+        const rightEl = rightItemRefs.current.get(right);
         
-        newLines.push({
-          x1: leftRect.right - containerRect.left,
-          y1: leftRect.top + leftRect.height / 2 - containerRect.top,
-          x2: rightRect.left - containerRect.left,
-          y2: rightRect.top + rightRect.height / 2 - containerRect.top,
-          left,
-          right
-        });
-      }
-    });
-    
-    setLinePositions(newLines);
-  }, [matchSelections]);
+        if (leftEl && rightEl) {
+          const leftRect = leftEl.getBoundingClientRect();
+          const rightRect = rightEl.getBoundingClientRect();
+          
+          newLines.push({
+            x1: leftRect.right - containerRect.left,
+            y1: leftRect.top + leftRect.height / 2 - containerRect.top,
+            x2: rightRect.left - containerRect.left,
+            y2: rightRect.top + rightRect.height / 2 - containerRect.top,
+            left,
+            right
+          });
+        }
+      });
+      
+      setLinePositions(newLines);
+    }
 
-  useLayoutEffect(() => {
-    updateLinePositions();
+    const animationFrameId = requestAnimationFrame(updateLinePositions);
     window.addEventListener('resize', updateLinePositions);
+
     return () => {
+      cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', updateLinePositions);
     };
-  }, [updateLinePositions]);
+  }, [matchSelections]);
 
   const handleMatchSubmit = () => {
     if (onAnswer && matchPairs.length > 0) {

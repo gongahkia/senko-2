@@ -77,7 +77,7 @@ export function importFromCSV(content: string, deckName: string): CSVImportResul
         } else if (typeHint.includes('tf') || typeHint.includes('true') || typeHint.includes('false')) {
           type = 'true-false';
         } else if (typeHint.includes('fib') || typeHint.includes('blank')) {
-          type = 'fill-in-blank';
+          type = 'fill-in-the-blank';
         }
       }
 

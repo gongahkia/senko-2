@@ -105,8 +105,8 @@ export function validateDeckStructure(data: unknown): DeckValidation {
         warnings.push(`Question ${index + 1}: multiple-choice type should have 'options' array`);
       }
 
-      if (question.type === "fill-in-blank" && !Array.isArray(question.blanks)) {
-        warnings.push(`Question ${index + 1}: fill-in-blank type should have 'blanks' array`);
+      if (question.type === "fill-in-the-blank" && !Array.isArray(question.blanks)) {
+        warnings.push(`Question ${index + 1}: fill-in-the-blank type should have 'blanks' array`);
       }
     });
   }
