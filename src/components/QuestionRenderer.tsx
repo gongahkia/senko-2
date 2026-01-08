@@ -16,7 +16,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   const [userInput, setUserInput] = useState("");
   const [matchSelections, setMatchSelections] = useState<Map<string, string>>(new Map());
   const [orderSelections, setOrderSelections] = useState<string[]>([]);
-  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [selectedLeftItem, setSelectedLeftItem] = useState<string | null>(null);
   const matchContainerRef = useRef<HTMLDivElement>(null);
@@ -241,10 +241,10 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     }
   };
 
-  const handleDragStart = useCallback((e: React.DragEvent, item: string) => {
-    setDraggedItem(item);
+  const handleDragStart = useCallback((e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', item);
+    e.dataTransfer.setData('text/plain', String(index));
   }, []);
 
   const handleDragOver = useCallback((e: React.DragEvent, index: number) => {
@@ -259,23 +259,22 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
 
   const handleDrop = useCallback((e: React.DragEvent, dropIndex: number) => {
     e.preventDefault();
-    if (draggedItem === null) return;
-    
+    if (draggedIndex === null) return;
+
     const items = [...currentOrderItems];
-    const dragIndex = items.indexOf(draggedItem);
-    
-    if (dragIndex !== -1 && dragIndex !== dropIndex) {
-      items.splice(dragIndex, 1);
+
+    if (draggedIndex !== dropIndex) {
+      const [draggedItem] = items.splice(draggedIndex, 1);
       items.splice(dropIndex, 0, draggedItem);
       setOrderSelections(items);
     }
-    
-    setDraggedItem(null);
+
+    setDraggedIndex(null);
     setDragOverIndex(null);
-  }, [draggedItem, currentOrderItems]);
+  }, [draggedIndex, currentOrderItems]);
 
   const handleDragEnd = useCallback(() => {
-    setDraggedItem(null);
+    setDraggedIndex(null);
     setDragOverIndex(null);
   }, []);
 
@@ -693,16 +692,16 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
             <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
               {currentOrderItems.map((item, idx) => (
                 <div
-                  key={item}
+                  key={`${item}-${idx}`}
                   draggable
-                  onDragStart={(e) => handleDragStart(e, item)}
+                  onDragStart={(e) => handleDragStart(e, idx)}
                   onDragOver={(e) => handleDragOver(e, idx)}
                   onDragLeave={handleDragLeave}
                   onDrop={(e) => handleDrop(e, idx)}
                   onDragEnd={handleDragEnd}
                   onClick={(e) => e.stopPropagation()}
                   className={`flex items-center gap-2 p-3 rounded-lg border-2 cursor-move transition-all ${
-                    draggedItem === item 
+                    draggedIndex === idx 
                       ? 'opacity-50 border-primary bg-primary/10' 
                       : dragOverIndex === idx 
                         ? 'border-primary border-dashed bg-primary/5' 
