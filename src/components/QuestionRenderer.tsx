@@ -77,11 +77,42 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     }
   };
 
+  // Fuzzy matching helper for fill-in-blank
+  const isFuzzyMatch = (userAnswer: string, correctAnswer: string): boolean => {
+    const normalize = (s: string) => s.trim().toLowerCase().replace(/\s+/g, ' ');
+    const userNorm = normalize(userAnswer);
+    const correctNorm = normalize(correctAnswer);
+
+    // Exact match
+    if (userNorm === correctNorm) return true;
+
+    // Common spelling variants (color/colour, etc.)
+    const variants: Record<string, string[]> = {
+      'color': ['colour'],
+      'favorite': ['favourite'],
+      'center': ['centre'],
+      'meter': ['metre'],
+      'liter': ['litre'],
+      'gray': ['grey'],
+    };
+
+    // Check if either is a variant of the other
+    for (const [base, alts] of Object.entries(variants)) {
+      if ((userNorm === base && alts.includes(correctNorm)) ||
+          (correctNorm === base && alts.includes(userNorm)) ||
+          (alts.includes(userNorm) && alts.includes(correctNorm))) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   const handleFillInBlankSubmit = () => {
     if (onAnswer && blanks) {
-      const userAnswers = userInput.split("|").map(a => a.trim().toLowerCase());
-      const correctBlanks = blanks.map(a => a.toLowerCase());
-      const isCorrect = userAnswers.length === correctBlanks.length && userAnswers.every((ans, idx) => ans === correctBlanks[idx]);
+      const userAnswers = userInput.split("|").map(a => a.trim());
+      const isCorrect = userAnswers.length === blanks.length &&
+        userAnswers.every((ans, idx) => isFuzzyMatch(ans, blanks[idx]));
       onAnswer(isCorrect);
     }
   };
@@ -443,9 +474,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                 <div className="text-sm font-semibold mb-2">Your Answer:</div>
                 <div className="space-y-1">
                   {userInput.split("|").map((ans, idx) => {
-                    const correctAnswer = blanks[idx]?.toLowerCase().trim();
+                    const correctAnswer = blanks[idx];
                     const userAnswer = ans.trim();
-                    const isCorrect = userAnswer.toLowerCase() === correctAnswer;
+                    const isCorrect = correctAnswer ? isFuzzyMatch(userAnswer, correctAnswer) : false;
                     return (
                       <div key={idx} className="flex items-center gap-2 text-sm">
                         <span className={`flex-shrink-0 w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${
