@@ -405,14 +405,34 @@ export function normalizeQuestion(q: QuestionItem): QuestionItem {
   // Type-specific normalizations
   switch (normalized.type) {
     case 'multiple-choice':
-      // Ensure the full answer text is stored, not just the letter
+      // Ensure the full answer text is stored
       if (normalized.options && normalized.answer) {
-        const correctOption = normalized.options.find(opt =>
-          opt.trim().toLowerCase().startsWith(String(normalized.answer).trim().toLowerCase())
-        );
+        const answerStr = String(normalized.answer).trim();
+        const answerLower = answerStr.toLowerCase();
+
+        // Try to find matching option with several strategies
+        let correctOption = normalized.options.find(opt => {
+          const optLower = opt.trim().toLowerCase();
+          // Strategy 1: Exact match (case-insensitive)
+          if (optLower === answerLower) return true;
+          // Strategy 2: Option starts with answer (e.g., "A)" starts with "A")
+          if (optLower.startsWith(answerLower)) return true;
+          // Strategy 3: Answer starts with option's first char (e.g., answer "A" matches "A) Option")
+          if (answerStr.length === 1 && optLower.startsWith(answerLower)) return true;
+          return false;
+        });
+
+        // If no match found and answer is single letter, try matching by prefix
+        if (!correctOption && answerStr.length <= 2) {
+          correctOption = normalized.options.find(opt =>
+            opt.trim().charAt(0).toLowerCase() === answerLower.charAt(0)
+          );
+        }
+
         if (correctOption) {
           normalized.answer = correctOption;
         }
+        // If still no match, keep original answer (validation will catch it)
       }
       break;
 
