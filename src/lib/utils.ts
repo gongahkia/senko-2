@@ -28,11 +28,37 @@ export function getMinutesDiff(start: number, end: number): number {
   return Math.floor((end - start) / 1000 / 60);
 }
 
-// Shuffle array (Fisher-Yates)
-export function shuffle<T>(array: T[]): T[] {
+// Simple string hash function for seeding
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  return Math.abs(hash);
+}
+
+// Seeded random number generator (LCG algorithm)
+function seededRandom(seed: number) {
+  let state = seed;
+  return function() {
+    // Linear Congruential Generator parameters
+    const a = 1664525;
+    const c = 1013904223;
+    const m = Math.pow(2, 32);
+    state = (a * state + c) % m;
+    return state / m;
+  };
+}
+
+// Shuffle array (Fisher-Yates) with optional seed for deterministic behavior
+export function shuffle<T>(array: T[], seed?: string): T[] {
   const shuffled = [...array];
+  const random = seed ? seededRandom(hashString(seed)) : Math.random;
+
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(random() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;

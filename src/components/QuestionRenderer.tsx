@@ -32,16 +32,17 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     options = [],
   } = question;
 
-  // Use useMemo with a stable shuffle (seeded by question content)
+  // Use useMemo with a stable shuffle (seeded by question content for reproducibility)
   const shuffledItems = useMemo(() => {
+    const seed = question.question; // Use question text as seed for deterministic shuffle
     if (question.type === "matching" && matchPairs.length > 0) {
-      return shuffle(matchPairs.map(p => p.right));
+      return shuffle(matchPairs.map(p => p.right), seed);
     }
     if (question.type === "ordering" && orderItems.length > 0) {
-      return shuffle([...orderItems]);
+      return shuffle([...orderItems], seed);
     }
     return [];
-  }, [question.type, matchPairs, orderItems]);
+  }, [question.type, question.question, matchPairs, orderItems]);
 
   // Initialize orderSelections with shuffled items for drag-and-drop
   const initialOrderItems = useMemo(() => {
