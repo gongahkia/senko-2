@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useToastContext } from "@/contexts/ToastContext";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { QuestionItem } from "@/types";
-import { parseQuestions, imageToBase64, isValidImageFile } from "@/lib/utils";
+import { parseQuestions, stringifyQuestions, imageToBase64, isValidImageFile } from "@/lib/utils";
 import { Upload, Search, X } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { MarkdownText } from "@/components/MarkdownText";
@@ -15,47 +15,22 @@ interface QuestionsProps {
   onSave: (questions: QuestionItem[]) => void;
 }
 
-export function Questions({
+export default function Questions({
   initialQuestions,
   onSave,
 }: QuestionsProps) {
-  const { showError } = useToastContext();
-  const [text, setText] = useState(() => {
-    // Convert questions back to text format
-    return initialQuestions
-      .map((q) => {
-        const prefix = q.type === "multiple-choice" ? "[MC] " :
-                      q.type === "true-false" ? "[TF] " :
-                      q.type === "fill-in-blank" ? "[FIB] " :
-                      q.type === "matching" ? "[MATCH] " :
-                      q.type === "ordering" ? "[ORDER] " :
-                      q.type === "multi-select" ? "[MS] " : "";
-        
-        // Format answer based on question type
-        let formattedAnswer = q.answer;
-        if (q.type === "ordering" && q.orderItems) {
-          formattedAnswer = q.orderItems.join(" | ");
-        } else if (q.type === "matching" && q.matchPairs) {
-          formattedAnswer = q.matchPairs.map(p => `${p.left} -> ${p.right}`).join(" | ");
-        } else if (q.type === "fill-in-blank" && q.blanks) {
-          formattedAnswer = q.blanks.join(" | ");
-        } else if (q.type === "multiple-choice" && q.options) {
-          const correctOption = q.options.find(opt => opt === q.answer);
-          const answerLetter = correctOption ? correctOption.charAt(0) : "A";
-          formattedAnswer = q.options.join("\n") + `\nANSWER: ${answerLetter})`;
-        } else if (q.type === "multi-select" && q.options && q.correctAnswers) {
-          formattedAnswer = q.options.join("\n") + `\nANSWERS: ${q.correctAnswers.join(", ")}`;
-        }
-        
-        return `${prefix}${q.question}\n===\n${formattedAnswer}`;
-      })
-      .join("\n\n");
-  });
-  const [parsedQuestions, setParsedQuestions] =
-    useState<QuestionItem[]>(initialQuestions);
+  const { showError, showSuccess } = useToastContext();
+  const [text, setText] = useState(() => stringifyQuestions(initialQuestions));
+  const [parsedQuestions, setParsedQuestions] = useState<QuestionItem[]>(initialQuestions);
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [questionSearchQuery, setQuestionSearchQuery] = useState("");
+
+  // When initialQuestions change (e.g. deck switch), update the state
+  useEffect(() => {
+    setText(stringifyQuestions(initialQuestions));
+    setParsedQuestions(initialQuestions);
+  }, [initialQuestions]);
 
   // Filter questions based on search query
   const filteredQuestions = useMemo(() => {
@@ -64,19 +39,24 @@ export function Questions({
     const query = questionSearchQuery.toLowerCase();
     return parsedQuestions.filter(q =>
       q.question.toLowerCase().includes(query) ||
-      q.answer.toLowerCase().includes(query)
+      (q.answer && q.answer.toLowerCase().includes(query))
     );
   }, [parsedQuestions, questionSearchQuery]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    setTimeout(() => {
+    try {
       const parsed = parseQuestions(text);
       setParsedQuestions(parsed);
       onSave(parsed);
+      showSuccess("Questions saved successfully!");
+    } catch (error) {
+      console.error("Failed to parse or save questions:", error);
+      showError("Failed to save questions. Check for formatting errors.");
+    } finally {
       setIsSaving(false);
-    }, 100);
+    }
   };
 
   const handleImageUpload = async (
@@ -95,9 +75,14 @@ export function Questions({
     try {
       const base64 = await imageToBase64(file);
       const updated = [...parsedQuestions];
-      updated[index] = { ...updated[index], imageUrl: base64 };
-      setParsedQuestions(updated);
-      onSave(updated);
+      const questionToUpdate = updated[index];
+      if (questionToUpdate) {
+        questionToUpdate.imageUrl = base64;
+        setParsedQuestions(updated);
+        onSave(updated);
+        setText(stringifyQuestions(updated)); // Update text area as well
+        showSuccess("Image uploaded!");
+      }
     } catch (error) {
       console.error("Failed to upload image:", error);
       showError("Failed to upload image");
@@ -115,7 +100,7 @@ export function Questions({
       <form onSubmit={handleSubmit} className="grid gap-2">
         <Textarea
           id="question"
-          placeholder="Type your questions here in the format: question\n===\nanswer\n\nSupports LaTeX math with $ and $$"
+          placeholder="Paste your questions here using the new YAML format..."
           value={text}
           onChange={(e) => setText(e.target.value)}
           className="min-h-[40vh] sm:min-h-[50vh] resize-y font-mono text-sm sm:text-base"
@@ -138,7 +123,6 @@ export function Questions({
             Parsed Questions ({parsedQuestions.length})
           </h3>
 
-          {/* Question Search */}
           {parsedQuestions.length > 5 && (
             <div className="mb-4">
               <div className="relative">
@@ -170,10 +154,10 @@ export function Questions({
           <div className="space-y-3 sm:space-y-4">
             {filteredQuestions.map((item, index) => (
               <div
-                key={index}
+                key={item.id || index}
                 className="border rounded-md p-3 sm:p-4 bg-card text-card-foreground"
               >
-                <p className="font-medium text-sm sm:text-base">Question {index + 1}:</p>
+                <p className="font-medium text-sm sm:text-base">Question {index + 1}: ({item.type})</p>
                 <MarkdownText className="ml-3 sm:ml-4 mt-1 whitespace-pre-wrap text-sm sm:text-base">
                   {item.question}
                 </MarkdownText>
@@ -231,5 +215,3 @@ export function Questions({
     </div>
   );
 }
-
-export default Questions;
