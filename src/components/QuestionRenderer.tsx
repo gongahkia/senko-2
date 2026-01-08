@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect, useLayoutEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { QuestionItem } from "@/types";
 import { MarkdownText } from "@/components/MarkdownText";
@@ -164,11 +164,10 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     setLinePositions(newLines);
   }, [matchSelections]);
 
-  useEffect(() => {
-    const timer = setTimeout(updateLinePositions, 50);
+  useLayoutEffect(() => {
+    updateLinePositions();
     window.addEventListener('resize', updateLinePositions);
     return () => {
-      clearTimeout(timer);
       window.removeEventListener('resize', updateLinePositions);
     };
   }, [updateLinePositions]);
