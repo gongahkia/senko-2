@@ -64,22 +64,77 @@ export function shuffle<T>(array: T[], seed?: string): T[] {
   return shuffled;
 }
 
+export interface ParseResult {
+  questions: QuestionItem[];
+  errors: string[];
+  warnings: string[];
+}
+
+// Validate type-specific required fields
+function validateQuestionFields(question: QuestionItem, blockIndex: number): string[] {
+  const errors: string[] = [];
+
+  switch (question.type) {
+    case 'multiple-choice':
+      if (!question.options || question.options.length < 2) {
+        errors.push(`Question ${blockIndex}: multiple-choice requires at least 2 options`);
+      }
+      break;
+    case 'fill-in-the-blank':
+      if (!question.blanks || question.blanks.length === 0) {
+        errors.push(`Question ${blockIndex}: fill-in-the-blank requires at least 1 blank`);
+      }
+      break;
+    case 'matching':
+      if (!question.matchPairs || question.matchPairs.length === 0) {
+        errors.push(`Question ${blockIndex}: matching requires at least 1 pair`);
+      }
+      break;
+    case 'ordering':
+      if (!question.orderItems || question.orderItems.length < 2) {
+        errors.push(`Question ${blockIndex}: ordering requires at least 2 items`);
+      }
+      break;
+    case 'multi-select':
+      if (!question.options || question.options.length < 2) {
+        errors.push(`Question ${blockIndex}: multi-select requires at least 2 options`);
+      }
+      if (!question.correctAnswers || question.correctAnswers.length === 0) {
+        errors.push(`Question ${blockIndex}: multi-select requires at least 1 correct answer`);
+      }
+      break;
+  }
+
+  return errors;
+}
+
 // Parse questions from the new YAML front matter format
-export function parseQuestions(inputText: string): QuestionItem[] {
-  if (!inputText.trim()) return [];
+export function parseQuestions(inputText: string): ParseResult {
+  if (!inputText.trim()) {
+    return { questions: [], errors: [], warnings: [] };
+  }
 
   const questions: QuestionItem[] = [];
+  const errors: string[] = [];
+  const warnings: string[] = [];
   const blocks = inputText.split(/^-{3,}\s*$/m).filter(block => block.trim());
 
-  for (const block of blocks) {
+  for (let i = 0; i < blocks.length; i++) {
+    const block = blocks[i];
     try {
       const parts = block.trim().split(/\n===\n/);
       const frontMatterText = parts[0];
       const content = parts.length > 1 ? parts.slice(1).join('\n===\n') : '';
-      
+
       const metadata = yaml.load(frontMatterText) as any;
-      if (!metadata || typeof metadata !== 'object' || !metadata.type) {
-        continue; // Skip invalid blocks
+      if (!metadata || typeof metadata !== 'object') {
+        errors.push(`Block ${i + 1}: Invalid YAML format`);
+        continue;
+      }
+
+      if (!metadata.type) {
+        errors.push(`Block ${i + 1}: Missing 'type' field`);
+        continue;
       }
 
       const type = metadata.type as QuestionType;
@@ -95,6 +150,11 @@ export function parseQuestions(inputText: string): QuestionItem[] {
         question = content.trim();
       }
 
+      if (!question) {
+        errors.push(`Block ${i + 1}: Missing question text`);
+        continue;
+      }
+
       const newItem: QuestionItem = {
         type,
         question,
@@ -105,6 +165,14 @@ export function parseQuestions(inputText: string): QuestionItem[] {
         orderItems: metadata.items || undefined,
         correctAnswers: metadata.answers || undefined,
       };
+
+      // Validate type-specific fields
+      const fieldErrors = validateQuestionFields(newItem, i + 1);
+      if (fieldErrors.length > 0) {
+        errors.push(...fieldErrors);
+        // Still add the question but mark as having errors
+        warnings.push(`Block ${i + 1}: Question added but may not render correctly`);
+      }
 
       // Post-process to generate a display answer for complex types
       if (newItem.type === 'multiple-choice' && newItem.options && newItem.answer) {
@@ -124,12 +192,12 @@ export function parseQuestions(inputText: string): QuestionItem[] {
 
       questions.push(normalizeQuestion(newItem));
     } catch (e) {
-      console.error("Failed to parse question block:", e);
-      // Optionally, provide feedback to the user about the parsing error
+      const errorMsg = e instanceof Error ? e.message : 'Unknown error';
+      errors.push(`Block ${i + 1}: Parse error - ${errorMsg}`);
     }
   }
 
-  return questions;
+  return { questions, errors, warnings };
 }
 
 // Convert an array of QuestionItems back to the YAML string format

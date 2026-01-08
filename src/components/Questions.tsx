@@ -47,10 +47,30 @@ export default function Questions({
     e.preventDefault();
     setIsSaving(true);
     try {
-      const parsed = parseQuestions(text);
-      setParsedQuestions(parsed);
-      onSave(parsed);
-      showSuccess("Questions saved successfully!");
+      const result = parseQuestions(text);
+
+      // Display errors and warnings to user
+      if (result.errors.length > 0) {
+        showError(`Found ${result.errors.length} error(s):\n${result.errors.slice(0, 3).join('\n')}${result.errors.length > 3 ? '\n...' : ''}`);
+      }
+
+      if (result.warnings.length > 0 && result.errors.length === 0) {
+        showError(`Found ${result.warnings.length} warning(s):\n${result.warnings.slice(0, 3).join('\n')}${result.warnings.length > 3 ? '\n...' : ''}`);
+      }
+
+      // Save questions even if there are warnings (but not if there are errors)
+      if (result.questions.length > 0) {
+        setParsedQuestions(result.questions);
+        onSave(result.questions);
+
+        if (result.errors.length === 0 && result.warnings.length === 0) {
+          showSuccess(`Questions saved successfully! (${result.questions.length} questions)`);
+        } else if (result.errors.length === 0) {
+          showSuccess(`Questions saved with ${result.warnings.length} warning(s)`);
+        }
+      } else if (result.errors.length === 0) {
+        showError("No valid questions found in the text");
+      }
     } catch (error) {
       console.error("Failed to parse or save questions:", error);
       showError("Failed to save questions. Check for formatting errors.");
