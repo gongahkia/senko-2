@@ -281,6 +281,21 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   }
 
   if (question.type === "multiple-choice") {
+    // Type guard: Validate required fields
+    if (!options || options.length < 2) {
+      return (
+        <div className="space-y-4">
+          <MarkdownText className="text-lg sm:text-xl font-semibold mb-4 break-words">
+            {question.question}
+          </MarkdownText>
+          <div className="p-4 bg-destructive/10 border border-destructive rounded-lg text-destructive">
+            <strong>Error:</strong> Multiple-choice questions require at least 2 options.
+            Please check the question format.
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-4">
         <MarkdownText className="text-lg sm:text-xl font-semibold mb-4 break-words">
@@ -360,6 +375,21 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   }
 
   if (question.type === "fill-in-the-blank") {
+    // Type guard: Validate required fields
+    if (!blanks || blanks.length === 0) {
+      return (
+        <div className="space-y-4">
+          <MarkdownText className="text-lg sm:text-xl font-semibold break-words">
+            {question.question}
+          </MarkdownText>
+          <div className="p-4 bg-destructive/10 border border-destructive rounded-lg text-destructive">
+            <strong>Error:</strong> Fill-in-the-blank questions require at least 1 blank answer.
+            Please check the question format.
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-4">
         <MarkdownText className="text-lg sm:text-xl font-semibold break-words">
@@ -437,6 +467,21 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   }
 
   if (question.type === "matching") {
+    // Type guard: Validate required fields
+    if (!matchPairs || matchPairs.length === 0) {
+      return (
+        <div className="space-y-4">
+          <MarkdownText className="text-lg sm:text-xl font-semibold break-words">
+            {question.question}
+          </MarkdownText>
+          <div className="p-4 bg-destructive/10 border border-destructive rounded-lg text-destructive">
+            <strong>Error:</strong> Matching questions require at least 1 pair to match.
+            Please check the question format.
+          </div>
+        </div>
+      );
+    }
+
     const leftItems = matchPairs.map(p => p.left);
     const rightItems = shuffledItems;
 
@@ -582,6 +627,21 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   }
 
   if (question.type === "ordering") {
+    // Type guard: Validate required fields
+    if (!orderItems || orderItems.length < 2) {
+      return (
+        <div className="space-y-4">
+          <MarkdownText className="text-lg sm:text-xl font-semibold break-words">
+            {question.question}
+          </MarkdownText>
+          <div className="p-4 bg-destructive/10 border border-destructive rounded-lg text-destructive">
+            <strong>Error:</strong> Ordering questions require at least 2 items to order.
+            Please check the question format.
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-4">
         <MarkdownText className="text-lg sm:text-xl font-semibold break-words">
@@ -702,6 +762,35 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   }
 
   if (question.type === "multi-select") {
+    // Type guard: Validate required fields
+    if (!options || options.length < 2) {
+      return (
+        <div className="space-y-4">
+          <MarkdownText className="text-lg sm:text-xl font-semibold mb-4 break-words">
+            {question.question}
+          </MarkdownText>
+          <div className="p-4 bg-destructive/10 border border-destructive rounded-lg text-destructive">
+            <strong>Error:</strong> Multi-select questions require at least 2 options.
+            Please check the question format.
+          </div>
+        </div>
+      );
+    }
+
+    if (!correctAnswers || correctAnswers.length === 0) {
+      return (
+        <div className="space-y-4">
+          <MarkdownText className="text-lg sm:text-xl font-semibold mb-4 break-words">
+            {question.question}
+          </MarkdownText>
+          <div className="p-4 bg-destructive/10 border border-destructive rounded-lg text-destructive">
+            <strong>Error:</strong> Multi-select questions require at least 1 correct answer.
+            Please check the question format.
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-4">
         <MarkdownText className="text-lg sm:text-xl font-semibold mb-4 break-words">
