@@ -23,65 +23,25 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   const leftItemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const rightItemRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const [linePositions, setLinePositions] = useState<{x1: number, y1: number, x2: number, y2: number, left: string, right: string}[]>([]);
-  
-  // Derive orderItems from answer if not present (for backwards compatibility)
-  const effectiveOrderItems = useMemo(() => {
-    if (question.orderItems && question.orderItems.length > 0) {
-      return question.orderItems;
-    }
-    if (question.type === "ordering" && question.answer) {
-      // Handle both → and | separators
-      return question.answer.split(/\s*(?:→|\|)\s*/).map(s => s.trim()).filter(Boolean);
-    }
-    return [];
-  }, [question.orderItems, question.type, question.answer]);
-  
-  // Derive matchPairs from answer if not present (for backwards compatibility)
-  const effectiveMatchPairs = useMemo(() => {
-    if (question.matchPairs && question.matchPairs.length > 0) {
-      return question.matchPairs;
-    }
-    if (question.type === "matching" && question.answer) {
-      // Answer format: "France → Paris, Germany → Berlin" or "France -> Paris | Germany -> Berlin"
-      const pairs = question.answer.split(/\s*(?:\||,)\s*/).map(pair => {
-        const parts = pair.split(/\s*(?:→|->)\s*/);
-        if (parts.length >= 2) {
-          return { left: parts[0]?.trim() || "", right: parts[1]?.trim() || "" };
-        }
-        return { left: "", right: "" };
-      }).filter(p => p.left && p.right);
-      return pairs;
-    }
-    return [];
-  }, [question.matchPairs, question.type, question.answer]);
 
-  // Derive correctAnswers for multi-select
-  const effectiveCorrectAnswers = useMemo(() => {
-    if (question.correctAnswers && question.correctAnswers.length > 0) {
-      return question.correctAnswers;
-    }
-    if (question.type === "multi-select" && question.answer) {
-      let answersStr = question.answer;
-      if (answersStr.toLowerCase().startsWith("correct:")) {
-        answersStr = answersStr.substring(8).trim();
-      } else if (answersStr.toLowerCase().startsWith("answers:")) {
-        answersStr = answersStr.substring(8).trim();
-      }
-      return answersStr.split(/\s*,\s*/).map(a => a.trim()).filter(Boolean);
-    }
-    return [];
-  }, [question.correctAnswers, question.type, question.answer]);
+  const {
+    orderItems = [],
+    matchPairs = [],
+    correctAnswers = [],
+    blanks = [],
+    options = [],
+  } = question;
 
   // Use useMemo with a stable shuffle (seeded by question content)
   const shuffledItems = useMemo(() => {
-    if (question.type === "matching" && effectiveMatchPairs.length > 0) {
-      return shuffle(effectiveMatchPairs.map(p => p.right));
+    if (question.type === "matching" && matchPairs.length > 0) {
+      return shuffle(matchPairs.map(p => p.right));
     }
-    if (question.type === "ordering" && effectiveOrderItems.length > 0) {
-      return shuffle([...effectiveOrderItems]);
+    if (question.type === "ordering" && orderItems.length > 0) {
+      return shuffle([...orderItems]);
     }
     return [];
-  }, [question.type, effectiveMatchPairs, effectiveOrderItems]);
+  }, [question.type, matchPairs, orderItems]);
 
   // Initialize orderSelections with shuffled items for drag-and-drop
   const initialOrderItems = useMemo(() => {
@@ -91,14 +51,15 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     return [];
   }, [question.type, shuffledItems]);
 
-  // Initialize orderSelections when the component mounts or question changes
+  // Reset state when question changes
   useEffect(() => {
-    if (question.type === "ordering" && initialOrderItems.length > 0 && orderSelections.length === 0) {
-      setOrderSelections([...initialOrderItems]);
-    }
-  }, [question.type, initialOrderItems, orderSelections.length]);
+    setSelectedOption(null);
+    setSelectedOptions(new Set());
+    setUserInput("");
+    setMatchSelections(new Map());
+    setOrderSelections(question.type === "ordering" ? initialOrderItems : []);
+  }, [question, initialOrderItems]);
 
-  // Use orderSelections directly (it gets initialized by the effect above)
   const currentOrderItems = orderSelections.length > 0 ? orderSelections : initialOrderItems;
 
   const handleMultipleChoiceSelect = (option: string) => {
@@ -115,10 +76,10 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   };
 
   const handleFillInBlankSubmit = () => {
-    if (onAnswer && question.blanks) {
+    if (onAnswer && blanks) {
       const userAnswers = userInput.split("|").map(a => a.trim().toLowerCase());
-      const correctAnswers = question.blanks.map(a => a.toLowerCase());
-      const isCorrect = userAnswers.every((ans, idx) => ans === correctAnswers[idx]);
+      const correctBlanks = blanks.map(a => a.toLowerCase());
+      const isCorrect = userAnswers.length === correctBlanks.length && userAnswers.every((ans, idx) => ans === correctBlanks[idx]);
       onAnswer(isCorrect);
     }
   };
@@ -134,9 +95,9 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   };
 
   const handleMultiSelectSubmit = () => {
-    if (onAnswer && effectiveCorrectAnswers.length > 0) {
+    if (onAnswer && correctAnswers.length > 0) {
       const selectedPrefixes = Array.from(selectedOptions).map(opt => opt.charAt(0).toUpperCase());
-      const correctPrefixes = effectiveCorrectAnswers.map(a => a.charAt(0).toUpperCase());
+      const correctPrefixes = correctAnswers.map(a => a.charAt(0).toUpperCase());
       const isCorrect = selectedPrefixes.length === correctPrefixes.length &&
         selectedPrefixes.every(s => correctPrefixes.includes(s)) &&
         correctPrefixes.every(c => selectedPrefixes.includes(c));
@@ -157,9 +118,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   const handleRightItemClick = (right: string) => {
     if (mode !== "question" || !selectedLeftItem) return;
     
-    // Create the match
     const newSelections = new Map(matchSelections);
-    // Remove any existing match to this right item (one-to-one matching)
     for (const [key, value] of newSelections) {
       if (value === right) {
         newSelections.delete(key);
@@ -170,7 +129,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     setSelectedLeftItem(null);
   };
 
-  // Remove a match by clicking on a connected left item
   const handleRemoveMatch = (left: string) => {
     if (mode !== "question") return;
     const newSelections = new Map(matchSelections);
@@ -178,7 +136,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     setMatchSelections(newSelections);
   };
 
-  // Calculate line positions for SVG
   const updateLinePositions = useCallback(() => {
     if (!matchContainerRef.current) return;
     
@@ -207,11 +164,8 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     setLinePositions(newLines);
   }, [matchSelections]);
 
-  // Update lines whenever matchSelections changes
   useEffect(() => {
-    // Small delay to ensure refs are populated
     const timer = setTimeout(updateLinePositions, 50);
-    // Also update on window resize
     window.addEventListener('resize', updateLinePositions);
     return () => {
       clearTimeout(timer);
@@ -220,15 +174,14 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   }, [updateLinePositions]);
 
   const handleMatchSubmit = () => {
-    if (onAnswer && effectiveMatchPairs.length > 0) {
-      const isCorrect = effectiveMatchPairs.every(pair =>
+    if (onAnswer && matchPairs.length > 0) {
+      const isCorrect = matchPairs.every(pair =>
         matchSelections.get(pair.left) === pair.right
       );
       onAnswer(isCorrect);
     }
   };
 
-  // Drag and drop handlers for ordering
   const handleDragStart = useCallback((e: React.DragEvent, item: string) => {
     setDraggedItem(item);
     e.dataTransfer.effectAllowed = 'move';
@@ -267,7 +220,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     setDragOverIndex(null);
   }, []);
 
-  // Move item up/down for non-drag interactions (mobile friendly)
   const moveItem = useCallback((index: number, direction: 'up' | 'down') => {
     const items = [...currentOrderItems];
     const newIndex = direction === 'up' ? index - 1 : index + 1;
@@ -279,14 +231,13 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   }, [currentOrderItems]);
 
   const handleOrderSubmit = () => {
-    if (onAnswer && effectiveOrderItems.length > 0) {
-      const isCorrect = currentOrderItems.length === effectiveOrderItems.length &&
-        currentOrderItems.every((item, idx) => item === effectiveOrderItems[idx]);
+    if (onAnswer && orderItems.length > 0) {
+      const isCorrect = currentOrderItems.length === orderItems.length &&
+        currentOrderItems.every((item, idx) => item === orderItems[idx]);
       onAnswer(isCorrect);
     }
   };
 
-  // Flashcard - traditional question/answer
   if (question.type === "flashcard") {
     return (
       <div className="space-y-4">
@@ -309,7 +260,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     );
   }
 
-  // Multiple Choice
   if (question.type === "multiple-choice") {
     return (
       <div className="space-y-4">
@@ -318,7 +268,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
         </MarkdownText>
 
         <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
-          {question.options?.map((option, idx) => (
+          {options.map((option, idx) => (
             <Button
               key={idx}
               variant={
@@ -352,7 +302,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     );
   }
 
-  // True/False
   if (question.type === "true-false") {
     return (
       <div className="space-y-6">
@@ -390,8 +339,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     );
   }
 
-  // Fill in the Blank
-  if (question.type === "fill-in-blank") {
+  if (question.type === "fill-in-the-blank") {
     return (
       <div className="space-y-4">
         <MarkdownText className="text-lg sm:text-xl font-semibold break-words">
@@ -409,7 +357,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
               type="text"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
-              placeholder={question.blanks && question.blanks.length > 1 ? "Separate answers with |" : "Type your answer"}
+              placeholder={blanks.length > 1 ? "Separate answers with |" : "Type your answer"}
               className="w-full p-3 text-sm sm:text-base border border-border rounded-lg bg-background text-foreground"
             />
             <Button 
@@ -426,18 +374,14 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
             <div>
               <div className="text-sm font-semibold mb-2">Correct Answer(s):</div>
               <div className="space-y-1">
-                {question.blanks?.map((blank, idx) => (
+                {blanks.map((blank, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-sm">
                     <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 text-green-500 text-xs flex items-center justify-center font-medium">
                       {idx + 1}
                     </span>
                     <MarkdownText>{blank}</MarkdownText>
                   </div>
-                )) || (
-                  <MarkdownText className="text-base sm:text-lg break-words">
-                    {question.answer}
-                  </MarkdownText>
-                )}
+                ))}
               </div>
             </div>
             
@@ -446,7 +390,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                 <div className="text-sm font-semibold mb-2">Your Answer:</div>
                 <div className="space-y-1">
                   {userInput.split("|").map((ans, idx) => {
-                    const correctAnswer = question.blanks?.[idx]?.toLowerCase().trim();
+                    const correctAnswer = blanks[idx]?.toLowerCase().trim();
                     const userAnswer = ans.trim();
                     const isCorrect = userAnswer.toLowerCase() === correctAnswer;
                     return (
@@ -472,9 +416,8 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     );
   }
 
-  // Matching
   if (question.type === "matching") {
-    const leftItems = effectiveMatchPairs.map(p => p.left);
+    const leftItems = matchPairs.map(p => p.left);
     const rightItems = shuffledItems;
 
     return (
@@ -491,7 +434,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
               className="relative"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* SVG overlay for drawing lines */}
               <svg 
                 className="absolute inset-0 w-full h-full pointer-events-none z-10"
                 style={{ overflow: 'visible' }}
@@ -510,9 +452,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                 ))}
               </svg>
               
-              {/* Two-column layout */}
               <div className="flex gap-4 sm:gap-8">
-                {/* Left column */}
                 <div className="flex-1 space-y-2">
                   {leftItems.map((left, idx) => {
                     const isMatched = matchSelections.has(left);
@@ -536,7 +476,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                   })}
                 </div>
                 
-                {/* Right column */}
                 <div className="flex-1 space-y-2">
                   {rightItems.map((right, idx) => {
                     const isMatched = Array.from(matchSelections.values()).includes(right);
@@ -575,7 +514,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
             <div>
               <div className="text-sm font-semibold mb-2">Correct Matches:</div>
               <div className="space-y-1">
-                {effectiveMatchPairs.map((pair, idx) => (
+                {matchPairs.map((pair, idx) => (
                     <div key={idx} className="flex items-center gap-2 text-sm">
                       <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 text-green-500 text-xs flex items-center justify-center font-medium">
                         {idx + 1}
@@ -592,7 +531,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
               <div className="pt-3 border-t border-border">
                 <div className="text-sm font-semibold mb-2">Your Matches:</div>
                 <div className="space-y-1">
-                  {effectiveMatchPairs.map((pair, idx) => {
+                  {matchPairs.map((pair, idx) => {
                     const userAnswer = matchSelections.get(pair.left);
                     const isCorrect = userAnswer === pair.right;
                     return (
@@ -622,7 +561,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     );
   }
 
-  // Ordering
   if (question.type === "ordering") {
     return (
       <div className="space-y-4">
@@ -700,7 +638,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
             <div>
               <div className="text-sm font-semibold mb-2">Correct Order:</div>
               <div className="space-y-1">
-                {effectiveOrderItems.map((item, idx) => (
+                {orderItems.map((item, idx) => (
                   <div key={idx} className="flex items-center gap-2 text-sm">
                     <span className="flex-shrink-0 w-6 h-6 rounded-full bg-green-500/20 text-green-500 text-xs flex items-center justify-center font-medium">
                       {idx + 1}
@@ -716,7 +654,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                 <div className="text-sm font-semibold mb-2">Your Answer:</div>
                 <div className="space-y-1">
                   {currentOrderItems.map((item, idx) => {
-                    const correctIdx = effectiveOrderItems.indexOf(item);
+                    const correctIdx = orderItems.indexOf(item);
                     const isCorrectPosition = correctIdx === idx;
                     return (
                       <div key={idx} className="flex items-center gap-2 text-sm">
@@ -743,7 +681,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     );
   }
 
-  // Multi-Select
   if (question.type === "multi-select") {
     return (
       <div className="space-y-4">
@@ -753,10 +690,10 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
         <p className="text-sm text-muted-foreground">Select all that apply:</p>
 
         <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
-          {question.options?.map((option, idx) => {
+          {options.map((option, idx) => {
             const isSelected = selectedOptions.has(option);
             const optionPrefix = option.charAt(0).toUpperCase();
-            const isCorrect = effectiveCorrectAnswers.some(a => a.charAt(0).toUpperCase() === optionPrefix);
+            const isCorrect = correctAnswers.some(a => a.charAt(0).toUpperCase() === optionPrefix);
 
             return (
               <Button
@@ -797,7 +734,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
 
         {mode === "answer-rating" && (
           <div className="mt-4 p-3 bg-muted rounded-lg text-sm">
-            <strong>Correct Answers:</strong> {effectiveCorrectAnswers.join(", ")}
+            <strong>Correct Answers:</strong> {correctAnswers.join(", ")}
           </div>
         )}
       </div>
