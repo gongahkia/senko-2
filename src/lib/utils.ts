@@ -117,15 +117,24 @@ export function parseQuestions(inputText: string): ParseResult {
   const questions: QuestionItem[] = [];
   const errors: string[] = [];
   const warnings: string[] = [];
-  const blocks = inputText.split(/^-{3,}\s*$/m).filter(block => block.trim());
 
-  for (let i = 0; i < blocks.length; i++) {
-    const block = blocks[i];
+  // Split by "---\n...metadata...\n---" pattern to get complete blocks
+  // Each block should have YAML front matter between --- delimiters, followed by content
+  // Pattern: ---\n<yaml>\n---\n<content>\n (with optional blank lines between blocks)
+  const blockPattern = /---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*?)(?=\n+---|\s*$)/g;
+  const matches = Array.from(inputText.matchAll(blockPattern));
+
+  if (matches.length === 0) {
+    errors.push('No valid question blocks found. Each question must be in format:\n---\ntype: <type>\n---\nQuestion text');
+    return { questions: [], errors, warnings };
+  }
+
+  for (let i = 0; i < matches.length; i++) {
+    const match = matches[i];
+    const frontMatterText = match[1];
+    const content = match[2];
+
     try {
-      const parts = block.trim().split(/\n===\n/);
-      const frontMatterText = parts[0];
-      const content = parts.length > 1 ? parts.slice(1).join('\n===\n') : '';
-
       const metadata = yaml.load(frontMatterText) as any;
       if (!metadata || typeof metadata !== 'object') {
         errors.push(`Block ${i + 1}: Invalid YAML format`);
@@ -446,9 +455,10 @@ export function normalizeQuestion(q: QuestionItem): QuestionItem {
 
     case 'true-false':
       // Normalize boolean answers to string "True" or "False"
-      if (normalized.answer === true || normalized.answer === 'true' || normalized.answer === 'True') {
+      const answerLower = String(normalized.answer).toLowerCase();
+      if (answerLower === 'true') {
         normalized.answer = 'True';
-      } else if (normalized.answer === false || normalized.answer === 'false' || normalized.answer === 'False') {
+      } else if (answerLower === 'false') {
         normalized.answer = 'False';
       }
       break;

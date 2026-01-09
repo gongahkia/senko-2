@@ -14,7 +14,7 @@ import { MathJaxContext } from "better-react-mathjax";
 import { useDecks } from "@/hooks/useDecks";
 import { useKeyboardBindings } from "@/hooks/useKeyboardBindings";
 import { QuestionItem } from "@/types";
-import { BookOpen, HelpCircle, Copy, Check, Sparkles, Search, X, ChevronDown, ChevronUp } from "lucide-react";
+import { BookOpen, HelpCircle, Copy, Check, Search, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,

@@ -174,7 +174,7 @@ export default function Questions({
           <div className="space-y-3 sm:space-y-4">
             {filteredQuestions.map((item, index) => (
               <div
-                key={item.id || index}
+                key={index}
                 className="border rounded-md p-3 sm:p-4 bg-card text-card-foreground"
               >
                 <p className="font-medium text-sm sm:text-base">Question {index + 1}: ({item.type})</p>
