@@ -1,4 +1,2 @@
-to check rendering logic as required for each question method
-also to brainstorm other rendering methods that are easier to parse and implement if better
-test whether new rendering logic works
+remove the statistics entirely and make it store memory only in instantaneous browser memory
 refactor frontend to make it a simple ascii man page display (think opentui display) but retain the same functionality through a "simple" (to develop) and "featureful view" (current)
