@@ -64,7 +64,8 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     leftItemRefs.current.clear();
     rightItemRefs.current.clear();
     setLinePositions([]);
-  }, [question, initialOrderItems]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [question]); // Only depend on question to avoid infinite loops
 
   // Use orderSelections directly since we initialize it properly
   const currentOrderItems = orderSelections;
@@ -368,7 +369,8 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
 
         {mode === "answer-rating" && (
           <div className="mt-4 p-3 bg-muted rounded-lg text-sm">
-            <strong>Correct Answer:</strong> {question.answer}
+            <strong>Correct Answer:</strong>{' '}
+            <MarkdownText className="inline">{question.answer}</MarkdownText>
           </div>
         )}
       </div>
@@ -405,7 +407,8 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
 
         {mode === "answer-rating" && (
           <div className="mt-4 p-3 bg-muted rounded-lg text-sm text-center">
-            <strong>Correct Answer:</strong> {question.answer}
+            <strong>Correct Answer:</strong>{' '}
+            <MarkdownText className="inline">{question.answer}</MarkdownText>
           </div>
         )}
       </div>
@@ -435,16 +438,16 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
         </MarkdownText>
 
         {mode === "question" && (
-          <div 
+          <div
             className="space-y-4"
             onClick={(e) => e.stopPropagation()}
             onTouchEnd={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
           >
             <input
               type="text"
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
               placeholder={blanks.length > 1 ? "Separate answers with |" : "Type your answer"}
               className="w-full p-3 text-sm sm:text-base border border-border rounded-lg bg-background text-foreground"
               aria-label={`Fill in the blank answer${blanks.length > 1 ? 's' : ''}`}
@@ -572,7 +575,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                       <div
                         key={idx}
                         ref={(el) => { if (el) leftItemRefs.current.set(left, el); }}
-                        onClick={() => !isMatched && handleLeftItemClick(left)}
+                        onClick={(e) => { e.stopPropagation(); !isMatched && handleLeftItemClick(left); }}
                         role="listitem button"
                         aria-pressed={isSelected}
                         aria-label={`${left}${isMatched ? ' - matched' : isSelected ? ' - selected' : ' - select to match'}`}
@@ -611,7 +614,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                       <div
                         key={idx}
                         ref={(el) => { if (el) rightItemRefs.current.set(right, el); }}
-                        onClick={() => handleRightItemClick(right)}
+                        onClick={(e) => { e.stopPropagation(); handleRightItemClick(right); }}
                         role="listitem button"
                         aria-label={`${right}${isMatched ? ' - already matched' : ''}`}
                         className={`p-3 rounded-lg border-2 cursor-pointer transition-all text-sm sm:text-base ${
@@ -716,17 +719,18 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
         {mode === "question" && currentOrderItems.length > 0 && (
           <>
             <p className="text-sm text-muted-foreground" id="ordering-instructions">Drag and drop to arrange in correct order, or use arrows:</p>
-            <div className="space-y-2" onClick={(e) => e.stopPropagation()} role="list" aria-label="Items to order" aria-describedby="ordering-instructions">
+            <div className="space-y-2" onClick={(e) => e.stopPropagation()} onTouchEnd={(e) => e.stopPropagation()} role="list" aria-label="Items to order" aria-describedby="ordering-instructions">
               {currentOrderItems.map((item, idx) => (
                 <div
                   key={`${item}-${idx}`}
                   draggable
-                  onDragStart={(e) => handleDragStart(e, idx)}
-                  onDragOver={(e) => handleDragOver(e, idx)}
-                  onDragLeave={handleDragLeave}
-                  onDrop={(e) => handleDrop(e, idx)}
-                  onDragEnd={handleDragEnd}
+                  onDragStart={(e) => { e.stopPropagation(); handleDragStart(e, idx); }}
+                  onDragOver={(e) => { e.stopPropagation(); handleDragOver(e, idx); }}
+                  onDragLeave={(e) => { e.stopPropagation(); handleDragLeave(); }}
+                  onDrop={(e) => { e.stopPropagation(); handleDrop(e, idx); }}
+                  onDragEnd={(e) => { e.stopPropagation(); handleDragEnd(); }}
                   onClick={(e) => e.stopPropagation()}
+                  onMouseDown={(e) => e.stopPropagation()}
                   role="listitem"
                   aria-label={`Position ${idx + 1}: ${item}`}
                   aria-grabbed={draggedIndex === idx}
@@ -868,7 +872,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
         </MarkdownText>
         <p className="text-sm text-muted-foreground">Select all that apply:</p>
 
-        <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+        <div className="space-y-2" onClick={(e) => e.stopPropagation()} onTouchEnd={(e) => e.stopPropagation()}>
           {options.map((option, idx) => {
             const isSelected = selectedOptions.has(option);
             // Compare full option text, not just prefix
@@ -890,6 +894,7 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                 }
                 className="w-full text-left justify-start h-auto py-3 px-3 sm:px-4 break-words whitespace-normal"
                 onClick={(e) => { e.stopPropagation(); mode === "question" && handleMultiSelectToggle(option); }}
+                onTouchEnd={(e) => e.stopPropagation()}
                 disabled={mode === "answer-rating"}
               >
                 <div className="flex items-center gap-2">
@@ -913,7 +918,8 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
 
         {mode === "answer-rating" && (
           <div className="mt-4 p-3 bg-muted rounded-lg text-sm">
-            <strong>Correct Answers:</strong> {correctAnswers.join(", ")}
+            <strong>Correct Answers:</strong>{' '}
+            <MarkdownText className="inline">{correctAnswers.join(", ")}</MarkdownText>
           </div>
         )}
       </div>

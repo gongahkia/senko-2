@@ -20,7 +20,7 @@ export function MarkdownText({ children, className = "" }: MarkdownTextProps) {
   const htmlContent = parseMarkdown(children);
 
   return (
-    <MathJax dynamic>
+    <MathJax key={children.substring(0, 50)} dynamic hideUntilTypeset="first">
       <div
         className={className}
         dangerouslySetInnerHTML={{ __html: htmlContent }}

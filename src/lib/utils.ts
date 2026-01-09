@@ -150,14 +150,15 @@ export function parseQuestions(inputText: string): ParseResult {
       let question = '';
       let answer = '';
 
-      // Flashcards: content can be "question===answer" (two-sided) or just "question" (one-sided)
+      // Flashcards: content can be "question\n===\nanswer" (two-sided) or just "question" (one-sided)
       // Other types: content is just the question, answer comes from metadata
       if (type === 'flashcard') {
-        const contentParts = content.split('===');
+        // Split on newline-surrounded === to avoid splitting on === within text
+        const contentParts = content.split(/\n===\n/);
         question = contentParts[0]?.trim() || '';
         // If there's a === separator, the second part is the answer
         if (contentParts.length > 1) {
-          answer = contentParts.slice(1).join('===').trim();
+          answer = contentParts.slice(1).join('\n===\n').trim();
         }
         // If no === separator and metadata.answer exists, use that
         if (!answer && metadata.answer) {
