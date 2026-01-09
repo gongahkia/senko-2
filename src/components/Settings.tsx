@@ -136,7 +136,7 @@ export function Settings() {
           <Palette className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-full sm:max-w-md max-h-[85vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-full sm:max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-xl sm:text-2xl">Color Scheme</DialogTitle>
         </DialogHeader>

@@ -463,10 +463,10 @@ Which of the following are valid derivatives? (Select all that apply)`
                 <h1 className="text-2xl sm:text-3xl font-bold text-foreground">せんこ 2</h1>
               </div>
               <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                <ImportExport
-                  currentDeckId={currentDeckId}
-                  onDeckImported={handleDeckImported}
-                />
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Settings />
+                </Suspense>
+
                 <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="icon">
@@ -477,7 +477,7 @@ Which of the following are valid derivatives? (Select all that apply)`
                   <DialogHeader>
                     <DialogTitle className="text-xl sm:text-2xl">Quick Start Guide</DialogTitle>
                     <DialogDescription className="text-sm sm:text-base">
-                      Learn active recall in 3 simple steps
+                      Learn active recall in 4 simple steps
                     </DialogDescription>
                   </DialogHeader>
 
@@ -505,6 +505,14 @@ Which of the following are valid derivatives? (Select all that apply)`
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold mb-1 text-sm sm:text-base">Start Studying</h4>
                           <p className="text-xs sm:text-sm text-muted-foreground">Return to Recall tab to begin your study session</p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm sm:text-base">4</div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold mb-1 text-sm sm:text-base">Track Your Progress</h4>
+                          <p className="text-xs sm:text-sm text-muted-foreground">Visit Statistics tab after studying to see your overall metrics</p>
                         </div>
                       </div>
                     </div>
@@ -586,7 +594,7 @@ Which of the following are valid derivatives? (Select all that apply)`
                       {/* Keyboard Shortcuts */}
                       <div>
                         <h4 className="font-semibold mb-2 sm:mb-3 flex items-center gap-2 text-sm sm:text-base">
-                          ⌨️ Keyboard Shortcuts
+                          Keyboard Shortcuts
                         </h4>
                         <div className="p-3 bg-muted/50 rounded-lg text-xs sm:text-sm space-y-2">
                           <div className="flex items-center gap-2">
@@ -608,9 +616,10 @@ Which of the following are valid derivatives? (Select all that apply)`
                 </DialogContent>
               </Dialog>
 
-              <Suspense fallback={<LoadingSpinner />}>
-                <Settings />
-              </Suspense>
+                <ImportExport
+                  currentDeckId={currentDeckId}
+                  onDeckImported={handleDeckImported}
+                />
               </div>
             </div>
 

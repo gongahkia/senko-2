@@ -243,14 +243,6 @@ export function ImportExport({
 
   return (
     <div className="flex gap-2">
-      <Button variant="outline" size="icon" onClick={handleExportDeck} title="Export Current Deck">
-        <Download className="h-4 w-4" />
-      </Button>
-
-      <Button variant="outline" size="icon" onClick={handleExportAll} title="Export All Decks">
-        <FileJson className="h-4 w-4" />
-      </Button>
-
       <Dialog open={isImportOpen} onOpenChange={setIsImportOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" size="icon" title="Import Deck">
@@ -386,6 +378,14 @@ export function ImportExport({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Button variant="outline" size="icon" onClick={handleExportDeck} title="Export Current Deck">
+        <Download className="h-4 w-4" />
+      </Button>
+
+      <Button variant="outline" size="icon" onClick={handleExportAll} title="Export All Decks">
+        <FileJson className="h-4 w-4" />
+      </Button>
 
       <Dialog open={isExportOpen} onOpenChange={setIsExportOpen}>
         <DialogContent className="max-w-full sm:max-w-2xl">

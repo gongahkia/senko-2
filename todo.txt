@@ -1,2 +1,0 @@
-remove the statistics entirely and make it store memory only in instantaneous browser memory like zeming's current version
-refactor frontend to make it a simple ascii man page display (think opentui display) but retain the same functionality through a "simple" (to develop) and "featureful view" (current)
