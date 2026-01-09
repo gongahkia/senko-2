@@ -10,10 +10,11 @@ interface QuestionRendererProps {
   onAnswer?: (isCorrect: boolean) => void;
 }
 
-export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererProps) {
+export function QuestionRenderer({ question, mode }: QuestionRendererProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<Set<string>>(new Set());
-  const [userInput, setUserInput] = useState("");
+  const [selectedTrueFalse, setSelectedTrueFalse] = useState<"True" | "False" | null>(null);
+  const [userInputs, setUserInputs] = useState<string[]>([]);
   const [matchSelections, setMatchSelections] = useState<Map<string, string>>(new Map());
   const [orderSelections, setOrderSelections] = useState<string[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -56,7 +57,8 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
   useEffect(() => {
     setSelectedOption(null);
     setSelectedOptions(new Set());
-    setUserInput("");
+    setSelectedTrueFalse(null);
+    setUserInputs(question.type === 'fill-in-the-blank' && question.blanks ? new Array(question.blanks.length).fill('') : []);
     setMatchSelections(new Map());
     // Always use initialOrderItems when resetting, not conditional
     setOrderSelections(initialOrderItems);
@@ -72,15 +74,10 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
 
   const handleMultipleChoiceSelect = (option: string) => {
     setSelectedOption(option);
-    if (onAnswer) {
-      onAnswer(option === question.answer);
-    }
   };
 
   const handleTrueFalseSelect = (value: "True" | "False") => {
-    if (onAnswer) {
-      onAnswer(value === question.answer);
-    }
+    setSelectedTrueFalse(value);
   };
 
   // Fuzzy matching helper for fill-in-blank
@@ -114,15 +111,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     return false;
   };
 
-  const handleFillInBlankSubmit = () => {
-    if (onAnswer && blanks) {
-      const userAnswers = userInput.split("|").map(a => a.trim());
-      const isCorrect = userAnswers.length === blanks.length &&
-        userAnswers.every((ans, idx) => isFuzzyMatch(ans, blanks[idx]));
-      onAnswer(isCorrect);
-    }
-  };
-
   const handleMultiSelectToggle = (option: string) => {
     const newSelections = new Set(selectedOptions);
     if (newSelections.has(option)) {
@@ -131,20 +119,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
       newSelections.add(option);
     }
     setSelectedOptions(newSelections);
-  };
-
-  const handleMultiSelectSubmit = () => {
-    if (onAnswer && correctAnswers.length > 0) {
-      // Compare full option text for accuracy, not just prefixes
-      const selectedSet = new Set(Array.from(selectedOptions).map(opt => opt.trim().toLowerCase()));
-      const correctSet = new Set(correctAnswers.map(a => a.trim().toLowerCase()));
-
-      // Check if sets are equal (same size and all elements match)
-      const isCorrect = selectedSet.size === correctSet.size &&
-        Array.from(selectedSet).every(s => correctSet.has(s));
-
-      onAnswer(isCorrect);
-    }
   };
 
   // Click-based matching: click left item, then click right item to connect
@@ -233,15 +207,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
     };
   }, [matchSelections]);
 
-  const handleMatchSubmit = () => {
-    if (onAnswer && matchPairs.length > 0) {
-      const isCorrect = matchPairs.every(pair =>
-        matchSelections.get(pair.left) === pair.right
-      );
-      onAnswer(isCorrect);
-    }
-  };
-
   const handleDragStart = useCallback((e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = 'move';
@@ -288,14 +253,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
       setOrderSelections(items);
     }
   }, [currentOrderItems]);
-
-  const handleOrderSubmit = () => {
-    if (onAnswer && orderItems.length > 0) {
-      const isCorrect = currentOrderItems.length === orderItems.length &&
-        currentOrderItems.every((item, idx) => item === orderItems[idx]);
-      onAnswer(isCorrect);
-    }
-  };
 
   if (question.type === "flashcard") {
     return (
@@ -387,7 +344,17 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center" onClick={(e) => e.stopPropagation()}>
           <Button
             size="lg"
-            variant={mode === "answer-rating" ? (question.answer === "True" ? "default" : "outline") : "outline"}
+            variant={
+              mode === "answer-rating"
+                ? question.answer === "True"
+                  ? "default"
+                  : selectedTrueFalse === "True"
+                  ? "destructive"
+                  : "outline"
+                : selectedTrueFalse === "True"
+                ? "default"
+                : "outline"
+            }
             onClick={() => mode === "question" && handleTrueFalseSelect("True")}
             disabled={mode === "answer-rating"}
             className="w-full sm:w-auto sm:min-w-[120px]"
@@ -396,7 +363,17 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
           </Button>
           <Button
             size="lg"
-            variant={mode === "answer-rating" ? (question.answer === "False" ? "default" : "outline") : "outline"}
+            variant={
+              mode === "answer-rating"
+                ? question.answer === "False"
+                  ? "default"
+                  : selectedTrueFalse === "False"
+                  ? "destructive"
+                  : "outline"
+                : selectedTrueFalse === "False"
+                ? "default"
+                : "outline"
+            }
             onClick={() => mode === "question" && handleTrueFalseSelect("False")}
             disabled={mode === "answer-rating"}
             className="w-full sm:w-auto sm:min-w-[120px]"
@@ -443,25 +420,28 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
             onClick={(e) => e.stopPropagation()}
             onTouchEnd={(e) => e.stopPropagation()}
           >
-            <input
-              type="text"
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-              placeholder={blanks.length > 1 ? "Separate answers with |" : "Type your answer"}
-              className="w-full p-3 text-sm sm:text-base border border-border rounded-lg bg-background text-foreground"
-              aria-label={`Fill in the blank answer${blanks.length > 1 ? 's' : ''}`}
-              aria-describedby="fill-in-blank-instructions"
-            />
-            <span id="fill-in-blank-instructions" className="sr-only">
-              {blanks.length > 1 ? `Enter ${blanks.length} answers separated by vertical bar` : 'Enter your answer'}
-            </span>
-            <Button 
-              onClick={handleFillInBlankSubmit} 
-              className="w-full py-5 sm:py-2"
-            >
-              Submit Answer
-            </Button>
+            {blanks.map((_, idx) => (
+              <div key={idx} className="space-y-1">
+                {blanks.length > 1 && (
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Blank {idx + 1}
+                  </label>
+                )}
+                <input
+                  type="text"
+                  value={userInputs[idx] || ''}
+                  onChange={(e) => {
+                    const newInputs = [...userInputs];
+                    newInputs[idx] = e.target.value;
+                    setUserInputs(newInputs);
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  placeholder={`Type your answer${blanks.length > 1 ? ` for blank ${idx + 1}` : ''}`}
+                  className="w-full p-3 text-sm sm:text-base border border-border rounded-lg bg-background text-foreground"
+                  aria-label={`Fill in blank ${idx + 1}`}
+                />
+              </div>
+            ))}
           </div>
         )}
 
@@ -481,19 +461,19 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
               </div>
             </div>
             
-            {userInput && (
+            {userInputs.some(input => input.trim() !== '') && (
               <div className="pt-3 border-t border-border">
                 <div className="text-sm font-semibold mb-2">Your Answer:</div>
                 <div className="space-y-1">
-                  {userInput.split("|").map((ans, idx) => {
+                  {userInputs.map((ans, idx) => {
                     const correctAnswer = blanks[idx];
                     const userAnswer = ans.trim();
                     const isCorrect = correctAnswer ? isFuzzyMatch(userAnswer, correctAnswer) : false;
                     return (
                       <div key={idx} className="flex items-center gap-2 text-sm">
                         <span className={`flex-shrink-0 w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${
-                          isCorrect 
-                            ? 'bg-green-500/20 text-green-500' 
+                          isCorrect
+                            ? 'bg-green-500/20 text-green-500'
                             : 'bg-red-500/20 text-red-500'
                         }`}>
                           {idx + 1}
@@ -632,13 +612,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                 </div>
               </div>
             </div>
-            <Button
-              onClick={(e) => { e.stopPropagation(); handleMatchSubmit(); }}
-              className="w-full py-5 sm:py-2"
-              disabled={matchSelections.size === 0}
-            >
-              Submit Matches ({matchSelections.size}/{leftItems.length} connected)
-            </Button>
           </>
         )}
 
@@ -775,9 +748,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
                 </div>
               ))}
             </div>
-            <Button onClick={(e) => { e.stopPropagation(); handleOrderSubmit(); }} className="w-full py-5 sm:py-2">
-              Submit Order
-            </Button>
           </>
         )}
 
@@ -909,12 +879,6 @@ export function QuestionRenderer({ question, mode, onAnswer }: QuestionRendererP
             );
           })}
         </div>
-
-        {mode === "question" && (
-          <Button onClick={(e) => { e.stopPropagation(); handleMultiSelectSubmit(); }} className="w-full py-5 sm:py-2" disabled={selectedOptions.size === 0}>
-            Submit Selection
-          </Button>
-        )}
 
         {mode === "answer-rating" && (
           <div className="mt-4 p-3 bg-muted rounded-lg text-sm">
