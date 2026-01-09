@@ -174,13 +174,13 @@ Match LaTeX notation with descriptions:
 ---
 type: multi-select
 answers:
-  - A) Lists: `- item`
-  - B) Bold: `**text**`
-  - C) LaTeX: `$equation$`
+  - "A) Lists: `- item`"
+  - "B) Bold: `**text**`"
+  - "C) LaTeX: `$equation$`"
 options:
-  - A) Lists: `- item`
-  - B) Bold: `**text**`
-  - C) LaTeX: `$equation$`
-  - D) Headers: `### title`
+  - "A) Lists: `- item`"
+  - "B) Bold: `**text**`"
+  - "C) LaTeX: `$equation$`"
+  - "D) Headers: `### title`"
 ---
 Which markdown features are supported? Select all that work:
